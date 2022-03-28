@@ -1,0 +1,1 @@
+ids	gtf.chr	gtf.start	gtf.end	gtf.length	gtf.ref	gtf.strand	gtf.name	mean_mESC	mean_mOPC	gtf.type	no.chr.mESC	no.chr.mOPC	max.distance.mESC	max.distance.mOPC	no.contact.mESC	no.contact.mOPC	no.distinct.contact.mESC	no.distinct.contact.mOPC	length

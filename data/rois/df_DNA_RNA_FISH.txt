@@ -1,0 +1,1 @@
+DNA.chr	DNA.start	DNA.end	DNA.windowID	DNA.group	RNA.chr	RNA.start	RNA.end	RNA.length	RNA.strand	RNA.RPM_mESC	RNA.RPM_mOPC	RNA.name	RNA.ensembleID	length
