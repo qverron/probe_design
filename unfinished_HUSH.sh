@@ -1,3 +1,5 @@
+set -e
+
 datapath="$PWD/data"
 suffix="Reference"
 length=40

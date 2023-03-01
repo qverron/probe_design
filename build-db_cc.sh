@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 cd data
 if [ -d "db" ]
