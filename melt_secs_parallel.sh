@@ -1,8 +1,16 @@
 #!/bin/bash
+set -e
 
 data=$PWD'/data'
 cd $data
 suffix='Reference'
+if [ ! -z "$1" ]
+then 
+case "$1" in
+	DNA) suffix="Reference";;
+	RNA) suffix="RevCompl";;
+esac
+fi
 mkdir melt
 mkdir secs
 

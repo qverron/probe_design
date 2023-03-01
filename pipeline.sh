@@ -8,6 +8,7 @@ mkdir data/melt
 mkdir data/secs
 mkdir data/db 
 mkdir data/db_tsv
+mkdir data/probe_candidates
 
 mkdir HUSH
 
@@ -15,29 +16,42 @@ mkdir HUSH
 Rscript prepare_input.r
 
 # 2. Retrieve sequences and extract k-mers
-./get_oligos.py
+./get_oligos.py DNA/RNA [applyGCfilter] [extfolder] # RNA assumes already existing transcript sequences. Default> DNA
 
 # 3. Run nHUSH and reconstitute into full-length oligos if using sublength hashing
-./run_nHUSH.sh -d DNA -L 40 -l 21 -m 2 -t 40 -i 14 # 40 threads for max perf. Add -g for genome ref
-./run_nHUSH.sh -d RNA -L 35 -m 5 -t 40 -i 40
+./run_nHUSH.sh -d DNA -L 40 -l 21 -m 1 -t 40 -i 14 # 40 threads for max perf. Add -g for genome ref
+./run_nHUSH.sh -d RNA -L 35 -m 5 -t 40 -i 14
 
 # only in case HUSH didn't finish successfully
 ./unfinished_HUSH.sh
 
 # only if using sublength:
-./reform_hush.py DNA 40 21  # syntax: ./reform_hush.py DNA|RNA|-RNA length sublength
+./reform_hush_consec.py DNA 40 21  # syntax: ./reform_hush.py DNA|RNA|-RNA length (sublength)
+./reform_hush.py DNA|RNA|-RNA length (sublength)
+./reform_hush_combined.py DNA|RNA|-RNA length sublength until
 
 # 4. Calculate secondary structures and melting temperature
-./melt_secs_parallel.sh
+./melt_secs_parallel.sh DNA|RNA
 
 # 5. Create database and convert to TSV for querying. Attribute score to each oligo
-./build-db.sh
+./build-db.sh q_combined 32 6 70 #(optional score function: q/q_combined, default: q)
+./build-db_cc.sh q_cc 32 6  #score function: q_cc
+# 32: length of max consecutive perfect match allowed; 6: max number of consecutive identical base pairs, 70: target temperature
 
 # 6. Query to fetch potential probe
-./probe-query.sh -p 0.0001 -o 48
+for k in {20..200..10}; do ./probe-query.sh -s DNA -o $k; done
+./probe-query.sh -s DNA/RNA #optional : -o 48 -p 0.0001 pair weight, otherwise sweeps range 1e-2 - 1e-7
 
 # 7. Inspect probes
 python summarize-probes.py
+python summarize-probes-cumul.py
+
 # notebook
-plot_probes.ipynb
+plot_oligos.ipynb
+plot_probe_candidates.ipynbv
+
+# MOVE BEST PROBES TO selected_probes/
+# check the selected probes with BLAST and/or (old)HUSH
+./validation_oldHUSH_BLAST.sh -L 40 -m 8 -t 40
+
 
