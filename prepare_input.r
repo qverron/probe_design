@@ -8,9 +8,9 @@ require(ggplot2)
 ## Read ROI
 
 roi_data = rbindlist(list(
-    fread("data/rois/df_DNA_FISH.txt", col.names=c("chrom", "DNA_start", "DNA_end", "window", "type", "ref", "length")),
+    fread("data/rois/df_DNA_FISH.txt", col.names=c("oligos","chrom", "DNA_start", "DNA_end", "type", "ref", "length")),
     fread("data/rois/df_RNA_FISH.txt")[, .(
-        chrom=gtf.chr, Gene_start=gtf.start, Gene_end=gtf.end, Gene_strand=gtf.strand, Gene_name=gtf.name, Gene_id=ids, ref=gtf.ref, length=length)],
+        chrom=gtf.chr, Gene_start=gtf.start, Gene_end=gtf.end, Gene_strand=gtf.strand, Gene_name=gtf.name, Gene_id=ids, ref=gtf.ref, length=length, oligos=oligos)],
     fread("data/rois/df_DNA_RNA_FISH.txt")[, .(
         chrom=DNA.chr, DNA_start=DNA.start, DNA_end=DNA.end, window=DNA.windowID, type=DNA.group,
         Gene_start=RNA.start, Gene_end=RNA.end, Gene_strand=RNA.strand, Gene_name=RNA.name, Gene_id=RNA.ensembleID, length=length)]
@@ -74,6 +74,8 @@ roi_data2 = windows[roi_data]
 roi_data2[, .N, by=window_id][N > 1]
 roi_data2[!is.na(Gene_name), .N, by=Gene_name][N>1]
 roi_data2[, max(window_id)]
+
+setorder(roi_data2,window_id)#,chrom,Window_start,Window_end)
 
 # Write to file
 fwrite(roi_data2, "data/rois/all_regions.tsv", sep="\t")

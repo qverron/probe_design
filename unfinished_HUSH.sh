@@ -19,6 +19,6 @@ sublength=21
 
 # reshape FASTA files in place
 cd "$datapath"
-for f in candidates/*"$suffix".fa; do echo $f; sed -r 's/pos=chr([0-9X]+):([0-9]+)-([0-9]+)\|([0-9]+):([0-9]+)/ \1 \2 \3 \4 \5/' $f | awk ' /^>/ {print $1" pos=chr"$2":"$3+$5-1"-"$3+$6-1;next}1' > candidates/$(basename $f).fix; done
+for f in candidates/*"$suffix".fa; do echo $f; sed -r 's/pos=([0-9A-Za-z_]+):([0-9]+)-([0-9]+)\|([0-9]+):([0-9]+)/ \1 \2 \3 \4 \5/' $f | awk ' /^>/ {print $1" pos="$2":"$3+$5-1"-"$3+$6-1;next}1' > candidates/$(basename $f).fix; done
 rm -r candidates/*"$suffix".fa
 rename 's/.fix$//' candidates/*
