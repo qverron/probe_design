@@ -69,7 +69,7 @@ do
     fi 
     out="$output/probe_roi_$roi.$roioligos""oligos.tsv"
     echo "Constructing probe with $roioligos oligos for region $roi"
-    escafish --db $file --noligos $roioligos --out $out --pw $pwi --opt
+    escafish --db $file --noligos $roioligos --out $out --pw $pwi
 
 done < <(tail -n +2 "$expfolder"/rois/all_regions.tsv)
 done
@@ -95,7 +95,7 @@ do
     fi 
     out="$output/probe_roi_$roi.$roioligos""oligos.tsv"
     echo "Constructing probe with $roioligos for region $roi"
-    escafish --db $file --noligos $roioligos --out $out --pw $pw --opt
+    escafish --db $file --noligos $roioligos --out $out --pw $pw
 
 done < <(tail -n +2 "$expfolder"/rois/all_regions.tsv)
 fi
