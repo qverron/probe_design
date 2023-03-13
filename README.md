@@ -37,11 +37,7 @@ CAUTION: These instructions are not up to date.
 ## Probe design pipeline:
 
 1. Computer access
-- Remotely access the computer used for probe design through SSH:
-  ``` shell
-  ssh probedesign@ggirellipc.scilifelab.se
-  ```
-  Password: probe2023
+- Remotely access the computer used for probe design through SSH
 - The probe design folder can be found under /mnt/data/Probe_design/
 - All pipeline functions are in Probe_design/Pipeline/
   and all input-output in Probe_design/Pipeline/data/
