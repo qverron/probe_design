@@ -168,5 +168,3 @@ CAUTION: These instructions are not up to date.
 - The complete oligos can be uploaded as an Excel file containing the
   oligo names (arbitrary but unique) and the sequences
 
-README.md
-Displaying README.md.
