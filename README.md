@@ -1,5 +1,3 @@
-## Probe design
-
 # Instructions for probe design
 
 CAUTION: These instructions are not up to date.
