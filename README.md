@@ -1,10 +1,17 @@
 # Instructions for probe design
 
-CAUTION: These instructions are not up to date.
+CAUTION: These instructions are only up to date until step 7.
 
 ## Preparation
 
+### General:
+
+- Install [escafish](https://github.com/elgw/escafish)
+
+- Install [OligoArrayAux](http://www.unafold.org/Dinamelt/software/oligoarrayaux.php)
+
 ### DNA:
+
 - Get the genomic coordinates of the regions of interest
 
 - Get the reference genome. Commonly used reference genomes are
@@ -14,16 +21,8 @@ CAUTION: These instructions are not up to date.
 ### RNA:
 
 - Get the transcripts of interest
-- Get the reference genome (idem as for DNA)
 
-### General:
-
-- Set up SciLifeLab VPN, instructions here. You can check that the
-  installation worked by successfully accessing the SciLifeLab
-  intranet.
-
-- Get familiar with basic Terminal commands, including how to navigate
-  between folders, how to move or edit text files, etc.
+- Get the reference transcriptome
 
 ### Notes:
 
@@ -31,37 +30,34 @@ CAUTION: These instructions are not up to date.
   the sequences of interest and to test probe candidates for
   homology. If different genomes need to be used, follow RNA steps and
   provide the regions of interest directly.
-
-
+  
+- For combined DNA-RNA FISH, the probe sets should be designed with an 
+  homology check against both genome and transcriptome.
+  
+- All the commands below assume you are starting from your pipeline
+  installation folder:
+  ``` shell
+  cd probe_design
+  ```
 
 ## Probe design pipeline:
 
-1. Computer access
-- Remotely access the computer used for probe design through SSH
-- The probe design folder can be found under /mnt/data/Probe_design/
-- All pipeline functions are in Probe_design/Pipeline/
-  and all input-output in Probe_design/Pipeline/data/
-- Note: A step-by-step summary of the modules in the probe design
-  pipeline is found in `Probe_design/Pipeline/pipeline.sh`
+1. Preparation
+- The probe desin pipeline data is currently intended to be run on a 
+  folder called `data/` contained within the pipeline installation folder.
 
-
-2. Preparation
-- Check that no one else is running probe design!
-
-- If `Probe_design/Pipeline/data/` contains data, rename the folder to
-  `data_backup_initials_date` so the other person gets a chance to
-  retrieve their data.
-
-- Upon starting the pipeline, the data/ folder should only contain
-  `data/rois/` and `data/ref/`.
+- Upon starting the pipeline, the `data/` folder should only contain
+  `data/rois/` and `data/ref/`. If more folders are included, consider 
+  making a back-up or simply removing them.
+  
 - List your regions of interest and their coordinates in the input file:
-  `Pipeline/data/rois/all_regions.tsv`
+  `data/rois/all_regions.tsv`
 
 - (Alternative: add  DNA / RNA separately  in `fw_DNA/RNA_FISH.txt` then
   run  `Rscript prepare_input.r`, which will gather them with correct
   formatting in `all_regions.tsv`)
 
-- Place your reference genome in the `Pipeline/data/ref/` folder. Make
+- Place your reference genome in the `data/ref/` folder. Make
   sure that the chromosome naming matches with the reference genome
   name provided in `all_regions.tsv`.
 
@@ -79,7 +75,9 @@ CAUTION: These instructions are not up to date.
 
    ``` shell
    # (from Pipeline/)
-   ./get_oligos.py (optional DNA/RNA)
+   ./get_oligos.py DNA|RNA [optional: applyGCfilter 0|1]
+   # Example:
+   ./get_oligos.py DNA 1
    ```
 
    If indicating RNA, the module will assume that the transcript / region
@@ -91,7 +89,6 @@ CAUTION: These instructions are not up to date.
    once, can be sped up by testing shorter sublength oligos (of length
    l).  `-m` number of mismatches to test for (always use 1 when running
    sublength); `-t` number of threads, `-i` comb size
-
 
 
 - Full length:
@@ -107,17 +104,28 @@ CAUTION: These instructions are not up to date.
   ``` shell
   ./unfinished_HUSH.sh
   ```
-- Recapitulate nHUSH results as a score
-  ``` shell
-  ./reform_hush.py DNA 40 21
-  ```
-  (syntax: `./reform_hush.py DNA|RNA|-RNA length (sublength)`)
+- Recapitulate nHUSH results as a score 
+
+Recommended:
+
+``` shell
+./reform_hush_combined.py DNA|RNA|-RNA length sublength until
+```
+(`until` denotes the same number as specified after `-m` when running nHUSH).
+
 - OR: If using sublength, recapitulate the mismatches into maximum
   consecutive match found:
 
   ``` shell
   ./reform_hush_consec.py DNA 40 21
   ```
+
+- OR: When using either full-length or sublength (deprecated):
+  ``` shell
+  ./reform_hush.py DNA 40 21
+  ```
+  (syntax: `./reform_hush.py DNA|RNA|-RNA length (sublength)`)
+  
 
 5. Calculate the melting temperature of k-mers and the free energy of
    secondary structure formation:
@@ -129,14 +137,29 @@ CAUTION: These instructions are not up to date.
 6. Create k-mer database, convert to TSV for querying and attribute
    score to each oligo (based on nHUSH score, GC content, melting
    temperature, homopolymer stretches, secondary structures).
+   
+   Recommended:
+   
+   ``` shell
+	./build-db.sh q_combined 32 6 70
+    ```
+    (optional score function: `q/gg/gg_nhush/q_combined`, default: `q`.
+    Recommended: `q_combined`.
+
+    32: Maximum length of a consecutive match. Default: 24
+    6: Maximum length of a consecutive homopolymer. Default: 6
+    All oligos with a longer consecutive match or homopolymer are stricly excluded.
+    70: Target melting temperature. Default: 72C)
+  
+   Alternative:
 
     ``` shell
-	./build-db.sh q_cc 32
+	./build-db_cc.sh q_cc 32
     ```
-    (optional score function: `q/gg/gg_nhush/q_cc`, default: `q`.
-    `q_cc` can only be used with sublength nHUSH and after running `reform_hush_consec.py`.
+    (`q_cc` can only be used with sublength nHUSH and after running `reform_hush_consec.py`.
 
-    32: Length of the maximum potential match allowed.)
+    32: Length of the maximum possible consecutive match.
+	All oligos with a longer consecutive match are stricly excluded.)
 
 
 7. Query the database to get candidate probes:
@@ -145,18 +168,39 @@ CAUTION: These instructions are not up to date.
 	./probe-query.sh -s DNA/RNA
     ```
 	Optional: `-o 48` (number of oligos to include in the probe)
-    `-p 0.0001` (pair weight, otherwise sweeps range 1e-2 - 1e-7)
+    `-p 0.0001` (pair weight, otherwise sweeps range 1e-1 - 1e-7)
+    
+    Sweep different oligo lengths (example):
+    ``` shell
+    	for k in {20..200..10}; do ./probe-query.sh -s DNA -o $k; done
+    ```
 
 8. Inspect the generated probes:
+
+	If using `q_combined` scoring function:
+
+   ``` shell
+   python summarize-probes-cumul.py
+   ```
+
+	If using one of the deprecated scoring functions:
+
    ``` shell
    python summarize-probes.py
    ```
-	Some visual elements can be obtained using the following notebook:
+	Some visual elements can be obtained using the following notebooks:
     ```shell
-    plot_probes.ipynb
+    plot_probe_candidates.ipynb
+    plot_oligos.ipynb
     ```
 
 9. Select a probe among the candidates.
+10. Validate the selected probe using HUSH.
+11. Optimize the selected probes by sequentially removing problematic oligos.
+
+In progress...
+
+
 
 ## Generate probes for ordering
 
