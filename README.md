@@ -69,7 +69,7 @@ CAUTION: These instructions are only up to date until step 7.
   mkdir data/db_tsv
   ```
 
-3. Retrieve your region sequences and extract all k-mers of correct length:
+2. Retrieve your region sequences and extract all k-mers of correct length:
 
    ``` shell
    # (from Pipeline/)
@@ -82,7 +82,7 @@ CAUTION: These instructions are only up to date until step 7.
    sequences are already present in the data/regions folder. Default: DNA
 
 
-4. Test all k-mers for their homology to other regions in the genome,
+3. Test all k-mers for their homology to other regions in the genome,
    using nHUSH. Instead of running the entire k-mers (of length `L`) at
    once, can be sped up by testing shorter sublength oligos (of length
    l).  `-m` number of mismatches to test for (always use 1 when running
@@ -102,7 +102,8 @@ CAUTION: These instructions are only up to date until step 7.
   ``` shell
   ./unfinished_HUSH.sh
   ```
-- Recapitulate nHUSH results as a score 
+  
+  4. Recapitulate nHUSH results as a score 
 
 Recommended:
 
