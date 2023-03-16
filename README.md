@@ -14,9 +14,7 @@ CAUTION: These instructions are only up to date until step 7.
 
 - Get the genomic coordinates of the regions of interest
 
-- Get the reference genome. Commonly used reference genomes are
-  already present in Probe_design/ref/ (see below). For other genomes,
-  Pipeline/get_ref_genome.sh can be used but requires manual set-up.
+- Get the reference genome
 
 ### RNA:
 
