@@ -12,7 +12,7 @@ import statistics as stat
 
 currentfolder = './data/'
 # identify probe files
-pattern = currentfolder+"probe_candidates/**/probe_*oligos.tsv"   #probelet
+pattern = currentfolder+"probe_candidates/**/probe_*.tsv"   #probelet
 #pattern = "data/**/probe*/**oligos.tsv"    #ifpd2 query
 #pattern = "data/**/*.best_probe.tsv"   #jupyternb
 filenames = glob.glob(pattern,recursive=True)

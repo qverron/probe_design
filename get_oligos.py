@@ -16,7 +16,7 @@ from tabulate import tabulate
 # Retrieve complete sequences in ROI
 if __name__ == '__main__':
     #syntax: ./get_oligos.py DNA/RNA gcfilter extfolder
-    gcfilter = True
+    gcfilter = 1
     extfolder = './data/'
 
     if(len(sys.argv) == 1):
@@ -26,10 +26,10 @@ if __name__ == '__main__':
         type = sys.argv[1]
     elif(len(sys.argv) == 3):
         type = sys.argv[1]
-        nofilter = sys.argv[2]
+        gcfilter = sys.argv[2]
     elif(len(sys.argv) == 4):
         type = sys.argv[1]
-        nofilter = sys.argv[2]
+        gcfilter = sys.argv[2]
         extfolder = sys.argv[3]
 
     else:

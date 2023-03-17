@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 data=$PWD'/data'
 cd $data

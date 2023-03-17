@@ -62,16 +62,6 @@ then
 fi	
 
 
-# Check that the input were correctly parsed
-while true; do
-    read -p "Do you wish to continue? (y/n)" yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes (y) or no (n).";;
-    esac
-done
-
 # define a unique HUSH folder
 datapath="${exppath}/data"
 HUSHpath="${exppath}/HUSH"
@@ -88,7 +78,7 @@ done
 # run HUSH on the FASTA files
 for pfa in "$datapath"/selected_probes/*.fa;
 do 
-   queryfolder="$datapath"/selected_probes/$(basename $pfa .fa)_split
+   queryfolder="$datapath"/selected_probes/$(basename $pfa .fa)_split_mm_$mismatch
    mkdir $queryfolder
    cd $queryfolder
    # Create one input file per thread
@@ -97,9 +87,8 @@ do
    hushp -l $length -t $threads -r "$datapath"/ref/genome.fa -q $queryfolder -m $mismatch -f 0 -C
 
    # Merge the ouputs to a single file
-   cat $queryfolder/*.out > "$datapath"/selected_probes/$(basename $pfa).out
+   cat $queryfolder/*.out > "$datapath"/selected_probes/$(basename $pfa)_"$mismatch"_mm.out
 done
-
 
 
 

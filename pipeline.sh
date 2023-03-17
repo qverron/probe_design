@@ -9,6 +9,7 @@ mkdir data/secs
 mkdir data/db 
 mkdir data/db_tsv
 mkdir data/probe_candidates
+mkdir data/selected_probes
 
 mkdir HUSH
 
@@ -16,7 +17,7 @@ mkdir HUSH
 Rscript prepare_input.r
 
 # 2. Retrieve sequences and extract k-mers
-./get_oligos.py DNA/RNA [applyGCfilter] [extfolder] # RNA assumes already existing transcript sequences. Default> DNA
+./get_oligos.py DNA/RNA [applyGCfilter 0/1] [extfolder] # RNA assumes already existing transcript sequences. Default> DNA
 
 # 3. Run nHUSH and reconstitute into full-length oligos if using sublength hashing
 ./run_nHUSH.sh -d DNA -L 40 -l 21 -m 1 -t 40 -i 14 # 40 threads for max perf. Add -g for genome ref
@@ -40,7 +41,10 @@ Rscript prepare_input.r
 
 # 6. Query to fetch potential probe
 for k in {20..200..10}; do ./probe-query.sh -s DNA -o $k; done
-./probe-query.sh -s DNA/RNA #optional : -o 48 -p 0.0001 pair weight, otherwise sweeps range 1e-2 - 1e-7
+./probe-query.sh -s DNA/RNA 
+#optional : -o 48 number of oligos
+#           -p 0.0001 pair weigh (otherwise sweeps range 1e-2 - 1e-7
+#           -e 5 specific ROI to query
 
 # 7. Inspect probes
 python summarize-probes.py
@@ -48,7 +52,7 @@ python summarize-probes-cumul.py
 
 # notebook
 plot_oligos.ipynb
-plot_probe_candidates.ipynbv
+plot_probe_candidates.ipynb
 
 # MOVE BEST PROBES TO selected_probes/
 # check the selected probes with BLAST and/or (old)HUSH

@@ -15,14 +15,17 @@ Help()
    echo "If not provided, scanning pair weights between 1e-1 and 1e-7."
    echo "-o oligos per probe (default 50)"
    echo "If not provided, reading oligo number from ROI list."
+   echo "-e specific ROI to query"
+   echo "If not provided, querying all ROIs listed in all_regions.tsv"
    echo "-h display help"
 }
 
-while getopts "p:o:s:h" flag; do
+while getopts "p:o:s:e:h" flag; do
    case "${flag}" in
       p) pw=${OPTARG};;
       o) oligos=${OPTARG};;
       s) type=${OPTARG};;
+      e) probe=${OPTARG};;
       h) # display Help
          Help
          exit;;
@@ -44,44 +47,51 @@ case "$type" in
 esac
 fi
 
+
+ts="$(date +%Y%m%d-%H%M%S)"
+randomid=$( cat /dev/urandom | tr -cd '0-9' | head -c 6 )       # to avoid folder names colliding
+#output="$expfolder/probe_candidates/query_output_t_$ts""-$randomid""_p_$pwi"
+if [ -z $oligos ]
+then
+    output="$expfolder/probe_candidates/query_output_t_$ts"   
+else
+    output="$expfolder/probe_candidates/query_output_o_$oligos""_t_$ts"
+fi
+
+mkdir "$expfolder/probe_candidates"
+mkdir $output
+
 if [ -z $pw ]
 then
 for pwi in 1E-1 1E-2 1E-3 1E-4 1E-5 1E-6 1E-7
 do
 
-ts="$(date +%Y%m%d-%H%M%S)"
-randomid=$( cat /dev/urandom | tr -cd '0-9' | head -c 6 )       # to avoid folder names colliding
-output="$expfolder/probe_candidates/query_output_t_$ts""-$randomid""_p_$pwi"
-
-mkdir "$expfolder/probe_candidates"
-mkdir $output
 
 while IFS=$'\t' read -ra table
 do
-    echo "Processing region ""${table[2]}"
     roi="${table[2]}"
-    file="$input/db.roi_$roi.GC35to85_$suffix.tsv"
-    if [ -z $oligos ]
+    if [ ! -z "$probe" ] && [ "$roi" != $probe ]
     then
-        roioligos="${table[6]}"
-    else
-        roioligos="$oligos"   
-    fi 
-    out="$output/probe_roi_$roi.$roioligos""oligos.tsv"
-    echo "Constructing probe with $roioligos oligos for region $roi"
-    escafish --db $file --noligos $roioligos --out $out --pw $pwi
+        continue
+    else    
+        echo "Processing region ""${table[2]}"
+        file="$input/db.roi_$roi.GC35to85_$suffix.tsv"
+        if [ -z $oligos ]
+        then
+            roioligos="${table[6]}"
+        else
+            roioligos="$oligos"   
+        fi 
+        out="$output/probe_roi_$roi.$roioligos""oligos.pw$pwi.tsv"
+        echo "Constructing probe with $roioligos oligos for region $roi"
+        escafish --db $file --noligos $roioligos --out $out --pw $pwi
+    fi
 
 done < <(tail -n +2 "$expfolder"/rois/all_regions.tsv)
 done
 
 else
 
-ts="$(date +%Y%m%d-%H%M%S)"
-randomid=$( cat /dev/urandom | tr -cd '0-9' | head -c 6 )       # to avoid folder names colliding
-output="$expfolder/probe_candidates/query_output_t_$ts""-$randomid""_p_$pw"
-
-mkdir $output
-
 while IFS=$'\t' read -ra table
 do
     echo "Processing region ""${table[2]}"
@@ -93,7 +103,7 @@ do
     else
         roioligos="$oligos"   
     fi 
-    out="$output/probe_roi_$roi.$roioligos""oligos.tsv"
+    out="$output/probe_roi_$roi.$roioligos""oligos.pw$pw.tsv"
     echo "Constructing probe with $roioligos for region $roi"
     escafish --db $file --noligos $roioligos --out $out --pw $pw
 

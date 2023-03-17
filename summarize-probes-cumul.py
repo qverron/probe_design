@@ -12,7 +12,7 @@ import statistics as stat
 
 currentfolder = './data/'
 # identify probe files
-pattern = currentfolder+"probe_candidates/**/probe_*oligos.tsv"   #probelet
+pattern = currentfolder+"probe_candidates/**/probe_*.tsv"   #probelet
 #pattern = "data/**/probe*/**oligos.tsv"    #ifpd2 query
 #pattern = "data/**/*.best_probe.tsv"   #jupyternb
 filenames = glob.glob(pattern,recursive=True)
@@ -61,7 +61,7 @@ for file in tqdm(filenames, "Processing probe candidates"):
     filesplit = file.split("/")
 
     table.loc[last] = [filesplit[3], filesplit[4], rd.name[1], rd.chromosome[1], probe_start, probe_end, \
-        len(rd), filesplit[3][-4:], probe_end-probe_start+1, int(roi_end)-int(roi_start)+1, (probe_end-probe_start+1)/(int(roi_end)-int(roi_start)+1), \
+        len(rd), filesplit[4][-8:-4], probe_end-probe_start+1, int(roi_end)-int(roi_start)+1, (probe_end-probe_start+1)/(int(roi_end)-int(roi_start)+1), \
         min(probe_center/roi_center,2-(probe_center/roi_center)), 100*(rd.start-rd.end.shift()).max()/(int(roi_end)-int(roi_start)+1), \
         (rd.start-rd.end.shift()).mean(), (rd.start-rd.end.shift()).min(), (rd.start-rd.end.shift()).max(), (rd.start-rd.end.shift()).std(), \
         max(rd.Tm)-min(rd.Tm), stat.mean(rd.Tm), stat.stdev(rd.Tm), \
