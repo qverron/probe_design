@@ -14,6 +14,8 @@ CAUTION: These instructions are only up to date until step 7.
 
 - Install [OligoArrayAux](http://www.unafold.org/Dinamelt/software/oligoarrayaux.php)
 
+- Install [ifpd2](https://github.com/ggirelli/ifpd2)
+
 ### DNA:
 
 - Get the genomic coordinates of the regions of interest
