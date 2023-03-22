@@ -6,6 +6,10 @@ CAUTION: These instructions are only up to date until step 7.
 
 ### General:
 
+- Install [nHUSH](https://github.com/elgw/nHUSH)
+
+- Install [oldHUSH](https://github.com/elgw/hush)
+
 - Install [escafish](https://github.com/elgw/escafish)
 
 - Install [OligoArrayAux](http://www.unafold.org/Dinamelt/software/oligoarrayaux.php)
