@@ -22,10 +22,10 @@ process () {
     local file=$1
     cd $data
     echo "Calculating melting temperatures"
-    melt_duplex -C -t DNA:DNA -o 0.05e-6 -n 1.04 -f 50 $file > "$data"/melt/$(basename $file)
+    melt_duplex -C -t DNA:DNA -o 0.05e-6 -n 1.04 -f 50 $file > "$data"/melt/$(basename $file) 2>/dev/null 
     cd "$data"/secs
     echo "Calculating secondary structures"
-    hybrid-ss-min -n DNA -N 1.04 $file #> /dev/null 2>&1
+    hybrid-ss-min -n DNA -N 1.04 $file >/dev/null 2>&1
 }
 
 for f in "$data"/candidates/*"$suffix".fa; do process "$f" & done
