@@ -73,6 +73,7 @@ CAUTION: These instructions are only up to date until step 7.
   mkdir data/secs
   mkdir data/db
   mkdir data/db_tsv
+  mkdir data/logfiles
   ```
 
 2. Retrieve your region sequences and extract all k-mers of correct length:
@@ -167,25 +168,22 @@ Recommended:
 	All oligos with a longer consecutive match are stricly excluded.)
 
 
-7. Query the database to get candidate probes:
+7. (new!) Query the database to get candidate probes:
 
     ``` shell
-	./probe-query.sh -s DNA/RNA
+	./cycling_query.py -s RNA -L 30 -m 7 -c 50 -t 40            
+	[optional: -start 20 -end 100 -step 5	 to sweep different oligo numbers, otherwise uses the oligo counts provided in `./rois/all_regions.tsv`]
+        [optional: -stepdown 10       how many oligos to decrease probe size with every iteration that does not find enough oligos. Default: 1]
     ```
-	Optional: `-o 48` (number of oligos to include in the probe)
-    `-p 0.0001` (pair weight, otherwise sweeps range 1e-1 - 1e-7)
-    
-    Sweep different oligo lengths (example):
-    ``` shell
-    	for k in {20..200..10}; do ./probe-query.sh -s DNA -o $k; done
-    ```
+Cycling query which generate probe candidates, then checks the resulting oligos using HUSH, removes inacceptable oligos and generate probes again.
+If enough oligos cannot be found, design probes with fewer oligos, decreasing with `stepdown` at each step.
 
-8. Inspect the generated probes:
+8. Summarize the final probes:
 
 	If using `q_combined` scoring function:
 
    ``` shell
-   python summarize-probes-cumul.py
+   ./summarize-probes-final.py
    ```
 
 	If using one of the deprecated scoring functions:
@@ -193,18 +191,11 @@ Recommended:
    ``` shell
    python summarize-probes.py
    ```
-	Some visual elements can be obtained using the following notebooks:
+	Some visual elements can be obtained using the following notebooks (needs updating!):
     ```shell
     plot_probe_candidates.ipynb
     plot_oligos.ipynb
     ```
-
-9. Select a probe among the candidates.
-10. Validate the selected probe using HUSH.
-11. Optimize the selected probes by sequentially removing problematic oligos.
-
-In progress...
-
 
 
 ## Generate probes for ordering
@@ -216,4 +207,11 @@ In progress...
   rev. compl of the rev sequence in the oligo
 - The complete oligos can be uploaded as an Excel file containing the
   oligo names (arbitrary but unique) and the sequences
+  
+  
+## TO DO:
+- Adapt the code for more flexibility in input/output folders.
+- Add a visual report of the probes at the end of the pipeline.
+- One-button process!
+- Find a way to automatize selecting primer sequences.
 
