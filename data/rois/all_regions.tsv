@@ -1,0 +1,5 @@
+Window_start	Window_end	window_id	chrom	DNA_start	DNA_end	window	type	ref	length	Gene_start	Gene_end	Gene_strand	Gene_name	Gene_id	design_type
+39462072	39562072	1	chr17	39462072	39917316	1000	targets	Homo_sapiens.GRCh38.dna	80						DNA
+39562073	39662072	1	chr17	39462072	39917316	1000	targets	Homo_sapiens.GRCh38.dna	80						DNA
+39662073	39762072	1	chr17	39462072	39917316	1000	targets	Homo_sapiens.GRCh38.dna	80						DNA
+39762073	39862072	1	chr17	39462072	39917316	1000	targets	Homo_sapiens.GRCh38.dna	80						DNA
