@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 import numpy as np
 import pandas as pd
@@ -60,7 +62,7 @@ for file in tqdm(filenames, "Processing final probes"):
 
     filesplit = file.split("/")
 
-    table.loc[last] = [filesplit[2], filesplit[3], rd.name[1], rd.chromosome[1], probe_start, probe_end, \
+    table.loc[last] = [filesplit[2], filesplit[3], int(current_roi), rd.chromosome[1], probe_start, probe_end, \
         len(rd), filesplit[3][-8:-4], probe_end-probe_start+1, int(roi_end)-int(roi_start)+1, (probe_end-probe_start+1)/(int(roi_end)-int(roi_start)+1), \
         min(probe_center/roi_center,2-(probe_center/roi_center)), 100*(rd.start-rd.end.shift()).max()/(int(roi_end)-int(roi_start)+1), \
         (rd.start-rd.end.shift()).mean(), (rd.start-rd.end.shift()).min(), (rd.start-rd.end.shift()).max(), (rd.start-rd.end.shift()).std(), \
@@ -74,7 +76,7 @@ for file in tqdm(filenames, "Processing final probes"):
  
 
 # append to existing probe summary file
-output = currentfolder+"final_probes/final_probes_summary.tsv"
+output = currentfolder+"final_probes_summary.tsv"
 sumExists = os.path.isfile(output)
 #if (sumExists):
 #    outtable = pd.read_csv(output,sep="\t")
@@ -82,7 +84,7 @@ sumExists = os.path.isfile(output)
 #else:
 newtable = table   
 
-newtable.sort_values(by=['probe_set'], inplace=True)
+newtable.sort_values(by=['roi'], inplace=True)
 
 # write into probe summary file
 newtable.to_csv(output,index=False,sep="\t")
