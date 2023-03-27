@@ -1,6 +1,6 @@
 # Instructions for probe design
 
-CAUTION: These instructions are only up to date until step 7.
+CAUTION: These instructions are up to date!
 
 ## Preparation
 
