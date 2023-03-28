@@ -16,8 +16,28 @@ from itertools import compress
 import subprocess
 import logging
 from datetime import datetime
+import multiprocessing as mp
+from joblib import Parallel, delayed
+import joblib
+import contextlib
 
 pd.options.mode.chained_assignment = None  # default='warn'. Suppress SettingWithCopyWarning
+
+@contextlib.contextmanager
+def tqdm_joblib(tqdm_object):
+    """Context manager to patch joblib to report into tqdm progress bar given as argument"""
+    class TqdmBatchCompletionCallback(joblib.parallel.BatchCompletionCallBack):
+        def __call__(self, *args, **kwargs):
+            tqdm_object.update(n=self.batch_size)
+            return super().__call__(*args, **kwargs)
+
+    old_batch_callback = joblib.parallel.BatchCompletionCallBack
+    joblib.parallel.BatchCompletionCallBack = TqdmBatchCompletionCallback
+    try:
+        yield tqdm_object
+    finally:
+        joblib.parallel.BatchCompletionCallBack = old_batch_callback
+        tqdm_object.close()
 
 @click.command(
     name="cycling_query",
@@ -32,7 +52,6 @@ pd.options.mode.chained_assignment = None  # default='warn'. Suppress SettingWit
 @click.option('-start', type=click.INT)
 @click.option('-end', type=click.INT)
 @click.option('-step', type=click.INT)
-
 
 def output(strand, length, mismatch, cutoff, threads, stepdown = None, start=None, end=None, step=None) -> None:
 
@@ -121,14 +140,13 @@ def output(strand, length, mismatch, cutoff, threads, stepdown = None, start=Non
             # if the user provided start/end/step, use as range of oligo numbers to design probes for the first time!
             if sweep:
                 querylogpath = logdir + "query_roi_"+str(roinumber)+"_oli_sweep_round_"+str(count)+"_" + ts_string + ".txt"
-                for k in oligorange:
-                    subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roinumber)+" -o "+str(k)+" > "+querylogpath+" 2>&1", shell=True)
-            
+                with tqdm_joblib(tqdm(desc="Sweeping oligo counts in region "+str(roinumber), total=len(oligorange))) as progress_bar:
+                    Parallel(n_jobs=threads)(delayed(probequery)(strand,roinumber,oligos,querylogpath) for oligos in oligorange)
             else:
                 querylogpath = logdir + "query_roi_"+str(roinumber)+"_oli_"+str(oligos)+"_round_"+str(count)+"_" + ts_string + ".txt"
                 # use as input for probe query (only process remaining ROIs)
-                subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roinumber)+" -o "+str(oligos)+" > "+querylogpath+" 2>&1", shell=True)
-                
+                probequery(strand,roinumber,oligos,querylogpath)
+
         # select best probes
         if(sweep):
             selection = selectprobes(currentfolder, toprocessRoi, [start]*len(toprocessRoi), cutoff_cost, cutoff_d, cutoff_d_pc) 
@@ -345,6 +363,9 @@ def feedback(currentfolder,outfolder,count,cutoff):
 
     return rerunlist
 
+def probequery(strand,roi,oligos,logpath):
+    subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+" > "+logpath+" 2>&1", shell=True)
+            
 
 if __name__ == '__main__':
     output()

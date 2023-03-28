@@ -1,8 +1,6 @@
 #!/bin/bash
-#set -e
-
-#read -a arr < demo.txt 
-#$ echo ${arr[0]}
+#set -e     # exit on error
+set -m      # enable job control
 
 
 Help()
@@ -20,7 +18,7 @@ Help()
    echo "-h display help"
 }
 
-while getopts "p:o:s:e:h" flag; do
+while getopts "p:o:s:e:l:h" flag; do
    case "${flag}" in
       p) pw=${OPTARG};;
       o) oligos=${OPTARG};;
@@ -61,69 +59,38 @@ fi
 mkdir "$expfolder/probe_candidates"
 mkdir $output
 
-if [ -z $pw ]
-then
-for pwi in 1E-1 1E-2 1E-3 1E-4 1E-5 1E-6 1E-7
-do
 
-
-while IFS=$'\t' read -ra table
-do
-    roi="${table[2]}"
-    if [ ! -z "$probe" ] && [ "$roi" != $probe ]
-    then
-        continue
-    else    
-        echo "Processing region ""${table[2]}"
-        file="$input/db.roi_$roi.GC35to85_$suffix.tsv"
-        if [ -z $oligos ]
+process () {
+    local pwl=$1
+    while IFS=$'\t' read -ra table
+    do
+        roi="${table[2]}"
+        if [ ! -z "$probe" ] && [ "$roi" != $probe ]        # the user has specified a probe, skip other regions
         then
-            roioligos="${table[6]}"
-        else
-            roioligos="$oligos"   
-        fi 
-        out="$output/probe_roi_$roi.$roioligos""oligos.pw$pwi.tsv"
-        echo "Constructing probe with $roioligos oligos for region $roi"
-        escafish --db $file --noligos $roioligos --out $out --pw $pwi
-    fi
+            continue
+        else    
+            file="$input/db.roi_$roi.GC35to85_$suffix.tsv"
+            if [ -z $oligos ]
+            then
+                roioligos="${table[6]}"
+            else
+                roioligos="$oligos"   
+            fi 
+            out="$output/probe_roi_$roi.$roioligos""oligos.pw$pwl.tsv"
+            echo "Constructing probe with $roioligos oligos for region $roi, pair weight: $pwl."
+            escafish --db $file --noligos $roioligos --out $out --pw $pwl
+        fi
 
-done < <(tail -n +2 "$expfolder"/rois/all_regions.tsv)
-done
+    done < <(tail -n +2 "$expfolder"/rois/all_regions.tsv)
+}
 
-else
 
-while IFS=$'\t' read -ra table
-do
-    echo "Processing region ""${table[2]}"
-    roi="${table[2]}"
-    file="$input/db.roi_$roi.GC35to85_$suffix.tsv"
-    if [ -z $oligos ]
-    then
-        roioligos="${table[6]}"
-    else
-        roioligos="$oligos"   
-    fi 
-    out="$output/probe_roi_$roi.$roioligos""oligos.pw$pw.tsv"
-    echo "Constructing probe with $roioligos for region $roi"
-    escafish --db $file --noligos $roioligos --out $out --pw $pw
-
-done < <(tail -n +2 "$expfolder"/rois/all_regions.tsv)
+if [ -z $pw ]           # no pair weight specify, sweep over full range
+then
+for pwi in 1E-1 1E-2 1E-3 1E-4 1E-5 1E-6 1E-7; do process "$pwi" & done
+else        # single pair weight
+process "$pw"
 fi
-
-
-
-# # enable job control
-# set -m
-
-# process () {
-#     local roi=$1
-#     local file="$input/db.roi_$roi.GC35to85_Reference.tsv"
-#     local out="$output/probe_roi_$roi.$oligos""oligos.tsv"
-#     echo "Constructing probe with $oligos for region $roi"
-#     probelet --db $file --noligos $oligos --out $out --pw $pw --iotn
-# }
-
-# for f in $(seq 1 $totalROI); do process $f & done
-# # Wait for all parallel jobs to finish
-# wait
-# echo "Done!"
+# Wait for all parallel jobs to finish
+wait
+echo "Done!"
