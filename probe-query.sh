@@ -21,13 +21,13 @@ Help()
 
 greedy=''
 
-while getopts "p:o:s:e:l:hb" flag; do
+while getopts "p:o:s:e:l:hg" flag; do
    case "${flag}" in
       p) pw=${OPTARG};;
       o) oligos=${OPTARG};;
       s) type=${OPTARG};;
       e) probe=${OPTARG};;
-      g) greedy='--greedy'
+      g) greedy='--greedy';;
       h) # display Help
          Help
          exit;;

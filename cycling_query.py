@@ -52,7 +52,7 @@ def tqdm_joblib(tqdm_object):
 @click.option('-start', type=click.INT)
 @click.option('-end', type=click.INT)
 @click.option('-step', type=click.INT)
-@click.option('-greedy',is_flag=True)
+@click.option('-greedy', is_flag=True)
 
 def output(strand, length, mismatch, cutoff, threads, greedy, stepdown = None, start=None, end=None, step=None):
         # initialization
@@ -145,7 +145,7 @@ def output(strand, length, mismatch, cutoff, threads, greedy, stepdown = None, s
             else:
                 querylogpath = logdir + "query_roi_"+str(roinumber)+"_oli_"+str(oligos)+"_round_"+str(count)+"_" + ts_string + ".txt"
                 # use as input for probe query (only process remaining ROIs)
-                probequery(strand,roinumber,oligos,querylogpath)
+                probequery(strand,roinumber,oligos,querylogpath,greedy)
 
         # select best probes
         print(f"Selecting probes...")
@@ -368,7 +368,7 @@ def feedback(currentfolder,outfolder,count,cutoff):
 
 def probequery(strand,roi,oligos,logpath,greedy):
     suffix = ""
-    if(greedy):
+    if(greedy): 
         suffix = " -g"
     subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+" > "+logpath+suffix+" 2>&1", shell=True)
             
