@@ -15,15 +15,19 @@ Help()
    echo "If not provided, reading oligo number from ROI list."
    echo "-e specific ROI to query"
    echo "If not provided, querying all ROIs listed in all_regions.tsv"
+   echo "-g Greedy probe query, speed > quality"
    echo "-h display help"
 }
 
-while getopts "p:o:s:e:l:h" flag; do
+greedy=''
+
+while getopts "p:o:s:e:l:hb" flag; do
    case "${flag}" in
       p) pw=${OPTARG};;
       o) oligos=${OPTARG};;
       s) type=${OPTARG};;
       e) probe=${OPTARG};;
+      g) greedy='--greedy'
       h) # display Help
          Help
          exit;;
@@ -78,7 +82,7 @@ process () {
             fi 
             out="$output/probe_roi_$roi.$roioligos""oligos.pw$pwl.tsv"
             echo "Constructing probe with $roioligos oligos for region $roi, pair weight: $pwl."
-            escafish --db $file --noligos $roioligos --out $out --pw $pwl
+            escafish --db $file --noligos $roioligos --out $out --pw $pwl $greedy
         fi
 
     done < <(tail -n +2 "$expfolder"/rois/all_regions.tsv)

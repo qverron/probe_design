@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Excludes a certain region from a reference chromosome.
 # Used to run HUSH on particularly repetitive sequences

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #set -e
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
@@ -52,10 +52,10 @@ def tqdm_joblib(tqdm_object):
 @click.option('-start', type=click.INT)
 @click.option('-end', type=click.INT)
 @click.option('-step', type=click.INT)
+@click.option('-greedy',is_flag=True)
 
-def output(strand, length, mismatch, cutoff, threads, stepdown = None, start=None, end=None, step=None) -> None:
-
-    # initialization
+def output(strand, length, mismatch, cutoff, threads, greedy, stepdown = None, start=None, end=None, step=None):
+        # initialization
     currentfolder = './data/'       # can be adapted so the code can be run in other folders
     logdir = currentfolder + "logfiles/"
     try:
@@ -141,13 +141,14 @@ def output(strand, length, mismatch, cutoff, threads, stepdown = None, start=Non
             if sweep:
                 querylogpath = logdir + "query_roi_"+str(roinumber)+"_oli_sweep_round_"+str(count)+"_" + ts_string + ".txt"
                 with tqdm_joblib(tqdm(desc="Sweeping oligo counts in region "+str(roinumber), total=len(oligorange))) as progress_bar:
-                    Parallel(n_jobs=threads)(delayed(probequery)(strand,roinumber,oligos,querylogpath) for oligos in oligorange)
+                    Parallel(n_jobs=threads)(delayed(probequery)(strand,roinumber,oligos,querylogpath,greedy) for oligos in oligorange)
             else:
                 querylogpath = logdir + "query_roi_"+str(roinumber)+"_oli_"+str(oligos)+"_round_"+str(count)+"_" + ts_string + ".txt"
                 # use as input for probe query (only process remaining ROIs)
                 probequery(strand,roinumber,oligos,querylogpath)
 
         # select best probes
+        print(f"Selecting probes...")
         if(sweep):
             selection = selectprobes(currentfolder, toprocessRoi, [start]*len(toprocessRoi), cutoff_cost, cutoff_d, cutoff_d_pc) 
         else:
@@ -161,9 +162,11 @@ def output(strand, length, mismatch, cutoff, threads, stepdown = None, start=Non
             timestamp = datetime.now()
             ts_string = timestamp.strftime("%Y%m%d_%H%M%S")
             hushlogpath = logdir + "hush_roi_round_"+str(count)+"_" + ts_string + ".txt"
+            print(f"Checking the oligos with (old)HUSH...")
             subprocess.run("./validation_oldHUSH_BLAST.sh -L "+str(length)+" -m "+str(mismatch)+" -t "+str(threads)+" > "+hushlogpath, shell=True)
 
         # apply results from HUSH to exclude poor oligos
+        print(f"Remove poor oligos from database")
         rerunlist = feedback(currentfolder,outprobes,count,cutoff)
 
         combinedlist = np.unique(failedlist+rerunlist)
@@ -179,13 +182,13 @@ def output(strand, length, mismatch, cutoff, threads, stepdown = None, start=Non
             maskrerun = [(toprocess.loc[k,'window_id'] in rerunlist) for k in toprocess.index.to_list()] 
             rerunrois = toprocess[maskrerun]
             if (len(rerunrois)>0):
-                toprocess["window"][maskrerun] = [selection.loc[k,'oligos'] for k in rerunrois.window_id.to_list()]
+                toprocess["window"][maskrerun] = [int(selection.loc[k,'oligos']) for k in rerunrois.window_id.to_list()]
 
             # for probes for which no valid probe could be constructed, reduce number of oligos for next iteration
             maskfailed = [(toprocess.loc[k,'window_id'] in failedlist) for k in toprocess.index.to_list()] 
             failedrois = toprocess[maskfailed]
             if (len(failedrois)>0):
-                toprocess["window"][maskfailed] = [selection.loc[k,'oligos']-stepdown for k in failedrois.window_id.to_list()]
+                toprocess["window"][maskfailed] = [int(selection.loc[k,'oligos']-stepdown) for k in failedrois.window_id.to_list()]
 
             # only keep rois that need to be re-run
             maskcombined = [(toprocess.loc[k,'window_id'] in combinedlist) for k in toprocess.index.to_list()] 
@@ -363,8 +366,11 @@ def feedback(currentfolder,outfolder,count,cutoff):
 
     return rerunlist
 
-def probequery(strand,roi,oligos,logpath):
-    subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+" > "+logpath+" 2>&1", shell=True)
+def probequery(strand,roi,oligos,logpath,greedy):
+    suffix = ""
+    if(greedy):
+        suffix = " -g"
+    subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+" > "+logpath+suffix+" 2>&1", shell=True)
             
 
 if __name__ == '__main__':

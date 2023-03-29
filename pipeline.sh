@@ -39,36 +39,18 @@ Rscript prepare_input.r
 ./build-db_cc.sh q_cc 32 6  #score function: q_cc
 # 32: length of max consecutive perfect match allowed; 6: max number of consecutive identical base pairs, 70: target temperature
 
-# 6. Query to fetch potential probes
-for k in {20..200..10}; do ./probe-query.sh -s DNA -o $k; done
-./probe-query.sh -s DNA/RNA 
-#optional : -o 48 number of oligos
-#           -p 0.0001 pair weigh (otherwise sweeps range 1e-2 - 1e-7
-#           -e 5 specific ROI to query
+# 6. Query to fetch and optimize probes
+./cycling_query.py -s RNA -L 30 -m 7 -c 50 -t 40            
+# [optional: -start 20 -end 100 -step 5: to sweep different oligo numbers]
+# -stepdown 10       how many oligos to decrease with every iteration 
+# -opt               Get the best probes, but takes a lot longer. Can be done after a quick iteration to remove poor oligos
 
 
-# 7. Select best probe
-./select_probe.py [optional: 500 max distance between oligos in nt]
+# 7. Summarize the final probes
+python summarize-probes-final.py
 
-# 8. check the selected probes with (old)HUSH
-./validation_oldHUSH_BLAST.sh -L 40 -m 9 -t 40 
-
-# 9. Exclude poor oligos according to oldHUSH
-./HUSH_feedback.py [optional: 99 max number of off-targets]
-
-# TEST: Cycling query instead
-./cycling_query.py -s RNA -L 30 -m 7 -c 50 -t 40            #[optional: -start 20 -end 100 -step 5: to sweep different oligo numbers]
-                                                            #-stepdown 10       how many oligos to decrease with every iteration 
-# Inspect probes
-python summarize-probes.py
-python summarize-probes-cumul.py
-
-# notebook
+# TO DO: ADD PLOTS
 plot_oligos.ipynb
 plot_probe_candidates.ipynb
-
-# MOVE BEST PROBES TO selected_probes/
-# check the selected probes with BLAST and/or (old)HUSH
-./validation_oldHUSH_BLAST.sh -L 40 -m 8 -t 40
 
 

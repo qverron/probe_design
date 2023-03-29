@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 import numpy as np

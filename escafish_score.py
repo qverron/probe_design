@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # GG's code sniplet (R)
 #max_dg_fraction = 0.5

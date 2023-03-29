@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from pickle import FALSE, TRUE
 import numpy as np
@@ -7,7 +7,7 @@ from joblib import Parallel, delayed
 from tabulate import tabulate as tab
 import os
 from tqdm import tqdm
-import pandas as pd
+import pandas as pd 
 import sys
 import contextlib
 import joblib

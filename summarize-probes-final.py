@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 import numpy as np
@@ -29,7 +29,7 @@ table = pd.DataFrame(columns=['folder', 'probe_set', 'roi', 'chr', 'probe_start'
         'd_mean', 'd_min', 'd_max', 'd_std', \
         'tm_range', 'tm_mean', 'tm_std', \
         'gc_range', 'gc_mean', 'gc_std', \
-        'mean_closestMM', 'min_closestMM', 'max_closestMM', 'std_closestMM', \
+        'mean_consecOffTarget', 'min_consecOffTarget', 'max_consecOffTarget', 'std_consecOffTarget', \
         'mean_cumulMM', 'min_cumulMM', 'max_cumulMM', 'std_cumulMM', \
         'mean_oligo_cost', 'min_oligo_cost', 'max_oligo_cost', 'std_oligo_cost' ,\
         'sum_inv_cost'])

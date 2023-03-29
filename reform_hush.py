@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from pickle import FALSE, TRUE
 import numpy as np

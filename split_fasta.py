@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 from ifpd2_new.ifpd2.scripts.extract_kmers import main as extract

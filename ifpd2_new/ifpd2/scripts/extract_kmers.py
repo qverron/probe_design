@@ -36,8 +36,9 @@ def main(input_path: str, output_path: str, kmer_size: int, gcfilter: bool) -> N
     oligos_list = extract_kmers(input_path, kmer_size)
     logging.info(f"Extracted {len(oligos_list)} sequences")
 
+#    if (gcfilter=="False"):
     if (not gcfilter):
-        logging.info(f"Skipping filtering on GC-content.")
+        logging.info(f"Skipped filtering on GC-content.")
         valid_oligos = oligos_list
     else:
         valid_oligos = select_by_GC(oligos_list, kmer_size)
