@@ -40,7 +40,8 @@ Rscript prepare_input.r
 # 32: length of max consecutive perfect match allowed; 6: max number of consecutive identical base pairs, 70: target temperature
 
 # 6. Query to fetch and optimize probes
-./cycling_query.py -s RNA -L 30 -m 7 -c 50 -t 40            
+./cycling_query.py -s RNA -L 30 -m 7 -c 50 -t 40     
+# [recommended: -greedy   for speed > quality. Can be removed for the final oligo design] 
 # [optional: -start 20 -end 100 -step 5: to sweep different oligo numbers]
 # -stepdown 10       how many oligos to decrease with every iteration 
 # -opt               Get the best probes, but takes a lot longer. Can be done after a quick iteration to remove poor oligos
