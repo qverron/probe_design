@@ -171,12 +171,16 @@ Recommended:
 7. (new!) Query the database to get candidate probes:
 
     ``` shell
-	./cycling_query.py -s RNA -L 30 -m 7 -c 50 -t 40            
+	./cycling_query.py -s RNA -L 30 -m 7 -c 50 -t 40  
+    ```
+    	[optional: -greedy. Speed > quality]
 	[optional: -start 20 -end 100 -step 5]	 
 To sweep different oligo numbers, otherwise uses the oligo counts provided in `./rois/all_regions.tsv`
         [optional: -stepdown 10]
 Number of oligos to decrease probe size with every iteration that does not find enough oligos. Default: 1
-    ```
+   
+      ```
+      	[optional: -greedy. Speed > quality]
 Cycling query which generate probe candidates, then checks the resulting oligos using HUSH, removes inacceptable oligos and generate probes again.
 If enough oligos cannot be found, design probes with fewer oligos, decreasing with `stepdown` at each step.
 
