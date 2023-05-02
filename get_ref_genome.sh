@@ -1,7 +1,7 @@
  # Download ref genomes
-prefix="Homo_sapiens.GRCh37.dna"
-address="http://ftp.ensembl.org/pub/grch37/current/fasta/homo_sapiens/dna/"
-total=22
+prefix="Mus_musculus.GRCm38.dna"
+address="http://ftp.ensembl.org/pub/release-102/fasta/mus_musculus/dna/"
+total=19
 # ex: get-ref-genome.sh 
 
 mkdir -p data/ref

@@ -20,6 +20,7 @@ Help()
    echo "L     kmer length"
    echo "m     Max number of mismatches being investigated"
    echo "t     Number of threads used for computing"
+   echo "e     Exclude mode"
    echo
    echo "Options:"
    echo "h     Display help"
@@ -29,13 +30,15 @@ Help()
 ##########################################
 # Variables
 gen=false
+exclude=false
 
-while getopts "f:L:m:t:h" flag; do
+while getopts "f:L:m:t:he" flag; do
    case "${flag}" in
       f) exppath=${OPTARG};;
       L) length=${OPTARG};;
       m) mismatch=${OPTARG};;
       t) threads=${OPTARG};;
+      e) excl=true;;
       h) # display Help
          Help
          exit;;
@@ -68,23 +71,33 @@ HUSHpath="${exppath}/HUSH"
 ts="oldHUSH_"$(date +%Y%m%d-%H%M%S)
 mkdir "$HUSHpath"/"$ts"
 
-ln "$datapath"/ref/genome.fa "$HUSHpath"/"$ts"/genome.fa
+for gen in "$datapath"/ref/genome*.fa
+do
+ln $gen "$HUSHpath"/"$ts"/$(basename -- $gen)
+done
 
 # transform probe candidates into FASTA files readable by HUSH
 for p in "$datapath"/selected_probes/*.tsv;
-do sed -r -n -e 's/^ROI_([0-9]+)'$'\t''chr([0-9]+)'$'\t''([0-9]+)'$'\t''([0-9]+)'$'\t''([A-Z]+).*$/ROI_\1:\2:\3-\4|\5/p' $p | tr '|' '\n' > data/selected_probes/query_$(basename $p .tsv).fa;
+do sed -r -n -e 's/^ROI_([0-9]+)'$'\t''chr([0-9XY]+)'$'\t''([0-9]+)'$'\t''([0-9]+)'$'\t''([A-Z]+).*$/ROI_\1:\2:\3-\4|\5/p' $p | tr '|' '\n' > data/selected_probes/query_$(basename $p .tsv).fa;
 done
 
 # run HUSH on the FASTA files
 for pfa in "$datapath"/selected_probes/*.fa;
 do 
+   if $exclude
+   then
+      genomeroi=`echo $(basename -- "$pfa") | sed 's/.*.\(roi_[0-9]\+\).*/genome_\1\.fa/'`
+   else
+      genomeroi="genome.fa"
+   fi      
    queryfolder="$datapath"/selected_probes/$(basename $pfa .fa)_split_mm_$mismatch
    mkdir $queryfolder
    cd $queryfolder
    # Create one input file per thread
    split -n l/$threads ../$(basename $pfa)
    cd ..
-   hushp -l $length -t $threads -r "$datapath"/ref/genome.fa -q $queryfolder -m $mismatch -f 0 -C
+   hushp -l $length -t $threads -r "$datapath"/ref/$genomeroi -q $queryfolder -m $mismatch -f 0 -C
+
 
    # Merge the ouputs to a single file
    cat $queryfolder/*.out > "$datapath"/selected_probes/$(basename $pfa)_"$mismatch"_mm.out
