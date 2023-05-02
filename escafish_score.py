@@ -166,12 +166,62 @@ def score_q_combined(d,max_consec,maxid,targetTemp):
 
     return score    
 
+def score_q_combined_bl(d,max_consec,maxid,targetTemp,hamdist):         
+   
+    # Extract variables from the dictionary
+    ss_dG = float(d['ss_dG'])
+    off_target_no = int(d['off_target_no'])    # actually the longest consecutive stretch
+    off_target_sum = int(d['off_target_sum'])  # cumulated mismatch counts
+    Tm_dG = float(d['Tm_dG'])
+    Tm = float(d['Tm'])
+    seq = str(d['sequence'])
+    distBL = int(d['bl_dist'])
+
+    # Parameters
+    max_dg_fraction = 0.5
+
+    # Calculate the oligo cost
+    # 1. Secondary structures
+    ss_cost = 1e10
+    if ss_dG >= 0:
+        ss_cost = 0
+    elif(ss_dG/Tm_dG <= max_dg_fraction):
+        ss_cost = ss_dG/Tm_dG/max_dg_fraction       # between 0-1 
+
+    # 2. Melting temperature
+    # Build into escafish in the future to minimize the Tm spread at the probe level?
+    tm_cost = ((targetTemp-Tm)/5)**2  # +-5 deg should give at 0-1 range
+
+    # 3. Off-target homology. Consecutive stretches
+    if off_target_no > max_consec:
+        consec_cost = 1e10
+    else:
+        consec_cost = off_target_no/max_consec     # between 0-1
+
+    # 4. Off-target homology. Cumulated Hamming distances
+    # The hard filter on consecutive stretches restrict the range of values to be expected here.
+    if distBL <= hamdist:
+        sum_offtarget_cost = 1e10
+    else:
+        sum_offtarget_cost = (10/(1+off_target_sum))**(1/2)     # between 0-1 (min value for a central mismatch in a 30mer: 9)
+
+    # 5. Homopolymers
+    query = r'((\w)\2{'+str(maxid-1)+',})'      
+    if re.search(query,seq):
+        ss_cost = 1e10
+
+    # Regroup into single oligo cost
+    score = 0.2*ss_cost + 0.2*tm_cost + 0.6*consec_cost + 0.2*sum_offtarget_cost
+
+    return score    
+
 
 score_functions = {'gg' : score_gg,
                    'gg_nhush': score_gg_nhush,
                    'q': score_q_nhush,
                    'q_cc': score_q_consec,
-                   'q_combined': score_q_combined}
+                   'q_combined': score_q_combined,
+                   'q_bl': score_q_combined_bl}
 
 if __name__ == '__main__':
     header = sys.stdin.readline().strip()
@@ -193,6 +243,11 @@ if __name__ == '__main__':
         maxmm = int(sys.argv[2])
         maxid = int(sys.argv[3])
         targetTemp = int(sys.argv[4])
+    elif(len(sys.argv) == 6):
+        maxmm = int(sys.argv[2])
+        maxid = int(sys.argv[3])
+        targetTemp = int(sys.argv[4])    
+        hamdist = int(sys.argv[5]) 
     print(f"{header}\toligo_cost")
 
     for line in tqdm(sys.stdin,"Reading database"):
@@ -203,6 +258,8 @@ if __name__ == '__main__':
             score = score_function(d,maxmm,maxid)
         elif (sys.argv[1] == 'q_combined'):
             score = score_function(d,maxmm,maxid,targetTemp)
+        elif (sys.argv[1] == 'q_bl'):
+            score = score_function(d,maxmm,maxid,targetTemp,hamdist)
         else: 
             score = score_function(d)
         # Optimization will not work if score < 0

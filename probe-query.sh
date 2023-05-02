@@ -8,7 +8,8 @@ Help()
    # Display Help
    echo "Construct optimized probes from pre-formed oligo databases."
    echo 
-   echo "Syntax: probe-query -p 0.0001 -o 50"
+   echo "Syntax: probe-query -L 40 -p 0.0001 -o 50"
+   echo "-L oligo length"
    echo "-p pair weight (default 0.0001)"
    echo "If not provided, scanning pair weights between 1e-1 and 1e-7."
    echo "-o oligos per probe (default 50)"
@@ -21,8 +22,9 @@ Help()
 
 greedy=''
 
-while getopts "p:o:s:e:l:hg" flag; do
+while getopts "L:p:o:s:e:l:hg" flag; do
    case "${flag}" in
+      L) length=${OPTARG};;
       p) pw=${OPTARG};;
       o) oligos=${OPTARG};;
       s) type=${OPTARG};;
@@ -73,7 +75,7 @@ process () {
         then
             continue
         else    
-            file="$input/db.roi_$roi.GC35to85_$suffix.tsv"
+            file="$input/db.roi_$roi.GC35to85_$suffix.tsv.filt"
             if [ -z $oligos ]
             then
                 roioligos="${table[6]}"
@@ -82,7 +84,9 @@ process () {
             fi 
             out="$output/probe_roi_$roi.$roioligos""oligos.pw$pwl.tsv"
             echo "Constructing probe with $roioligos oligos for region $roi, pair weight: $pwl."
+            #escafish --db $file --len $length --noligos $roioligos --out $out --pw $pwl $greedy
             escafish --db $file --noligos $roioligos --out $out --pw $pwl $greedy
+
         fi
 
     done < <(tail -n +2 "$expfolder"/rois/all_regions.tsv)
