@@ -1,4 +1,6 @@
- # Download ref genomes
+#!/bin/bash
+
+# Download ref genomes
 prefix="Mus_musculus.GRCm38.dna"
 address="http://ftp.ensembl.org/pub/release-102/fasta/mus_musculus/dna/"
 total=19
