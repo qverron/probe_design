@@ -54,8 +54,9 @@ def tqdm_joblib(tqdm_object):
 @click.option('-end', type=click.INT)
 @click.option('-step', type=click.INT)
 @click.option('-greedy', is_flag=True)
+@click.option('-excl', is_flag=True)
 
-def output(strand, length, mismatch, cutoff, threads, gap, greedy, stepdown = None, start=None, end=None, step=None):
+def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl, stepdown = None, start=None, end=None, step=None):
         # initialization
     currentfolder = './data/'       # can be adapted so the code can be run in other folders
     logdir = currentfolder + "logfiles/"
@@ -76,7 +77,10 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy, stepdown = No
     logging.info(f"Oligo length             : {length}")
     logging.info(f"HUSH mismatches          : {mismatch}")
     logging.info(f"Max nb of off-targets    : {cutoff}")
+    if(excl):
+        logging.info(f"Masking probe region from HUSH runs.")
     
+
     outprobes = currentfolder +"final_probes/"
     try:
         os.mkdir(outprobes)
@@ -138,6 +142,11 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy, stepdown = No
         toprocessRoi = toprocess.window_id.to_list()
         toprocessOligos = toprocess.window.to_list()
 
+        if excl:
+            flag = " -e"
+        else:
+            flag=""    
+
         for n in tqdm(range(len(toprocess)),"Generating probe candidates..."):
             # retrieve ROI number from ROI name
             roinumber = toprocessRoi[n]
@@ -176,7 +185,7 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy, stepdown = No
                 ts_string = timestamp.strftime("%Y%m%d_%H%M%S")
                 hushlogpath = logdir + "hush_roi_round_"+str(count)+"_" + ts_string + ".txt"
                 print(f"Checking the oligos with (old)HUSH...")
-                subprocess.run("./validation_oldHUSH_BLAST.sh -L "+str(length)+" -m "+str(mismatch)+" -t "+str(threads)+" > "+hushlogpath, shell=True)
+                subprocess.run("./validation_oldHUSH_BLAST.sh -L "+str(length)+" -m "+str(mismatch)+" -t "+str(threads)+ " -e > "+hushlogpath, shell=True)
 
         # apply results from HUSH to exclude poor oligos
         print(f"Removing poor oligos from database")
