@@ -257,13 +257,16 @@ In case nHUSH is interrupted before completion, run before continuing:
 Recommended:
 
 ``` shell
+# Format:
 ./reform_hush_combined.py DNA|RNA|-RNA length sublength until
+# Example:
+./reform_hush_combined.py DNA 40 21 3
 ```
 (`until` denotes the same number as specified after `-m` when running nHUSH).
 
 Example:
 ``` shell
-./reform_hush_combined.py DNA 40 21 3
+
 ```
 
 6. Calculate the melting temperature of k-mers and the free energy of
