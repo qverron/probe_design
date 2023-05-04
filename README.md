@@ -1,12 +1,12 @@
 # Instructions for probe design
 
-CAUTION: These instructions are up to date!
+CAUTION: These instructions are currently being updated (230504)
 
 ## Preparation
 
 ### General:
 
-- Install [nHUSH](https://github.com/elgw/nHUSH)
+- Install the dev branch of [nHUSH](https://github.com/elgw/nHUSH)
 
 - Install [oldHUSH](https://github.com/elgw/hush)
 
@@ -45,6 +45,7 @@ CAUTION: These instructions are up to date!
   ```
 
 ## Probe design pipeline:
+## Alternative 1: Normally repetitive regions.
 
 1. Preparation
 - The probe desin pipeline data is currently intended to be run on a 
@@ -64,6 +65,10 @@ CAUTION: These instructions are up to date!
 - Place your reference genome in the `data/ref/` folder. Make
   sure that the chromosome naming matches with the reference genome
   name provided in `all_regions.tsv`.
+  
+- The reference folder can alternatively be gathered using `get_ref_genome.sh`.
+  In that case, adjust the script manually with the correct Ensembl 
+  address for your genome of interest.
 
 - Generate all required subfolders:
 
@@ -85,8 +90,8 @@ CAUTION: These instructions are up to date!
    ./get_oligos.py DNA 1
    ```
 
-   If indicating RNA, the module will assume that the transcript / region
-   sequences are already present in the data/regions folder. Default: DNA
+   If indicating `RNA`, the module will assume that the transcript / region
+   sequences are already present in the `data/regions` folder. Default: `DNA.
 
 
 3. Test all k-mers for their homology to other regions in the genome,
@@ -112,26 +117,10 @@ CAUTION: These instructions are up to date!
   
   4. Recapitulate nHUSH results as a score 
 
-Recommended:
-
 ``` shell
 ./reform_hush_combined.py DNA|RNA|-RNA length sublength until
 ```
-(`until` denotes the same number as specified after `-m` when running nHUSH).
-
-- OR: If using sublength, recapitulate the mismatches into maximum
-  consecutive match found:
-
-  ``` shell
-  ./reform_hush_consec.py DNA 40 21
-  ```
-
-- OR: When using either full-length or sublength (deprecated):
-  ``` shell
-  ./reform_hush.py DNA 40 21
-  ```
-  (syntax: `./reform_hush.py DNA|RNA|-RNA length (sublength)`)
-  
+(`until` denotes the same number as specified after `-m` when running nHUSH). 
 
 5. Calculate the melting temperature of k-mers and the free energy of
    secondary structure formation:
@@ -144,8 +133,6 @@ Recommended:
    score to each oligo (based on nHUSH score, GC content, melting
    temperature, homopolymer stretches, secondary structures).
    
-   Recommended:
-   
    ``` shell
 	./build-db.sh q_combined 32 6 70
     ```
@@ -157,21 +144,11 @@ Recommended:
     All oligos with a longer consecutive match or homopolymer are stricly excluded.
     70: Target melting temperature. Default: 72C)
   
-   Alternative:
+
+7. Query the database to get candidate probes:
 
     ``` shell
-	./build-db_cc.sh q_cc 32
-    ```
-    (`q_cc` can only be used with sublength nHUSH and after running `reform_hush_consec.py`.
-
-    32: Length of the maximum possible consecutive match.
-	All oligos with a longer consecutive match are stricly excluded.)
-
-
-7. (new!) Query the database to get candidate probes:
-
-    ``` shell
-	./cycling_query.py -s RNA -L 30 -m 7 -c 50 -t 40  
+	./cycling_query.py -s RNA -L 30 -m 7 -c 50 -t 40 -greedy -e
     ```
     	[optional: -greedy. Speed > quality]
 	[optional: -start 20 -end 100 -step 5]	 
@@ -202,6 +179,136 @@ If enough oligos cannot be found, design probes with fewer oligos, decreasing wi
     plot_probe_candidates.ipynb
     plot_oligos.ipynb
     ```
+
+
+## Alternative 2: Repetitive or repeated regions.
+
+In this alternative, the region (along with any user-indicated repeats)
+is masked out from the reference genome used by nHUSH. This way, repeated
+oligos that are specific for the ROI can be included in the final probe.
+
+# Warning: This approach occupies more hard drive space!
+
+1. Preparation
+- Besides `data/rois/` and `data/ref/`, the pipeline requires an additional
+  `data/exclude/` folder containing BED files with the coordinates of sections
+  to mask out when running HUSH for each ROI. 
+  
+- Minimum exclusion regions can be generated using:
+
+  ``` shell
+  ./generate_exclude.sh
+  ```
+- The same sheet template can be used to manually add further regions to exclude.
+
+- Generate all required subfolders:
+
+  ``` shell
+  mkdir data/candidates
+  mkdir data/melt
+  mkdir data/secs
+  mkdir data/db
+  mkdir data/db_tsv
+  mkdir data/logfiles
+  ```
+
+2. Retrieve your region sequences and extract all k-mers of correct length:
+
+   ``` shell
+   # (from Pipeline/)
+   ./get_oligos.py DNA|RNA [optional: applyGCfilter 0|1]
+   # Example:
+   ./get_oligos.py DNA 1
+   ```
+
+   If indicating `RNA`, the module will assume that the transcript / region
+   sequences are already present in the `data/regions` folder. Default: `DNA.
+   
+3. Generate a black list of abundantly repeated oligos in the reference genome.
+	
+    ``` shell
+    ./generate_blacklist.sh -L 40 -c 100
+    ```
+    
+L: oligo length; c: min abundance to be included in oligo black list   
+
+
+4. Test all k-mers for their homology to other regions in the genome,
+   using nHUSH. Instead of running the entire k-mers (of length `L`) at
+   once, can be sped up by testing shorter sublength oligos (of length
+   l).  `-m` number of mismatches to test for (minimum 1 for sublength;
+   more gives better information but takes longer time);
+   `-t` number of threads, `-i` comb size
+
+Sublength:
+  ``` shell
+  ./run_nHUSH_excl.sh -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
+  ```
+  
+Note the `_excl` specific to the exclusion mode.  
+  
+In case nHUSH is interrupted before completion, run before continuing:
+  ``` shell
+  ./unfinished_HUSH.sh
+  ```
+  
+  5. Recapitulate nHUSH results as a score 
+
+Recommended:
+
+``` shell
+./reform_hush_combined.py DNA|RNA|-RNA length sublength until
+```
+(`until` denotes the same number as specified after `-m` when running nHUSH).
+
+Example:
+``` shell
+./reform_hush_combined.py DNA 40 21 3
+```
+
+6. Calculate the melting temperature of k-mers and the free energy of
+   secondary structure formation:
+
+   ``` shell
+   ./melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))
+   ```
+
+7. Create k-mer database, convert to TSV for querying and attribute
+   score to each oligo (based on nHUSH score, GC content, melting
+   temperature, homopolymer stretches, secondary structures).
+   
+   Recommended:
+   
+   ``` shell
+	./build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
+    ```
+    
+    f: score function
+    d: max Hamming distance to blacklist that is excluded
+    L: oligo length; c: min abundance to be included in oligo black list
+    i: max identical consecutive base pairs, T: target temperature, m: max length of consecutive off-target match
+  
+
+8. Query the database to get candidate probes:
+
+    ``` shell
+	./cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy -excl
+    ```
+    	[optional: -greedy. Speed > quality]
+	[optional: -start 20 -end 100 -step 5]	 
+To sweep different oligo numbers, otherwise uses the oligo counts provided in `./rois/all_regions.tsv`
+        [optional: -stepdown 10]
+Number of oligos to decrease probe size with every iteration that does not find enough oligos. Default: 1
+
+Cycling query which generate probe candidates, then checks the resulting oligos using HUSH, removes inacceptable oligos and generate probes again.
+If enough oligos cannot be found, design probes with fewer oligos, decreasing with `stepdown` at each step.
+
+
+9. Summarize the final probes:
+
+   ``` shell
+   ./summarize-probes-final.py
+   ```
 
 
 ## Generate probes for ordering
