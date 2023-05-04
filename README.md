@@ -44,7 +44,7 @@ CAUTION: These instructions are currently being updated (230504)
   cd probe_design
   ```
 
-## Probe design pipeline:
+# Probe design pipeline:
 ## Alternative 1: Normally repetitive regions.
 
 1. Preparation
@@ -187,7 +187,7 @@ In this alternative, the region (along with any user-indicated repeats)
 is masked out from the reference genome used by nHUSH. This way, repeated
 oligos that are specific for the ROI can be included in the final probe.
 
-# Warning: This approach occupies more hard drive space!
+### Warning: This approach occupies more hard drive space!
 
 1. Preparation
 - Besides `data/rois/` and `data/ref/`, the pipeline requires an additional
