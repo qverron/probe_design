@@ -198,7 +198,7 @@ oligos that are specific for the ROI can be included in the final probe.
 - Minimum exclusion regions can be generated using:
 
   ``` shell
-  ./generate_exclude.sh
+  ./generate_exclude.py
   ```
 - The same sheet template can be used to manually add further regions to exclude.
 
