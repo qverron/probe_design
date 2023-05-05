@@ -124,7 +124,7 @@ if [ ! -z "$sublength" ]
 then
    if ! $skip
 	then
-		for d in "$datapath"/candidates/*"$suffix".fa; do nhush-fasplit -L "$length" -l "$sublength" --file "$d"; done
+		for d in "$datapath"/candidates/*"$suffix".fa; do nhush fasplit -length "$length" --sub-length "$sublength" --file "$d"; done
 	fi
 	for d in "$datapath"/regions/*.fa
         do
