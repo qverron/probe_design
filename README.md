@@ -79,6 +79,7 @@ CAUTION: These instructions are currently being updated (230504)
   mkdir data/db
   mkdir data/db_tsv
   mkdir data/logfiles
+  mkdir HUSH
   ```
 
 2. Retrieve your region sequences and extract all k-mers of correct length:
