@@ -225,16 +225,23 @@ oligos that are specific for the ROI can be included in the final probe.
    If indicating `RNA`, the module will assume that the transcript / region
    sequences are already present in the `data/regions` folder. Default: `DNA.
    
-3. Generate a black list of abundantly repeated oligos in the reference genome.
+3. Apply the region exclusion mask on the reference genome.
+
+	``` shell
+	./exclude_region.py 
+	```   
+   
+4. Generate a black list of abundantly repeated oligos in the reference genome.
 	
     ``` shell
     ./generate_blacklist.sh -L 40 -c 100
     ```
+    Only needs to be run one if not using any exclusion regions!
     
 L: oligo length; c: min abundance to be included in oligo black list   
 
 
-4. Test all k-mers for their homology to other regions in the genome,
+5. Test all k-mers for their homology to other regions in the genome,
    using nHUSH. Instead of running the entire k-mers (of length `L`) at
    once, can be sped up by testing shorter sublength oligos (of length
    l).  `-m` number of mismatches to test for (minimum 1 for sublength;
@@ -253,7 +260,7 @@ In case nHUSH is interrupted before completion, run before continuing:
   ./unfinished_HUSH.sh
   ```
   
-  5. Recapitulate nHUSH results as a score 
+  6. Recapitulate nHUSH results as a score 
 
 Recommended:
 
@@ -270,14 +277,14 @@ Example:
 
 ```
 
-6. Calculate the melting temperature of k-mers and the free energy of
+7. Calculate the melting temperature of k-mers and the free energy of
    secondary structure formation:
 
    ``` shell
    ./melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))
    ```
 
-7. Create k-mer database, convert to TSV for querying and attribute
+8. Create k-mer database, convert to TSV for querying and attribute
    score to each oligo (based on nHUSH score, GC content, melting
    temperature, homopolymer stretches, secondary structures).
    
@@ -293,7 +300,7 @@ Example:
     i: max identical consecutive base pairs, T: target temperature, m: max length of consecutive off-target match
   
 
-8. Query the database to get candidate probes:
+9. Query the database to get candidate probes:
 
     ``` shell
 	./cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy -excl
@@ -308,7 +315,7 @@ Cycling query which generate probe candidates, then checks the resulting oligos 
 If enough oligos cannot be found, design probes with fewer oligos, decreasing with `stepdown` at each step.
 
 
-9. Summarize the final probes:
+10. Summarize the final probes:
 
    ``` shell
    ./summarize-probes-final.py
