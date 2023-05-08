@@ -37,5 +37,5 @@ if __name__ == '__main__':
             fixedchr = rd.ref[roi]+".chromosome."+rd.chrom[roi][3:]
             exporttable = pd.DataFrame(columns=['chrom','chromStart','chromEnd'])
             exporttable.loc[roi]=[fixedchr,rd.Window_start[roi],rd.Window_end[roi]]
-            filename = 'exl_roi_'+str(rd.window_id[roi])+'.bed'
+            filename = 'excl_roi_'+str(rd.window_id[roi])+'.bed'
             exporttable.to_csv(out+filename,index=False,sep="\t") 
