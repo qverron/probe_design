@@ -63,7 +63,7 @@ def parse_hush(path: str) -> pd.DataFrame:
 
     hush_df = pd.DataFrame(parsed_lines, columns=["name", "sequence", "off_target_no"])
     hush_df.set_index("name", inplace=True)
-    ass.ert_in_dtype(hush_df["off_target_no"].values.max(), "u4")
+    ass.ert_in_dtype(hush_df["off_target_no"].values.max(), "u8")
     dtype = copy.copy(const.dtype_hush)
     dtype["sequence"] = f"|S{max(sequence_lengths)}"
     return hush_df.astype(dtype)
