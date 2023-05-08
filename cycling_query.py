@@ -185,7 +185,7 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl, stepdown
                 ts_string = timestamp.strftime("%Y%m%d_%H%M%S")
                 hushlogpath = logdir + "hush_roi_round_"+str(count)+"_" + ts_string + ".txt"
                 print(f"Checking the oligos with (old)HUSH...")
-                subprocess.run("./validation_oldHUSH_BLAST.sh -L "+str(length)+" -m "+str(mismatch)+" -t "+str(threads)+ " -e > "+hushlogpath, shell=True)
+                subprocess.run("./validation_oldHUSH_BLAST.sh -L "+str(length)+" -m "+str(mismatch)+" -t "+str(threads)+ flag +" > "+hushlogpath, shell=True)
 
         # apply results from HUSH to exclude poor oligos
         print(f"Removing poor oligos from database")
