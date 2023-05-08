@@ -38,7 +38,7 @@ while getopts "f:L:m:t:he" flag; do
       L) length=${OPTARG};;
       m) mismatch=${OPTARG};;
       t) threads=${OPTARG};;
-      e) excl=true;;
+      e) exclude=true;;
       h) # display Help
          Help
          exit;;
