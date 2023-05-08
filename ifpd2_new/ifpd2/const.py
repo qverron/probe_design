@@ -13,7 +13,7 @@ dtype_melting = {
     "Tm": "<f4",
     "sequence": "|S",
 }
-dtype_hush = {"sequence": "|S", "off_target_no": "<u4"}
+dtype_hush = {"sequence": "|S", "off_target_no": "<u8"}
 dtype_secondary = {"ss_dG": "<f4"}
 dtype_sequence_features = {"sequence": "|S", "gc_content": "<f4"}
 dtype_header_features = {"name": "|S", "chromosome": "|S", "start": "<u4", "end": "<u4"}
