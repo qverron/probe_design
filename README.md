@@ -14,6 +14,26 @@
 
 - Install [ifpd2](https://github.com/ggirelli/ifpd2)
 
+Notes on ifpd2 installation:
+
+If ifpd2 is already installed, remove using `pip3 uninstall ifpd2`.
+
+Get a new copy of the ifpd2 repository: `git clone https://github.com/ggirelli/ifpd2.git`
+
+Manually edit `ifpd2/const.py`: Row 16: `dtype_hush={"sequence":"|S","off_target_no":"<u8"}`
+
+Manually edit `ifpd2/io.py`: Row 66: `ass.ert_in_dtype(hush_df["off_target_no"].values.max(),"u8")`
+
+Install using (requires poetry):
+
+```
+shell
+cd ifpd2
+poetry install
+poetry build
+pip3 install dist/*.whl
+```
+
 ### DNA:
 
 - Get the genomic coordinates of the regions of interest
