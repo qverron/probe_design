@@ -1,7 +1,5 @@
 # Instructions for probe design
 
-CAUTION: These instructions are currently being updated (230504)
-
 ## Preparation
 
 ### General:
