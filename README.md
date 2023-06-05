@@ -26,8 +26,7 @@ Manually edit `ifpd2/io.py`: Row 66: `ass.ert_in_dtype(hush_df["off_target_no"].
 
 Install using (requires poetry):
 
-```
-shell
+``` shell
 cd ifpd2
 poetry install
 poetry build
