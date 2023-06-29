@@ -1,8 +1,7 @@
 # Instructions for probe design
 
-## Preparation
+## Installation
 
-### General:
 
 - Install the dev branch of [nHUSH](https://github.com/elgw/nHUSH)
 
@@ -14,7 +13,7 @@
 
 - Install [ifpd2](https://github.com/ggirelli/ifpd2)
 
-Notes on ifpd2 installation:
+### Notes on ifpd2 installation:
 
 If ifpd2 is already installed, remove using `pip3 uninstall ifpd2`.
 
@@ -32,6 +31,8 @@ poetry install
 poetry build
 pip3 install dist/*.whl
 ```
+
+## Preparation
 
 ### DNA:
 
@@ -189,10 +190,9 @@ If enough oligos cannot be found, design probes with fewer oligos, decreasing wi
    ``` shell
    ./summarize-probes-final.py
    ```
+Some visual elements can be obtained using the following notebooks (needs updating!):
 
-   ```
-	Some visual elements can be obtained using the following notebooks (needs updating!):
-    ```shell
+    ``` shell
     plot_probe_candidates.ipynb
     plot_oligos.ipynb
     ```
