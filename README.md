@@ -6,7 +6,7 @@
 
 - Install the dev branch of [nHUSH](https://github.com/elgw/nHUSH)
 
-- Install [oldHUSH](https://github.com/elgw/hush)
+- Install [HUSH](https://github.com/elgw/hush)
 
 - Install [escafish](https://github.com/elgw/escafish)
 
