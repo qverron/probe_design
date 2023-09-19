@@ -12,6 +12,8 @@
 - Install [OligoArrayAux](http://www.unafold.org/Dinamelt/software/oligoarrayaux.php)
 
 - Install [ifpd2](https://github.com/ggirelli/ifpd2)
+  
+- Install [oligo-melting](https://github.com/ggirelli/oligo-melting))
 
 ### Notes on ifpd2 installation:
 
