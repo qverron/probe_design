@@ -25,7 +25,7 @@ Manually edit `ifpd2/const.py`: Row 16: `dtype_hush={"sequence":"|S","off_target
 
 Manually edit `ifpd2/io.py`: Row 66: `ass.ert_in_dtype(hush_df["off_target_no"].values.max(),"u8")`
 
-Install using (requires poetry):
+Install using (requires [poetry](https://python-poetry.org/docs/)):
 
 ``` shell
 cd ifpd2
