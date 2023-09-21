@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-#set -e
+#!/usr/bin/env python
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
 import numpy as np
@@ -8,6 +7,7 @@ import os
 import glob
 import sys
 import click
+import re
 from tqdm import tqdm 
 from tabulate import tabulate
 import statistics as stat
@@ -49,14 +49,17 @@ def tqdm_joblib(tqdm_object):
 @click.option('-c', '--cutoff', type=click.INT)
 @click.option('-t', '--threads', type=click.INT)
 @click.option('-g', '--gap', type=click.INT)
+@click.option('-gpercent', '--gappercent', type=click.INT)
 @click.option('-stepdown', type=click.INT)
+@click.option('-probe', type=click.INT)
 @click.option('-start', type=click.INT)
 @click.option('-end', type=click.INT)
 @click.option('-step', type=click.INT)
 @click.option('-greedy', is_flag=True)
 @click.option('-excl', is_flag=True)
+@click.option('-noquerylog', is_flag=True)
 
-def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl, stepdown = None, start=None, end=None, step=None):
+def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylog, gappercent = None, stepdown = None, probe=None,start=None, end=None, step=None):
         # initialization
     currentfolder = './data/'       # can be adapted so the code can be run in other folders
     logdir = currentfolder + "logfiles/"
@@ -67,8 +70,9 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl, stepdown
 
     now = datetime.now()
     nowstring = now.strftime("%Y_%m_%d_%H:%M:%S")
+    logpath = logdir+'cycling_query_'+nowstring+'.log'
 
-    logging.basicConfig(filename=logdir+'cycling_query_'+nowstring+'.log', level=logging.DEBUG)
+    logging.basicConfig(filename=logpath, level=logging.DEBUG)
 
     logging.info(f"Starting probe query: "+nowstring)
 
@@ -89,8 +93,12 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl, stepdown
     # TO DO: check already completed probes and skip
 
     # parameters
-    cutoff_cost = 1e5       # max total cost of a probe. Exclude probe if even one oligo has a prohibitive cost
-    cutoff_d_pc = 10        # max distance between 2 consecutive oligos, as a % of the total probe length
+    cutoff_cost = 1e6       # max total cost of a probe. Exclude probe if even one oligo has a prohibitive cost
+    if (not gappercent):
+        cutoff_d_pc = 10
+    else:
+        cutoff_d_pc = gappercent    
+    #cutoff_d_pc = 10        # max distance between 2 consecutive oligos, as a % of the total probe length
     cutoff_d = gap          # max distance between 2 consecutive oligos, in nucleotides 
     #cutoff_d = 500          # max distance between 2 consecutive oligos, in nucleotides 
     cutoff_oligo = 10       # max allowed cost for a single oligo
@@ -106,17 +114,22 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl, stepdown
     # start process with full ROI list
     roilist = currentfolder+'rois/all_regions.tsv'
     rdroi = pd.read_csv(roilist,sep="\t",header=0)
-    toprocess = rdroi
+    
     finished = False
     count = 1
+
+    completelyfailed = []
 
     if ((not start) or (not end) or (not step)):          # check if the user has provided all three parameters to sweep different oligo numbers
         sweep = False  
     else:
         sweep = True
         oligorange = range(start,end,step)
+    if (not probe):
+        toprocess = rdroi
+    else:
+        toprocess = rdroi[rdroi.window_id == probe]      
           
-
     while (not finished):
 
         logging.warning(f"Probe generation round "+str(count)+".")
@@ -131,10 +144,7 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl, stepdown
         try:
             shutil.rmtree(currentfolder + "selected_probes") 
         except:
-            pass    
-
-        # update the probe databases with removed oligos
-        filterdatabase(currentfolder,cutoff_oligo)    
+            pass       
 
         os.mkdir(currentfolder+"probe_candidates/")
         os.mkdir(currentfolder+"selected_probes/")
@@ -142,8 +152,13 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl, stepdown
         toprocessRoi = toprocess.window_id.to_list()
         toprocessOligos = toprocess.window.to_list()
 
+        # update the probe databases with removed oligos
+        #filterdatabase(currentfolder,cutoff_oligo,toprocessRoi)    
+
+        filterdatabase_par(currentfolder,cutoff_oligo,threads,toprocessRoi) 
+
         if excl:
-            flag = " -e"
+            flag = "-e"
         else:
             flag=""    
 
@@ -154,15 +169,21 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl, stepdown
             timestamp = datetime.now()
             ts_string = timestamp.strftime("%Y%m%d_%H%M%S")
 
+            if oligos <= 0:         # no probe was found at any length
+                completelyfailed.append(roinumber)
+                logging.warning(f"No probe could be found for ROI "+str(roinumber)+". Proceeding with the other probes.")
+                continue
+
             # if the user provided start/end/step, use as range of oligo numbers to design probes for the first time!
             if sweep:
                 querylogpath = logdir + "query_roi_"+str(roinumber)+"_oli_sweep_round_"+str(count)+"_" + ts_string + ".txt"
+                timeout=9999999
                 with tqdm_joblib(tqdm(desc="Sweeping oligo counts in region "+str(roinumber), total=len(oligorange))) as progress_bar:
-                    Parallel(n_jobs=threads)(delayed(probequery)(length,strand,roinumber,oligos,querylogpath,greedy) for oligos in oligorange)
+                    Parallel(n_jobs=threads,timeout=timeout)(delayed(probequery)(length,strand,roinumber,oligos,querylogpath,greedy,noquerylog) for oligos in oligorange)
             else:
                 querylogpath = logdir + "query_roi_"+str(roinumber)+"_oli_"+str(oligos)+"_round_"+str(count)+"_" + ts_string + ".txt"
                 # use as input for probe query (only process remaining ROIs)
-                probequery(length,strand,roinumber,oligos,querylogpath,greedy)
+                probequery(length,strand,roinumber,oligos,querylogpath,greedy,noquerylog)
 
         # select best probes
         print(f"Selecting probes...")
@@ -172,29 +193,32 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl, stepdown
             selection = selectprobes(currentfolder, toprocessRoi, toprocessOligos, cutoff_cost, cutoff_d, cutoff_d_pc) 
     
         failedlist = selection[selection.success == 0].index.to_list()
+        logging.info(f'Length of failedlist: '+str(len(failedlist)))
+        
         selectedlist = selection[selection.success == 1].index.to_list()
 
-        pid = os.fork()
-        if pid:
-            os.wait()
-            # force the process to wait for HUSH computations to be complete before moving on
-        else:
-            if(len(selectedlist)>0):
-                # check off-target homology with HUSH
-                timestamp = datetime.now()
-                ts_string = timestamp.strftime("%Y%m%d_%H%M%S")
-                hushlogpath = logdir + "hush_roi_round_"+str(count)+"_" + ts_string + ".txt"
-                print(f"Checking the oligos with (old)HUSH...")
-                subprocess.run("./validation_oldHUSH_BLAST.sh -L "+str(length)+" -m "+str(mismatch)+" -t "+str(threads)+ flag +" > "+hushlogpath, shell=True)
+        if(len(selectedlist)>0):
+            # check off-target homology with HUSH
+            timestamp = datetime.now()
+            ts_string = timestamp.strftime("%Y%m%d_%H%M%S")
+            hushlogpath = logdir + "hush_roi_round_"+str(count)+"_" + ts_string + ".txt"
+            print(f"Checking the oligos with (old)HUSH...")
+            with open(hushlogpath,'w') as f:
+#            subprocess.run("./validation_oldHUSH_BLAST.sh -L "+str(length)+" -m "+str(mismatch)+" -t "+str(threads)+flag+" > "+hushlogpath, shell=True,check=True)
+                subprocess.run(["./validation_oldHUSH_BLAST.sh", '-L', str(length),"-m",str(mismatch),"-t",str(threads),flag],stdout=f)
+            print(f"Removing poor oligos from database")
 
         # apply results from HUSH to exclude poor oligos
-        print(f"Removing poor oligos from database")
-        rerunlist = feedback(currentfolder,outprobes,count,cutoff)
+        rerunlist = feedback(currentfolder,outprobes,count,cutoff,logpath)
 
         combinedlist = np.unique(failedlist+rerunlist)
 
         if (len(combinedlist) == 0):
             finished = True
+            logging.info(f"Done! :)")
+            if(len(completelyfailed)>0):
+                logging.info(f"No probe could be found for the following regions: "+''.join(str(e)+", " for e in completelyfailed)+".")
+            break
         else:
             print(f""+str(len(combinedlist))+" probes need to be re-run.")
             
@@ -322,11 +346,14 @@ def selectprobes(input_folder, toprocessroi, toprocessoligos, cutoff_cost, cutof
 # -----------------------------------------------------------------------------------------------------------------------            
 
 
-def feedback(currentfolder,outfolder,count,cutoff):
+def feedback(currentfolder,outfolder,count,cutoff,logpath):
     selectedfolder = currentfolder + 'selected_probes/'
     # identify probe files
     hushpattern = currentfolder+"selected_probes/query_*.out"   # HUSH validation output
     hushnames = glob.glob(hushpattern,recursive=True)
+
+    logging.info(f'Length of hushnames: '+str(len(hushnames)))
+    #logging.info(f'Hushnames: '+' '.join(str(l) for l in hushnames))  
 
     dbpattern = currentfolder+"db_tsv/db.*.tsv"   # ROI oligo databases
     dbnames = glob.glob(dbpattern,recursive=True)
@@ -337,6 +364,8 @@ def feedback(currentfolder,outfolder,count,cutoff):
     # read all rows and fetch HUSH score
     if(len(hushnames)>0):
         for hushfile in hushnames:
+
+            #logging.info(f'Current hush file: '+hushfile)
 
             # identify DB file
             filesplit = hushfile.split('/')
@@ -384,7 +413,11 @@ def feedback(currentfolder,outfolder,count,cutoff):
                 # move probe to final selection folder
                 tsvname = basename[6:basename.find('.fa')]+".tsv"
                 shutil.move(selectedfolder + tsvname,outfolder)
-                shutil.move(selectedfolder + basename,outfolder)    # also keep the .out file (all other files will be deleted)
+                shutil.move(selectedfolder + basename,outfolder)    # also keep the .out file (all other files will be deleted)      
+                    
+
+    logging.info(f'Length of rerunlist: '+str(len(rerunlist)))
+    logging.info(f'Rerunlist: '+' '.join(str(l) for l in rerunlist))
 
     return rerunlist
 
@@ -393,7 +426,7 @@ def feedback(currentfolder,outfolder,count,cutoff):
 # -----------------------------------------------------------------------------------------------------------------------            
 
 
-def filterdatabase(currentfolder,cutoff):
+def filterdatabase(currentfolder,cutoff,toprocessRoi):
     # generate a filtered copy of the oligo database for each ROI
     # filter by removing oligos over a certain threshold cost
 
@@ -402,25 +435,61 @@ def filterdatabase(currentfolder,cutoff):
     dbpattern = dbfolder+"db.*.tsv"   # HUSH validation output
     dbnames = glob.glob(dbpattern,recursive=True)
 
-    # for each database file
-    # open the updated (full) database and export a filtered version without discarded oligos
+    dbparse = [re.split('roi_',db,maxsplit=1)[1] for db in dbnames]
+    dbrois = [int(re.split('\.',db,maxsplit=1)[0]) for db in dbparse]
 
-    for db in tqdm(dbnames,"Preparing filtered oligo databases..."):
+    filtereddblist = [dbnames[k] for k in range(len(dbrois)) if dbrois[k] in toprocessRoi]
+
+    # for each database file
+    # open the updated (full) database and export a filtered version without discarded oligos       
+
+    for db in tqdm(filtereddblist,"Preparing filtered oligo databases..."):
         # retrieve oligos with poor HUSH score
         oligodb = pd.read_csv(db,sep="\t",header=0)
         filtereddb = oligodb[oligodb.oligo_cost < cutoff]
         filtereddb.to_csv(db+".filt",index=False,sep="\t")
 
+def filterdatabase_par(currentfolder,cutoff,threads,toprocessRoi):
+    # generate a filtered copy of the oligo database for each ROI
+    # filter by removing oligos over a certain threshold cost
+
+    dbfolder = currentfolder + 'db_tsv/'
+    # identify database files
+    dbpattern = dbfolder+"db.*.tsv"   # HUSH validation output
+    dbnames = glob.glob(dbpattern,recursive=True)
+
+    dbparse = [re.split('roi_',db,maxsplit=1)[1] for db in dbnames]
+    dbrois = [int(re.split('\.',db,maxsplit=1)[0]) for db in dbparse]
+
+    filtereddblist = [dbnames[k] for k in range(len(dbrois)) if dbrois[k] in toprocessRoi]
+
+    # for each database file
+    # open the updated (full) database and export a filtered version without discarded oligos
+    with tqdm_joblib(tqdm(desc="Filtering oligo databases", total=len(filtereddblist))) as progress_bar:
+        Parallel(n_jobs=threads)(delayed(filterdb)(db,cutoff) for db in filtereddblist)
+ 
+
+def filterdb(db,cutoff):
+     # retrieve oligos with poor HUSH score
+    oligodb = pd.read_csv(db,sep="\t",header=0)
+    filtereddb = oligodb[oligodb.oligo_cost < cutoff]
+    filtereddb.to_csv(db+".filt",index=False,sep="\t")       
+
 # -----------------------------------------------------------------------------------------------------------------------      
 # -----------------------------------------------------------------------------------------------------------------------            
 
 
-def probequery(length,strand,roi,oligos,logpath,greedy):
+def probequery(length,strand,roi,oligos,logpath,greedy,noquerylog):
     suffix = ""
     if(greedy): 
-        suffix = " -g"
-    subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+" > "+logpath+suffix+" 2>&1", shell=True)
-    #-L "+str(length)+"
+        suffix = "-g"
+    if noquerylog:    
+        #subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+suffix+"> /dev/null 2>&1", shell=True)
+        subprocess.run(["./probe-query.sh","-s",strand,"-e",str(roi),"-o",str(oligos),suffix], stdout=None)
+    else:
+        with open(logpath,'w') as f:
+        #subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+suffix+" > "+logpath+" 2>&1", shell=True)
+            subprocess.run(["./probe-query.sh","-s",strand,"-e",str(roi),"-o",str(oligos),suffix],stderr=subprocess.STDOUT,stdout=f)
 
 # -----------------------------------------------------------------------------------------------------------------------      
 # -----------------------------------------------------------------------------------------------------------------------            
