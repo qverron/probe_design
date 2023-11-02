@@ -1,5 +1,4 @@
 #!/bin/bash
-#set -e     # exit on error
 set -m      # enable job control
 
 
