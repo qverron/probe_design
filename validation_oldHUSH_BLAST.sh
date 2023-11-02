@@ -1,5 +1,4 @@
 #!/bin/bash
-#set -e
 
 ############################################################
 
@@ -78,30 +77,50 @@ done
 
 # transform probe candidates into FASTA files readable by HUSH
 for p in "$datapath"/selected_probes/*.tsv;
-do sed -r -n -e 's/^ROI_([0-9]+)'$'\t''chr([0-9XY]+)'$'\t''([0-9]+)'$'\t''([0-9]+)'$'\t''([A-Z]+).*$/ROI_\1:\2:\3-\4|\5/p' $p | tr '|' '\n' > data/selected_probes/query_$(basename $p .tsv).fa;
+#do sed -r -n -e 's/^ROI_([0-9]+)'$'\t''chr([0-9A-Za-z_]+)'$'\t''([0-9]+)'$'\t''([0-9]+)'$'\t''([A-Z]+).*$/ROI_\1:\2:\3-\4|\5/p' $p | tr '|' '\n' > data/selected_probes/query_$(basename $p .tsv).fa;
+do sed -r -n -e 's/^ROI_([0-9]+)'$'\t''([0-9A-Za-z_]+)'$'\t''([0-9]+)'$'\t''([0-9]+)'$'\t''([A-Z]+).*$/ROI_\1:\2:\3-\4|\5/p' $p | tr '|' '\n' > data/selected_probes/query_$(basename $p .tsv).fa;
 done
+wait
 
 # run HUSH on the FASTA files
+echo 'Creating subfolders'
 for pfa in "$datapath"/selected_probes/*.fa;
-do 
+do    
+   queryfolder="$datapath"/selected_probes/$(basename $pfa .fa)_split_mm_$mismatch
+   mkdir $queryfolder
+done
+wait   
+echo 'Creating threads'
+for pfa in "$datapath"/selected_probes/*.fa;
+do  
+   queryfolder="$datapath"/selected_probes/$(basename $pfa .fa)_split_mm_$mismatch
+   cd $queryfolder
+   # Create one input file per thread
+   split -n l/$threads ../$(basename $pfa)
+   cd ..
+done
+wait
+echo 'Running HUSH'
+for pfa in "$datapath"/selected_probes/*.fa;
+do  
    if $exclude
    then
       genomeroi=`echo $(basename -- "$pfa") | sed 's/.*.\(roi_[0-9]\+\).*/genome_\1\.fa/'`
    else
       genomeroi="genome.fa"
-   fi      
+   fi   
    queryfolder="$datapath"/selected_probes/$(basename $pfa .fa)_split_mm_$mismatch
-   mkdir $queryfolder
-   cd $queryfolder
-   # Create one input file per thread
-   split -n l/$threads ../$(basename $pfa)
-   cd ..
-   hushp -l $length -t $threads -r "$datapath"/ref/$genomeroi -q $queryfolder -m $mismatch -f 0 -C
-
-
+   hushp -l $length -t $threads -r "$datapath"/ref/$genomeroi -q $queryfolder -m $mismatch -f 0 -C --verbose 1
+done
+wait
+echo 'Exporting results'
+for pfa in "$datapath"/selected_probes/*.fa;
+do  
+   queryfolder="$datapath"/selected_probes/$(basename $pfa .fa)_split_mm_$mismatch
    # Merge the ouputs to a single file
    cat $queryfolder/*.out > "$datapath"/selected_probes/$(basename $pfa)_"$mismatch"_mm.out
 done
-
+wait
+echo 'Done!'
 
 

@@ -17,7 +17,7 @@ mkdir HUSH
 Rscript prepare_input.r
 
 # 2. Retrieve sequences and extract k-mers
-./get_oligos.py DNA/RNA [applyGCfilter 0/1] [extfolder] # RNA assumes already existing transcript sequences. Default> DNA
+./get_oligos.py DNA/RNA [applyGCfilter False] [extfolder] # RNA assumes already existing transcript sequences. Default> DNA
 
 # 3. The exclusion pipeline requires a mask of regions to exclude from HUSH analysis. 
 # These can either be added manually in data/exclude or automatically generated to only include the ROI itself. 
@@ -52,7 +52,7 @@ Rscript prepare_input.r
 # i: max identical consecutive base pairs, T: target temperature, m: max length of consecutive off-target match
 
 # 10. Query to fetch and optimize probes
-./cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy 
+./cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy -excl
 # [recommended: -greedy     for speed > quality. Can be removed when designing final oligos]        
 # [optional: -start 20 -end 100 -step 5: to sweep different oligo numbers]
 # -stepdown 10       how many oligos to decrease with every iteration 
