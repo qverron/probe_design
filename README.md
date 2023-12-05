@@ -329,7 +329,7 @@ If enough oligos cannot be found, design probes with fewer oligos, decreasing wi
 11. Summarize the final probes:
 
    ``` shell
-   ./summarize-probes-final.py
+   python summarize-probes-final.py
    ```
 
 
