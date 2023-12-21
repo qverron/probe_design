@@ -1,0 +1,35 @@
+[build-system]
+requires = [poetry-core>=1.0.0]
+
+[project]
+name = "probe_design"
+version = "0.1.0"
+requires-python = ">= 3.8"
+readme = "README.md"
+description = "Probe design"
+
+authors = [
+  {name = "Quentin Verron"},
+  {name = "Zafer Kosar"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dependencies =[
+    "poetry-core>=1.0.0",
+    "biopython",
+    "poetry",
+    "bio",
+    "numpy",
+    "tqdm",
+    "pandas >= 2.1.4",
+    "tabulate",
+    "joblib",
+    "click",
+]
+
+[project.urls]
+Homepage = "https://github.com/qverron/probe_design"
