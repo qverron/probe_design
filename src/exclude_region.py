@@ -17,11 +17,9 @@ from tqdm import tqdm
 from tabulate import tabulate
 
 
-if __name__ == '__main__':
-
-    roifile = './data/rois/all_regions.tsv'     # proceed all ROIs as provided in region list
-    ref = './data/ref/'
-    excl = './data/exclude/'
+def exclude_region(roifile:os.PathLike = './data/rois/all_regions.tsv',     # proceed all ROIs as provided in region list
+                   ref: os.PathLike = './data/ref/',
+                   excl: os.PathLike = './data/exclude/')->None:
 
     f = open(roifile)
     rd = pd.read_csv(f, sep="\t", header=0)
@@ -70,3 +68,7 @@ if __name__ == '__main__':
             out = open(ref+'genome_roi_' + str(rd.window_id[k])+'.fa', 'w')
             out.write('>Genome_ROI_'+str(rd.window_id[k])+'\n'+genome)
             out.close()
+    return
+
+if __name__ == "__main__":
+    exclude_region()
