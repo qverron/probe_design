@@ -14,10 +14,8 @@ from tqdm import tqdm
 from tabulate import tabulate
 
 # Retrieve complete sequences in ROI
-if __name__ == '__main__':
+def get_oligos(gcfilter:int = 1, extfolder:os.PathLike = './data/')->None:
     #syntax: ./get_oligos.py DNA/RNA gcfilter extfolder
-    gcfilter = 1
-    extfolder = './data/'
 
     if(len(sys.argv) == 1):
         # no probe type was specified
@@ -106,3 +104,6 @@ if __name__ == '__main__':
                 print('The FASTA sequence for ROI '+str(rd.window_id[k])+' is missing.')
                 continue
             extract(fullseq,outcan,rd.length[k],gcfilter)     
+
+if __name__ == '__main__':
+    get_oligos()
