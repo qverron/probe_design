@@ -103,7 +103,9 @@ def get_oligos(gcfilter:int = 1, extfolder:os.PathLike = './data/')->None:
             if not os.path.isfile(fullseq):
                 print('The FASTA sequence for ROI '+str(rd.window_id[k])+' is missing.')
                 continue
-            extract(fullseq,outcan,rd.length[k],gcfilter)     
+            extract(fullseq,outcan,rd.length[k],gcfilter)
+
+    return   
 
 if __name__ == '__main__':
     get_oligos()

@@ -17,8 +17,7 @@ import contextlib
 from tqdm import tqdm
 
 
-if __name__ == '__main__':
-    currentfolder = './data'
+def generate_exclude(currentfolder:os.PathLike = './data/')->None:
 
     roilist = currentfolder+'/rois/all_regions.tsv'
     rd = pd.read_csv(roilist,sep="\t",header=0)
@@ -39,3 +38,8 @@ if __name__ == '__main__':
             exporttable.loc[roi]=[fixedchr,rd.Window_start[roi],rd.Window_end[roi]]
             filename = 'excl_roi_'+str(rd.window_id[roi])+'.bed'
             exporttable.to_csv(out+filename,index=False,sep="\t") 
+
+    return
+
+if __name__ == "__main__":
+    generate_exclude()
