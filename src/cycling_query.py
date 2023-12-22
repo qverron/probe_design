@@ -493,10 +493,10 @@ def probequery(length,strand,roi,oligos,logpath,greedy,noquerylog):
 
 # -----------------------------------------------------------------------------------------------------------------------      
 # -----------------------------------------------------------------------------------------------------------------------            
-def main():
+def cycling_query():
     output()
     logging.shutdown()
     return
 
 if __name__ == '__main__':
-    main()
+    cycling_query()

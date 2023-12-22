@@ -223,7 +223,7 @@ score_functions = {'gg' : score_gg,
                    'q_combined': score_q_combined,
                    'q_bl': score_q_combined_bl}
 
-if __name__ == '__main__':
+def escafish_score():
     header = sys.stdin.readline().strip()
 
     if(len(sys.argv) < 2):
@@ -267,3 +267,7 @@ if __name__ == '__main__':
             score = 0
 
         print(f"{line}\t{score}")
+    return
+
+if __name__ == "__main__":
+    escafish_score()
