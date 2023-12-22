@@ -59,7 +59,7 @@ def consecblock(oligo,L,l,hdist_grouped):
 
 
 
-if __name__ == '__main__':
+def reform_hush_consec(currentfolder:os.PathLike = './data')->None:
     #syntax: ./reform_hush.py DNA/RNA/-RNA 80 (22)
 
     print(f'Number of arguments: '+str(len(sys.argv)))
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     suffix = types[sys.argv[1]]
 
 
-    currentfolder = './data'
+
 
     roilist = currentfolder+'/rois/all_regions.tsv'
     rd = pd.read_csv(roilist,sep="\t",header=0)
@@ -168,3 +168,7 @@ if __name__ == '__main__':
     #         o.write(outseq)
     #         o.close()
     #         f.close()         
+    return
+
+if __name__ == "__main__": 
+    reform_hush_consec()

@@ -13,7 +13,7 @@ import shutil
 
 
 
-if __name__ == '__main__':
+def select_probe(currentfolder:os.PathLike = './data/')->None:
     # parameters
     cutoff_cost = 1e5       # max total cost of a probe. Exclude probe if even one oligo has a prohibitive cost
     cutoff_d_pc = 10        # max distance between 2 consecutive oligos, as a % of the total probe length
@@ -23,7 +23,6 @@ if __name__ == '__main__':
         cutoff_d = 500          # max distance between 2 consecutive oligos, in nucleotides
 
     # retrieve probe queries
-    currentfolder = './data/'
     selectedfolder = currentfolder + 'selected_probes/'
     try:
         os.mkdir(selectedfolder)
@@ -98,3 +97,8 @@ if __name__ == '__main__':
         filteredroilist = roiprobelist[roiprobelist.nOligos == roiprobelist.nOligos.max()]
         selectedprobeindex = filteredroilist[['pw']].idxmin()
         shutil.copy2(filteredroilist.loc[selectedprobeindex].fullpath.tolist()[0],selectedfolder)
+
+    return
+
+if __name__ == "__main__":
+    select_probe()

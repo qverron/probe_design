@@ -9,7 +9,7 @@ from tqdm import tqdm
 from tabulate import tabulate
 
 
-if __name__ == '__main__':
+def split_fasta()->None:
     file = sys.argv[1]
     outfolder = sys.argv[2]
 
@@ -19,3 +19,5 @@ if __name__ == '__main__':
             out.write('>'+values[0]+'\n'+values[1])
             out.close()
 
+if __name__ == "__main__":
+    split_fasta()

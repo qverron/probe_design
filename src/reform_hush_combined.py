@@ -58,7 +58,7 @@ def consecblock(oligo,L,l,hdist_grouped):
     
     return maxccmatch
 
-if __name__ == '__main__':
+def reform_hush_combined(currentfolder:os.PathLike = './data')->None:
     #syntax: ./reform_hush_combined.py DNA/RNA/-RNA 40 22 3 
 
     print(f'Number of arguments: '+str(len(sys.argv)))
@@ -78,8 +78,6 @@ if __name__ == '__main__':
     print(f'Sublength: '+str(l))
     until = int(sys.argv[4])
     print(f'HUSH was run until '+str(until)+' mismatches.')
-
-    currentfolder = './data'
 
     roilist = currentfolder+'/rois/all_regions.tsv'
     rd = pd.read_csv(roilist,sep="\t",header=0)
@@ -130,4 +128,9 @@ if __name__ == '__main__':
         outseq = ''.join(splitseq)
         o.write(outseq)
         o.close()
-        f.close()  
+        f.close()
+
+        return
+
+if __name__ == "__main__":
+    reform_hush_combined()  

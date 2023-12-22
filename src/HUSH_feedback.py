@@ -17,8 +17,8 @@ from itertools import compress
 # read corresponding probe candidate tsv file
 # attribute HUSH score to tsv file rows
 
-if __name__ == '__main__':
-    currentfolder = './data/'
+def HUSH_feedback(currentfolder:os.PathLike = './data/')->None:
+    
     selectedfolder = currentfolder + 'selected_probes/'
     # identify probe files
     hushpattern = currentfolder+"selected_probes/query_*.out"   # HUSH validation output
@@ -88,6 +88,10 @@ if __name__ == '__main__':
         if (not finished):
             print("Not completed. Run again!")
 
+    return
+
+if __name__ == "__main__":
+    HUSH_feedback()
         
         
         
