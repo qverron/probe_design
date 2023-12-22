@@ -485,11 +485,11 @@ def probequery(length,strand,roi,oligos,logpath,greedy,noquerylog):
         suffix = "-g"
     if noquerylog:    
         #subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+suffix+"> /dev/null 2>&1", shell=True)
-        subprocess.run(["./probe-query.sh","-s",strand,"-e",str(roi),"-o",str(oligos),suffix], stdout=None)
+        subprocess.run(["./shell/probe-query.sh","-s",strand,"-e",str(roi),"-o",str(oligos),suffix], stdout=None)
     else:
         with open(logpath,'w') as f:
         #subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+suffix+" > "+logpath+" 2>&1", shell=True)
-            subprocess.run(["./probe-query.sh","-s",strand,"-e",str(roi),"-o",str(oligos),suffix],stderr=subprocess.STDOUT,stdout=f)
+            subprocess.run(["./shell/probe-query.sh","-s",strand,"-e",str(roi),"-o",str(oligos),suffix],stderr=subprocess.STDOUT,stdout=f)
 
 # -----------------------------------------------------------------------------------------------------------------------      
 # -----------------------------------------------------------------------------------------------------------------------            
