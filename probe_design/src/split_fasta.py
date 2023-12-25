@@ -9,11 +9,14 @@ from tqdm import tqdm
 from tabulate import tabulate
 
 
-def split_fasta(file,outfolder)->None:
+def split_fasta(file:os.PathLike,outfolder:os.PathLike)->None:
 
     with open(file) as handle:
         for values in SimpleFastaParser(handle):
-            out = open(outfolder+values[0]+".fa", 'w')
+            if not ".fa" in file: # just in case they don't add the extension
+                out = open(outfolder+values[0]+".fa", 'w')
+            else:
+                out = open(outfolder+values[0], 'w')
             out.write('>'+values[0]+'\n'+values[1])
             out.close()
 
@@ -22,4 +25,4 @@ def split_fasta(file,outfolder)->None:
 if __name__ == "__main__":
     file = sys.argv[1]
     outfolder = sys.argv[2]
-    split_fasta(file,outfolder)
+    split_fasta(file=file,outfolder=outfolder)
