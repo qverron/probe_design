@@ -2,3 +2,4 @@ token
 *.tar.gz
 *.whl
 dist
+*.pyc

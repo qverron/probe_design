@@ -1,5 +1,5 @@
 # Expose this functions to outside as a module
-from src import (
+from .src import (
     cycling_query,
     escafish_score,
     exclude_region,
