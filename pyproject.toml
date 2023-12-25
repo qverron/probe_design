@@ -1,16 +1,15 @@
 [tool.poetry]
 name = "probe-design"
-version = "0.1.0"
-description = ""
-authors = ["Quentin Verron "]
-maintainers = ["Zafer Kosar"]
-license = "n"
+version = "0.1.1"
+description = "Probe design for FISH by Quentin Verron"
+authors = ["Quentin Verron"]
+maintainers = ["Quentin Verron","Zafer Kosar"]
+license = "CC NC BY 4.0"
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
-numpy = "^1.26.2"
-0 = "^0.0.0"
+numpy = ">=1.20,<1.25"
 pandas = "^2.1.4"
 tabulate = "^0.9.0"
 biopython = "^1.82"
