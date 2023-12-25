@@ -1,37 +1,27 @@
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-
-[project]
-name = "probe_design"
+[tool.poetry]
+name = "probe-design"
 version = "0.1.0"
-requires-python = ">= 3.8"
+description = ""
+authors = ["Quentin Verron "]
+maintainers = ["Zafer Kosar"]
+license = "n"
 readme = "README.md"
-description = "Probe design"
-license = "CC-BY-NC-4.0"
 
-authors = [
-  {name = "Quentin Verron"},
-  {name = "Zafer Kosar"}
-]
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+numpy = "^1.26.2"
+0 = "^0.0.0"
+pandas = "^2.1.4"
+tabulate = "^0.9.0"
+biopython = "^1.82"
+tqdm = "^4.66.1"
+joblib = "^1.3.2"
+click = "^8.1.7"
+poetry = "^1.7.1"
 
-dependencies =[
-    "poetry-core>=1.0.0",
-    "biopython",
-    "poetry",
-    "bio",
-    "biopython",
-    "numpy",
-    "tqdm",
-    "pandas >= 2.1.4",
-    "tabulate",
-    "joblib",
-    "click",
-]
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.8.0"
 
-[project.urls]
-Homepage = "https://github.com/qverron/probe_design"
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
