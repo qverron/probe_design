@@ -9,9 +9,7 @@ from tqdm import tqdm
 from tabulate import tabulate
 
 
-def split_fasta()->None:
-    file = sys.argv[1]
-    outfolder = sys.argv[2]
+def split_fasta(file,outfolder)->None:
 
     with open(file) as handle:
         for values in SimpleFastaParser(handle):
@@ -19,5 +17,9 @@ def split_fasta()->None:
             out.write('>'+values[0]+'\n'+values[1])
             out.close()
 
+    return
+
 if __name__ == "__main__":
-    split_fasta()
+    file = sys.argv[1]
+    outfolder = sys.argv[2]
+    split_fasta(file,outfolder)
