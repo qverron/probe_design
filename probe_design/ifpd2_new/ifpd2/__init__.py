@@ -12,13 +12,9 @@ from . import loggingg
 from importlib.metadata import version, PackageNotFoundError
 from typing import List
 
-try:
-    __version__ = version(__name__)
-except PackageNotFoundError:
-    pass
+__version__ = "unknown"
 
 __all__ = [
-    "__version__",
     "asserts",
     "dataclasses",
     "fasta",
@@ -34,3 +30,10 @@ __all__ = [
     "loggingg",
 ]
 __path__: List[str]
+
+try:
+    __version__ = version(__name__)
+    __all__.append("__version__")
+except PackageNotFoundError:
+    pass
+

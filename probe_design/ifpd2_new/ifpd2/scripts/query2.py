@@ -4,14 +4,14 @@
 """
 
 import click  # type: ignore
-from ifpd2.const import CONTEXT_SETTINGS
-from ifpd2.dataclasses import Folder
-from ifpd2.dataclasses import PositiveInteger
-from ifpd2.dataclasses import QueryWindow
-from probe_design.ifpd2_new.ifpd2.loggingg import add_log_file_handler
-from ifpd2.database import DataBase
-from ifpd2.region import GenomicRegionBuilder
-from ifpd2.walker2 import ChromosomeWalker
+from ..const import CONTEXT_SETTINGS
+from ..dataclasses import Folder
+from ..dataclasses import PositiveInteger
+from ..dataclasses import QueryWindow
+from ..loggingg import add_log_file_handler
+from ..database import DataBase
+from ..region import GenomicRegionBuilder
+from ..walker2 import ChromosomeWalker
 import logging
 from os.path import isdir, isfile
 from os import mkdir

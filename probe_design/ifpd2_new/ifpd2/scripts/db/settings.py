@@ -4,7 +4,7 @@
 """
 
 from copy import copy
-from ifpd2.const import DEFAULT_DATABASE_INDEX_BIN_SIZE
+from ...const import DEFAULT_DATABASE_INDEX_BIN_SIZE
 import logging
 from os.path import isdir, isfile
 from typing import Any, Dict, List, Set

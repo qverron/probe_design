@@ -24,3 +24,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 [1.0.1a1] https://github.com/ggirelli/ifpd2/releases/tag/v1.0.1a1  
 [1.0.0-alpha] https://github.com/ggirelli/ifpd2/releases/tag/v1.0.0-alpha  
+
+
+## Changes by Zafer Kosar
+
+Fix the relative imports
+imports literally relied on the previous installations (not the local one)
+change logging.py to loggingg with double 'g' to prevent import problems due to built in logging library. 

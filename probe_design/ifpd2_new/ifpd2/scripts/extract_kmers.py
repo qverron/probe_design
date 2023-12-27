@@ -5,10 +5,10 @@
 
 from Bio.Seq import reverse_complement  # type: ignore
 import click  # type: ignore
-from ifpd2.const import CONTEXT_SETTINGS
-from ifpd2.fasta import extract_kmers
-from ifpd2.io import write_oligos
-from ifpd2.oligo import select_by_GC
+from ..const import CONTEXT_SETTINGS
+from ..fasta import extract_kmers
+from ..io import write_oligos
+from ..oligo import select_by_GC
 import logging
 from os.path import isdir, isfile, join as path_join
 from os.path import basename, normpath, splitext

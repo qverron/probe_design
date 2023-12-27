@@ -5,13 +5,13 @@
 
 import click  # type: ignore
 import copy
-from ifpd2.const import CONTEXT_SETTINGS, DEFAULT_DATABASE_INDEX_BIN_SIZE
-from ifpd2.const import dtype_header_features, dtype_sequence_features
-from ifpd2.const import database_columns, dtype_hush, dtype_melting, dtype_secondary
-from ifpd2 import asserts as ass
-from ifpd2.chromosome import ChromosomeDict
-from ifpd2.io import parse_hush, parse_melting, parse_secondary
-from ifpd2.scripts.db.settings import DBMakeSettings
+from ...const import CONTEXT_SETTINGS, DEFAULT_DATABASE_INDEX_BIN_SIZE
+from ...const import dtype_header_features, dtype_sequence_features
+from ...const import database_columns, dtype_hush, dtype_melting, dtype_secondary
+from ... import asserts as ass
+from ...chromosome import ChromosomeDict
+from ...io import parse_hush, parse_melting, parse_secondary
+from .settings import DBMakeSettings
 import logging
 import numpy as np  # type: ignore
 import os

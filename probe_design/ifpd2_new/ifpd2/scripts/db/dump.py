@@ -4,9 +4,9 @@
 """
 
 import click  # type: ignore
-from ifpd2 import const
-from ifpd2.database import DataBase
-from ifpd2.walker2 import ChromosomeWalker
+from ... import const
+from ...database import DataBase
+from ...walker2 import ChromosomeWalker
 from tqdm import tqdm  # type: ignore
 from typing import List, Optional, Tuple
 

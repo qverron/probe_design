@@ -4,8 +4,8 @@
 """
 
 import click  # type: ignore
-from ifpd2.const import CONTEXT_SETTINGS
-from ifpd2.scripts.db import check, dump, info, make
+from ...const import CONTEXT_SETTINGS
+from ...scripts.db import check, dump, info, make
 
 
 @click.group(

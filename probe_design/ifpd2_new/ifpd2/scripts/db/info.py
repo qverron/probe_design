@@ -4,8 +4,8 @@
 """
 
 import click  # type: ignore
-from ifpd2.const import CONTEXT_SETTINGS
-from ifpd2.database import DataBase
+from ...const import CONTEXT_SETTINGS
+from ...database import DataBase
 import logging
 
 

@@ -4,9 +4,9 @@
 """
 
 import click  # type: ignore
-from ifpd2 import __version__
-from ifpd2.const import CONTEXT_SETTINGS
-from ifpd2.scripts import db, extract_kmers, query, query2
+from .. import __version__
+from ..const import CONTEXT_SETTINGS
+from ..scripts import db, extract_kmers, query, query2
 import sys
 import webbrowser
 

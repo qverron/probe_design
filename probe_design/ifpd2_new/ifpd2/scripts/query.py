@@ -4,16 +4,16 @@
 """
 
 import click  # type: ignore
-from ifpd2.const import CONTEXT_SETTINGS
-from ifpd2.dataclasses import Folder, GenomicRegion, FreeEnergyInterval
-from ifpd2.dataclasses import NonNegativeInteger, PositiveInteger
-from ifpd2.dataclasses import PositiveFloat
-from ifpd2.dataclasses import NonNegativeIntInterval
-from ifpd2.dataclasses import QueryFocus, QueryWindow
-from ifpd2.walker import Walker
-from probe_design.ifpd2_new.ifpd2.loggingg import add_log_file_handler
-from ifpd2.probe import OligoProbeBuilder
-from ifpd2.probe_set import OligoProbeSetBuilder
+from ..const import CONTEXT_SETTINGS
+from ..dataclasses import Folder, GenomicRegion, FreeEnergyInterval
+from ..dataclasses import NonNegativeInteger, PositiveInteger
+from ..dataclasses import PositiveFloat
+from ..dataclasses import NonNegativeIntInterval
+from ..dataclasses import QueryFocus, QueryWindow
+from ..walker import Walker
+from ..loggingg import add_log_file_handler
+from ..probe import OligoProbeBuilder
+from ..probe_set import OligoProbeSetBuilder
 import logging
 from os.path import isdir, isfile, join as path_join
 from os import mkdir
