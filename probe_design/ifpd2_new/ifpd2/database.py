@@ -6,8 +6,8 @@
 import argparse
 import copy
 from . import const
-from chromosome import ChromosomeData, ChromosomeDict
-from io import get_dtype_length
+from .chromosome import ChromosomeData, ChromosomeDict
+from .io import get_dtype_length
 import logging
 import numpy as np  # type: ignore
 import os

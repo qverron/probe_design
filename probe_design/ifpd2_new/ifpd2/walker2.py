@@ -3,8 +3,8 @@
 @contact: gigi.ga90@gmail.com
 """
 
-from database import DataBase, Record
-from region import GenomicRegion
+from .database import DataBase, Record
+from .region import GenomicRegion
 import itertools
 import logging
 import os

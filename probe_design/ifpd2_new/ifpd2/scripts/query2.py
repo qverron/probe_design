@@ -8,7 +8,7 @@ from ifpd2.const import CONTEXT_SETTINGS
 from ifpd2.dataclasses import Folder
 from ifpd2.dataclasses import PositiveInteger
 from ifpd2.dataclasses import QueryWindow
-from ifpd2.logging import add_log_file_handler
+from probe_design.ifpd2_new.ifpd2.loggingg import add_log_file_handler
 from ifpd2.database import DataBase
 from ifpd2.region import GenomicRegionBuilder
 from ifpd2.walker2 import ChromosomeWalker

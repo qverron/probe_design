@@ -16,11 +16,11 @@ from tqdm import tqdm  # type: ignore
 from typing import Dict, List, Optional, Union
 
 from . import asserts as ass
-from logging import add_log_file_handler
-from database import DataBase
-from oligo import OligoGroup
-from probe import OligoProbeBuilder
-from walker2 import ChromosomeWalker
+from .loggingg import add_log_file_handler
+from .database import DataBase
+from .oligo import OligoGroup
+from .probe import OligoProbeBuilder
+from .walker2 import ChromosomeWalker
 
 
 class GenomicWindowSet:

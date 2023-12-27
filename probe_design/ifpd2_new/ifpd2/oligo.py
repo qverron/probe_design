@@ -4,9 +4,10 @@
 """
 
 from . import asserts as ass
-from dataclasses import GCRange
-import logging
+from .dataclasses import GCRange
+from . import loggingg
 import numpy as np  # type: ignore
+import logging
 import pandas as pd  # type: ignore
 from tqdm import tqdm  # type: ignore
 from typing import List, Tuple

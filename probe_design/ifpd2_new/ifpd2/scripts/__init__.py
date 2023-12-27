@@ -3,9 +3,9 @@
 @contact: gigi.ga90@gmail.com
 """
 
-from ifpd2.scripts import autocomplete, ifpd2
-from ifpd2.scripts import db, extract_kmers
-from ifpd2.scripts import query, query2
+from . import autocomplete, ifpd2
+from . import db, extract_kmers
+from . import query, query2
 
 import logging
 from rich.logging import RichHandler  # type: ignore

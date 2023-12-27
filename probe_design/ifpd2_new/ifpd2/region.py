@@ -3,7 +3,7 @@
 @contact: gigi.ga90@gmail.com
 """
 
-from chromosome import ChromosomeData
+from .chromosome import ChromosomeData
 import logging
 from typing import List, Tuple
 

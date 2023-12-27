@@ -10,8 +10,8 @@ import shlex
 from shutil import copyfile
 import sys
 
-from ifpd2 import __path__, __version__
-from ifpd2.const import CONTEXT_SETTINGS
+from .. import __path__, __version__
+from ..const import CONTEXT_SETTINGS
 
 
 SHELL_TYPES = ("bash", "zsh", "fish")

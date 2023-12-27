@@ -12,7 +12,7 @@ from rich.progress import track  # type: ignore
 import shutil
 from typing import List
 
-from probe import OligoProbe
+from .probe import OligoProbe
 
 
 class OligoProbeSet:

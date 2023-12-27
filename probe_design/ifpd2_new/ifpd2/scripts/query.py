@@ -11,7 +11,7 @@ from ifpd2.dataclasses import PositiveFloat
 from ifpd2.dataclasses import NonNegativeIntInterval
 from ifpd2.dataclasses import QueryFocus, QueryWindow
 from ifpd2.walker import Walker
-from ifpd2.logging import add_log_file_handler
+from probe_design.ifpd2_new.ifpd2.loggingg import add_log_file_handler
 from ifpd2.probe import OligoProbeBuilder
 from ifpd2.probe_set import OligoProbeSetBuilder
 import logging
