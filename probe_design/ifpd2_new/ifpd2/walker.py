@@ -15,12 +15,12 @@ import shutil
 from tqdm import tqdm  # type: ignore
 from typing import Dict, List, Optional, Union
 
-from ifpd2 import asserts as ass
-from ifpd2.logging import add_log_file_handler
-from ifpd2.database import DataBase
-from ifpd2.oligo import OligoGroup
-from ifpd2.probe import OligoProbeBuilder
-from ifpd2.walker2 import ChromosomeWalker
+from . import asserts as ass
+from logging import add_log_file_handler
+from database import DataBase
+from oligo import OligoGroup
+from probe import OligoProbeBuilder
+from walker2 import ChromosomeWalker
 
 
 class GenomicWindowSet:

@@ -3,10 +3,10 @@
 @contact: gigi.ga90@gmail.com
 """
 
-from ifpd2 import asserts, dataclasses, fasta, io
-from ifpd2 import walker, walker2
-from ifpd2 import chromosome, database, region
-from ifpd2 import oligo, probe, probe_set
+from . import asserts, dataclasses, fasta, io
+from . import walker, walker2
+from . import chromosome, database, region
+from . import oligo, probe, probe_set
 
 from importlib.metadata import version, PackageNotFoundError
 from typing import List

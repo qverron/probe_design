@@ -4,8 +4,8 @@
 """
 
 import copy
-from ifpd2 import const
-from ifpd2.io import get_dtype_length
+from . import const
+from io import get_dtype_length
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
 from rich.progress import Progress, TaskID  # type: ignore

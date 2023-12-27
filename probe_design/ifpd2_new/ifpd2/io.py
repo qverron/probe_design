@@ -4,8 +4,8 @@
 """
 
 import copy
-from ifpd2 import asserts as ass
-from ifpd2 import const
+from . import asserts as ass
+from . import const
 import gzip
 import logging
 import os

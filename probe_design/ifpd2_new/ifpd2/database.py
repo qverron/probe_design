@@ -5,9 +5,9 @@
 
 import argparse
 import copy
-from ifpd2 import const
-from ifpd2.chromosome import ChromosomeData, ChromosomeDict
-from ifpd2.io import get_dtype_length
+from . import const
+from chromosome import ChromosomeData, ChromosomeDict
+from io import get_dtype_length
 import logging
 import numpy as np  # type: ignore
 import os

@@ -9,7 +9,7 @@ import os
 import pandas as pd  # type: ignore
 import shutil
 
-from ifpd2 import asserts as ass
+from . import asserts as ass
 
 
 class OligoProbe:

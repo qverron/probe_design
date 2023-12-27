@@ -3,8 +3,8 @@
 @contact: gigi.ga90@gmail.com
 """
 
-from ifpd2 import asserts as ass
-from ifpd2.dataclasses import GCRange
+from . import asserts as ass
+from dataclasses import GCRange
 import logging
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
