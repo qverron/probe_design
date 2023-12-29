@@ -2,8 +2,13 @@
 
 ## Installation
 
+NOTE: Dependening on your system use either `pip` or `pip3`
 
-- Install the dev branch of [nHUSH](https://github.com/elgw/nHUSH)
+- Install **probe_design** `pip install probe_design`
+
+- Install **ifpd2q** `pip install ifpd2q`
+
+- Install the **dev branch** of [nHUSH](https://github.com/elgw/nHUSH)
 
 - Install [HUSH](https://github.com/elgw/hush)
 
@@ -11,28 +16,7 @@
 
 - Install [OligoArrayAux](http://www.unafold.org/Dinamelt/software/oligoarrayaux.php)
 
-- Install [ifpd2](https://github.com/ggirelli/ifpd2)
-  
 - Install [oligo-melting](https://github.com/ggirelli/oligo-melting)
-
-### Notes on ifpd2 installation:
-
-If ifpd2 is already installed, remove using `pip3 uninstall ifpd2`.
-
-Get a new copy of the ifpd2 repository: `git clone https://github.com/ggirelli/ifpd2.git`
-
-Manually edit `ifpd2/const.py`: Row 16: `dtype_hush={"sequence":"|S","off_target_no":"<u8"}`
-
-Manually edit `ifpd2/io.py`: Row 66: `ass.ert_in_dtype(hush_df["off_target_no"].values.max(),"u8")`
-
-Install using (requires [poetry](https://python-poetry.org/docs/)):
-
-``` shell
-cd ifpd2
-poetry install
-poetry build
-pip3 install dist/*.whl
-```
 
 ## Preparation
 
@@ -349,4 +333,3 @@ If enough oligos cannot be found, design probes with fewer oligos, decreasing wi
 - Add a visual report of the probes at the end of the pipeline.
 - One-button process!
 - Find a way to automatize selecting primer sequences.
-
