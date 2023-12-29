@@ -504,20 +504,20 @@ files = [
 
 [[package]]
 name = "ifpd2q"
-version = "1.0.0"
+version = "1.0.1"
 description = "An iFISH probe design pipeline (II)"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "ifpd2q-1.0.0-py3-none-any.whl", hash = "sha256:67dffdc48f32b9b20da9f2a6719a91dba6f855a1cbcc7fa9f1d23d44d6ae08f5"},
-    {file = "ifpd2q-1.0.0.tar.gz", hash = "sha256:e10fd609becb5aa8307d8e3b19c8b8714b1d74aaa5a230f8a8d14ab2ed1a36fc"},
+    {file = "ifpd2q-1.0.1-py3-none-any.whl", hash = "sha256:d261c24795ad311d02c6df9f73d4517ec73e08522d3049fd464e285b4cc368c6"},
+    {file = "ifpd2q-1.0.1.tar.gz", hash = "sha256:9a3c2ea011988fa1aa121c76dece60632eaf785c1f1518d720278334560273ac"},
 ]
 
 [package.dependencies]
 biopython = ">=1.79,<2.0"
 click = ">=8.0.1,<9.0.0"
 numpy = ">=1.20.1,<2.0.0"
-pandas = ">=1.2.2,<2.0.0"
+pandas = ">=1.5.3,<3.0.0"
 rich = ">=9.10,<11.0"
 tqdm = ">=4.58.0,<5.0.0"
 
@@ -1468,5 +1468,5 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 
 [metadata]
 lock-version = "2.0"
-python-versions = ">=3.8,<4.0"
-content-hash = "cffe2d81e2e7802c04e6c8046c436bd17d22d16b6418d3f5072f7a3857e71739"
+python-versions = "^3.8"
+content-hash = "5771911a9baaf05c92daaca461db88ec6d6b880a89cc7ab363e86b16f8a8db31"
