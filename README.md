@@ -8,6 +8,8 @@ NOTE: Dependening on your system use either `pip` or `pip3`
 
 - Install **ifpd2q** `pip install ifpd2q`
 
+- Install **oligo-melting** `pip install oligo_melting`
+
 - Install the **dev branch** of [nHUSH](https://github.com/elgw/nHUSH)
 
 - Install [HUSH](https://github.com/elgw/hush)
@@ -16,7 +18,6 @@ NOTE: Dependening on your system use either `pip` or `pip3`
 
 - Install [OligoArrayAux](http://www.unafold.org/Dinamelt/software/oligoarrayaux.php)
 
-- Install [oligo-melting](https://github.com/ggirelli/oligo-melting)
 
 ## Preparation
 
