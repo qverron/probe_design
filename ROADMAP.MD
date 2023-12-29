@@ -52,8 +52,35 @@ This way;
     1. Functions inside `./src`  could be accessed from main directory
     2. Functions can be used as a part of `probe_design` library. Will be useful if we make it `pip` installable.
 
+## Resolving circular imports in ifpd2
+
+original had some circular import problem
+for modularity and cleaner way they were resolved
+
+## Fixing import problems in ifpd2_new
+
+`logging.py` -> `loggingg.py`
+fix compatibility
+
+## adding PATH to library
+
+To access shell or data etc., folders inside pip installed probe_design added PATH constants into `__init__.py` . They are now accessible as `prb.PATHSHELL` considering `import probe_design as prb`.
+
+## Making libraries pip installable
+
+`probe_design` is now pip installable
+made `ifpd2q` into standalone repo
+ifpd2_new -> `ifpd2q`
+removed it from `probe_design`
+`ifpd2q` is now pip installable
+
+## Updating readme
+
+installation path changed drastically. Update it into much simpler version.
+
 ## TODO
 1. Move args into global scope
 2. (maybe) make sys.argv into argparse
 3. package other installlation requirements 
 4. What else??
+
