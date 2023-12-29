@@ -3,3 +3,4 @@ token
 *.whl
 dist/
 *.pyc
+/__pycache__/

@@ -60,7 +60,7 @@ for modularity and cleaner way they were resolved
 ## Fixing import problems in ifpd2_new
 
 `logging.py` -> `loggingg.py`
-fix compatibility
+fix conflict
 
 ## adding PATH to library
 
