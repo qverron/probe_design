@@ -38,3 +38,9 @@ PATHSRC = os.path.join(PATHMAIN, "src")
 PATHSHELL = os.path.join(PATHMAIN, "shell")
 PATHDATA = os.path.join(PATHMAIN, "data")
 PATHNOTEBOOK = os.path.join(PATHMAIN, "notebooks")
+
+__constants__ = ["PATHMAIN",
+                "PATHSRC",
+                "PATHSHELL",
+                "PATHDATA",
+                "PATHNOTEBOOK"]
