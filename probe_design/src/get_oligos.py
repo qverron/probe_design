@@ -95,7 +95,7 @@ def get_oligos(nt_type:str='DNA',
     return   
 
 if __name__ == '__main__':
-        #syntax: ./get_oligos.py DNA/RNA gcfilter extfolder
+    #syntax: ./get_oligos.py DNA/RNA gcfilter extfolder
 
     if(len(sys.argv) == 1):
         # no probe type was specified
