@@ -219,17 +219,29 @@ def score_q_combined_bl(d:dict,max_consec:int,maxid:int,
     return score    
 
 
-
-def escafish_score():
-    
-    return
-
+# Dictionary of scoring functions
 score_functions = { 'gg' : score_gg,
                     'gg_nhush': score_gg_nhush,
                     'q': score_q_nhush,
                     'q_cc': score_q_consec,
                     'q_combined': score_q_combined,
                     'q_bl': score_q_combined_bl}
+
+def escafish_score(function:str,d:dict,*args,**kwargs)->float:
+    """
+    # Dictionary of scoring functions
+    score_functions = { 'gg' : score_gg,
+                    'gg_nhush': score_gg_nhush,
+                    'q': score_q_nhush,
+                    'q_cc': score_q_consec,
+                    'q_combined': score_q_combined,
+                    'q_bl': score_q_combined_bl}
+    """
+
+    score_function = score_functions[function]
+    score = score_function(d,*args,**kwargs)
+    
+    return score
 
 if __name__ == "__main__":
     header = sys.stdin.readline().strip()
@@ -262,6 +274,7 @@ if __name__ == "__main__":
         line = line.strip()
         d = dict(zip(header.split('\t'), line.split('\t')))
 
+        
         if (sys.argv[1] == 'q_cc'):
             score = score_function(d,maxmm,maxid)
         elif (sys.argv[1] == 'q_combined'):
