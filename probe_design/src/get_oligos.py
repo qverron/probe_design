@@ -14,28 +14,12 @@ from tqdm import tqdm
 from tabulate import tabulate
 
 # Retrieve complete sequences in ROI
-def get_oligos(gcfilter:int = 1, extfolder:os.PathLike = './data/')->None:
-    #syntax: ./get_oligos.py DNA/RNA gcfilter extfolder
+def get_oligos(nt_type:str='DNA',
+               gcfilter:bool = 1, 
+               extfolder:os.PathLike = './data/',
+               )->None:
 
-    if(len(sys.argv) == 1):
-        # no probe type was specified
-        type = 'DNA'
-    elif(len(sys.argv) == 2):
-        type = sys.argv[1]
-    elif(len(sys.argv) == 3):
-        type = sys.argv[1]
-        gcfilter = sys.argv[2]
-    elif(len(sys.argv) == 4):
-        type = sys.argv[1]
-        gcfilter = sys.argv[2]
-        extfolder = sys.argv[3]
-
-    else:
-         print(f'Incorrect number of arguments. Exiting...')
-         exit(-1)
-
-
-    if type=='DNA':
+    if nt_type=='DNA':
         roifile = os.path.join(extfolder,'rois/all_regions.tsv')
         ref = os.path.join(extfolder,'ref/')
         outseq = os.path.join(extfolder,'regions/')
@@ -104,8 +88,29 @@ def get_oligos(gcfilter:int = 1, extfolder:os.PathLike = './data/')->None:
                 print(f'The FASTA sequence for ROI {rd.window_id[k]} is missing.')
                 continue
             extract(fullseq,outcan,rd.length[k],gcfilter)
+    else:
+        print(f'Invalid nt_type: {nt_type}. Exiting...')
+        exit(-1)
 
     return   
 
 if __name__ == '__main__':
-    get_oligos()
+        #syntax: ./get_oligos.py DNA/RNA gcfilter extfolder
+
+    if(len(sys.argv) == 1):
+        # no probe type was specified
+        get_oligos(nt_type='DNA') # default is nt_type = 'DNA'
+    elif(len(sys.argv) == 2):
+        get_oligos(nt_type = sys.argv[1]) # default is nt_type = 'DNA'
+    elif(len(sys.argv) == 3):
+        get_oligos(nt_type = sys.argv[1],
+                   gcfilter= sys.argv[2]) # gcfilter = 1 (True) by default
+    elif(len(sys.argv) == 4):
+        get_oligos(nt_type = sys.argv[1],
+                   gcfilter = sys.argv[2],
+                   extfolder = sys.argv[3]) # extraction folder = './data/' by default
+
+    else:
+         print(f'Incorrect number of arguments. Exiting...')
+         exit(-1)
+    
