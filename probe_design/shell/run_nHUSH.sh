@@ -11,7 +11,7 @@ Help()
    echo "'./data/ref/genome.fa'."
    echo 
    echo "Syntax: run_nHUSH -f folder -d FISH type -s direction -L length (-l sublength) -m mism -t threads -i hash (-h|-c|-g|-p)"
-   ech
+   echo
    echo "Arguments:"
    echo "f     Experiment folder" 
    echo "d     FISH type (DNA|RNA)"

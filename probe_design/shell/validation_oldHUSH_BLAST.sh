@@ -11,7 +11,7 @@ Help()
    echo "'./data/ref/genome.fa'."
    echo 
    echo "Syntax: validation_oldHUSH_BLAST -f folder -d FISH type -s direction -L length -m mism -t threads (-h|-p)"
-   ech
+   echo
    echo "Arguments:"
    echo "f     Experiment folder" 
    echo "d     FISH type (DNA|RNA)"
