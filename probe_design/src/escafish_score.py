@@ -17,14 +17,12 @@ import sys
 import re
 from tqdm import tqdm 
 
-def score_gg(d):
+def score_gg(d:dict, max_dg_fraction:float = 0.5,max_off_targets:int = 99):
     # Extract variables from the dictionary
     ss_dG = float(d['ss_dG'])
     off_target_no = int(d['off_target_no'])
     Tm_dG = float(d['Tm_dG'])
-    # Parameters
-    max_dg_fraction = 0.5
-    max_off_targets = 99
+
     # Calculate the score
     off_target_score = 1-off_target_no/max_off_targets
     if off_target_score < 0:
@@ -216,12 +214,6 @@ def score_q_combined_bl(d,max_consec,maxid,targetTemp,hamdist):
     return score    
 
 
-score_functions = {'gg' : score_gg,
-                   'gg_nhush': score_gg_nhush,
-                   'q': score_q_nhush,
-                   'q_cc': score_q_consec,
-                   'q_combined': score_q_combined,
-                   'q_bl': score_q_combined_bl}
 
 def escafish_score():
     header = sys.stdin.readline().strip()
@@ -270,4 +262,11 @@ def escafish_score():
     return
 
 if __name__ == "__main__":
+
+    score_functions = { 'gg' : score_gg,
+                        'gg_nhush': score_gg_nhush,
+                        'q': score_q_nhush,
+                        'q_cc': score_q_consec,
+                        'q_combined': score_q_combined,
+                        'q_bl': score_q_combined_bl}
     escafish_score()
