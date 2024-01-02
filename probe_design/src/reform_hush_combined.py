@@ -33,11 +33,12 @@ def tqdm_joblib(tqdm_object):
 
 
 
-def consecblock(oligo,L,l,hdist_grouped):
+def consecblock(oligo,L,l,hdist_grouped,
+                maxccmatch:int=0, # largest possible match
+                currentccmatch:int=0, # current match block
+                prev:int=1, # pointer to previous sublength
+                )->int:
     # find consecutive 0 in each L-mer
-    maxccmatch = 0      # largest possible match
-    currentccmatch = 0  # current match block
-    prev = 1            # pointer to previous sublength
 
     for sub in range(L-l+1):         # check the homology of all consecutive l-mers
         current = hdist_grouped[oligo,sub]
