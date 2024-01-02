@@ -18,6 +18,7 @@ joblib = "^1"
 click = "^8.1.7"
 poetry = "^1.5"
 ifpd2q = "^1.0.0"
+oligo-melting = "^2.0.2.post1"
 
 
 [tool.poetry.group.dev.dependencies]

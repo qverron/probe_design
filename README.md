@@ -2,15 +2,15 @@
 
 ## Installation
 
-NOTE: Dependening on your system use either `pip` or `pip3`
+NOTE: Depending on your system use either `pip` or `pip3`
 
-- Install **probe_design** `pip install probe_design`
+- Install **probe_design** `pip install probe_design` this will do the next two steps..
 
-- Install **ifpd2q** `pip install ifpd2q`
+  - Install **ifpd2q** `pip install ifpd2q`
 
-- Install **oligo-melting** `pip install oligo_melting`
+  - Install **oligo-melting** `pip install oligo_melting`
 
-- Install the **dev branch** of [nHUSH](https://github.com/elgw/nHUSH)
+- Install the **dev branch** of [nHUSH](https://github.com/elgw/nHUSH/tree/dev)
 
 - Install [HUSH](https://github.com/elgw/hush)
 
