@@ -17,13 +17,14 @@ import contextlib
 from tqdm import tqdm
 
 
-def generate_exclude(currentfolder:os.PathLike = './data/')->None:
+def generate_exclude(currentfolder:os.PathLike = './data')->None:
 
+    # paths
     roilist = currentfolder+'/rois/all_regions.tsv'
+    out = currentfolder+'/exclude/'
+
     rd = pd.read_csv(roilist,sep="\t",header=0)
     ROIcount = len(rd)
-
-    out = currentfolder+'/exclude/'
 
     try:
         os.mkdir(out)
