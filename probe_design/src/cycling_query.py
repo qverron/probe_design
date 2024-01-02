@@ -59,14 +59,15 @@ def tqdm_joblib(tqdm_object):
 @click.option('-excl', is_flag=True)
 @click.option('-noquerylog', is_flag=True)
 
-def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylog, 
-           gappercent = None, stepdown = None, probe=None,start=None, end=None, step=None,
+def output(strand:str, length:int, mismatch:int, cutoff:int, threads:int, gap:int, greedy:bool,excl:bool,noquerylog:bool, 
+           gappercent:int|None = None, stepdown:int|None = None, probe:int|None=None,
+           start:int|None=None, end:int|None =None, step:int|None=None,
            currentfolder = './data/', # can be adapted so the code can be run in other folders
-           cutoff_cost = 1e6,
-           cutoff_oligo = 10, # max allowed cost for a single oligo
-           finished = False,
-           count = 1,
-           completelyfailed = [],
+           cutoff_cost:float = 1e6,
+           cutoff_oligo:float = 10, # max allowed cost for a single oligo
+           finished:bool = False,
+           count:int = 1,
+           completelyfailed:list = [],
            )->None:
     # initialization
     
