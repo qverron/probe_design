@@ -9,7 +9,6 @@ from tabulate import tabulate
 import statistics as stat
 
 
-
 def summarize_probes_cumul(currentfolder:os.PathLike = './data/')->None:
 
     # identify probe files

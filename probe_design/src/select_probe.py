@@ -13,14 +13,14 @@ import shutil
 
 
 
-def select_probe(currentfolder:os.PathLike = './data/')->None:
-    # parameters
-    cutoff_cost = 1e5       # max total cost of a probe. Exclude probe if even one oligo has a prohibitive cost
-    cutoff_d_pc = 10        # max distance between 2 consecutive oligos, as a % of the total probe length
-    if (len(sys.argv)==2):
-        cutoff_d = sys.argv[1]
-    else:
-        cutoff_d = 500          # max distance between 2 consecutive oligos, in nucleotides
+def select_probe(currentfolder:os.PathLike = './data/',
+                cutoff_cost:float = 1e5,      # max total cost of a probe. Exclude probe if even one oligo has a prohibitive cost
+                cutoff_d_pc:int = 10,        # max distance between 2 consecutive oligos, as a % of the total probe length
+                cutoff_d:int = 500           # max distance between 2 consecutive oligos, in nucleotides
+                )->None:
+    
+    # independent variables moved to function arguments
+
 
     # retrieve probe queries
     selectedfolder = currentfolder + 'selected_probes/'
@@ -101,4 +101,9 @@ def select_probe(currentfolder:os.PathLike = './data/')->None:
     return
 
 if __name__ == "__main__":
-    select_probe()
+    # select_probe.py (cuttoff_d)
+    if (len(sys.argv)==2):
+        cutoff_d = sys.argv[1]
+    else:
+        cutoff_d = 500 # max distance between 2 consecutive oligos, in nucleotides
+    select_probe(cutoff_d = cutoff_d)

@@ -9,7 +9,6 @@ from tabulate import tabulate
 import statistics as stat
 
 
-
 def summarize_probes(currentfolder:os.PathLike = './data/')->None:
     # identify probe files
     pattern = currentfolder+"probe_candidates/**/probe_*.tsv"   #probelet
