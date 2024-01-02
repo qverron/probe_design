@@ -14,6 +14,8 @@ import joblib
 import time
 from tqdm import tqdm
 
+types = {'DNA' : 'Reference', 'RNA' : 'RevCompl', '-RNA' : 'Reference'}
+
 @contextlib.contextmanager
 def tqdm_joblib(tqdm_object):
     """Context manager to patch joblib to report into tqdm progress bar given as argument"""
@@ -32,11 +34,12 @@ def tqdm_joblib(tqdm_object):
 
 
 
-def consecblock(oligo,L,l,hdist_grouped):
+def consecblock(oligo,L,l,hdist_grouped,
+                maxccmatch = 0, # largest possible match,
+                currentccmatch = 0,  # current match block,
+                prev = 1, # pointer to previous sublength
+                )->int:
     # find consecutive 0 in each L-mer
-    maxccmatch = 0      # largest possible match
-    currentccmatch = 0  # current match block
-    prev = 1            # pointer to previous sublength
 
     for sub in range(L-l+1):         # check the homology of all consecutive l-mers
         current = hdist_grouped[oligo,sub]
@@ -59,32 +62,15 @@ def consecblock(oligo,L,l,hdist_grouped):
 
 
 
-def reform_hush_consec(currentfolder:os.PathLike = './data')->None:
-    #syntax: ./reform_hush.py DNA/RNA/-RNA 80 (22)
-
-    print(f'Number of arguments: '+str(len(sys.argv)))
-    if(len(sys.argv) == 3):
-        # no sublength was used
-        sub = FALSE
-    elif(len(sys.argv) == 4):
-        sub = TRUE
-    else:
-         print(f'Incorrect number of arguments. Exiting...')
-         exit(-1)
-
-    L = int(sys.argv[2])     #full oligo length
-    print(f'Length: '+str(L))
-    if (sub==TRUE):
-        l = int(sys.argv[3])
-        print(f'Sublength: '+str(l))
-    else:
-        print(f'No sublength used')
-    
-    types = {'DNA' : 'Reference', 'RNA' : 'RevCompl', '-RNA' : 'Reference'}
-    suffix = types[sys.argv[1]]
+def reform_hush_consec(nt_type:str,
+                       sub:bool,
+                       L:int,
+                       l:int,
+                       currentfolder:os.PathLike = './data',
+                       )->None:
 
 
-
+    suffix = types[nt_type]
 
     roilist = currentfolder+'/rois/all_regions.tsv'
     rd = pd.read_csv(roilist,sep="\t",header=0)
@@ -170,5 +156,32 @@ def reform_hush_consec(currentfolder:os.PathLike = './data')->None:
     #         f.close()         
     return
 
-if __name__ == "__main__": 
-    reform_hush_consec()
+if __name__ == "__main__":
+    # for Command Line use
+    #syntax: ./reform_hush.py DNA/RNA/-RNA 80 (22)
+
+    nt_type = sys.argv[1] # DNA/RNA/-RNA
+    print(f'Number of arguments: '+str(len(sys.argv)))
+    if(len(sys.argv) == 3):
+        # no sublength was used
+        sub = FALSE
+    elif(len(sys.argv) == 4):
+        sub = TRUE
+    else:
+         print(f'Incorrect number of arguments. Exiting...')
+         exit(-1)
+
+    L = int(sys.argv[2])     #full oligo length
+    print(f'Length: '+str(L))
+    if (sub==TRUE):
+        l = int(sys.argv[3])
+        print(f'Sublength: '+str(l))
+        reform_hush_consec(nt_type=nt_type,sub=sub,L=L,l=l)
+    else:
+        print(f'No sublength used')
+        reform_hush_consec(nt_type=nt_type,sub=sub,L=L)
+    
+    
+
+
+    

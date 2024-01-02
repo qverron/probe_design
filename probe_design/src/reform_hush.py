@@ -8,31 +8,11 @@ from tqdm import tqdm
 import pandas as pd
 import sys
 
+types = {'DNA' : 'Reference', 'RNA' : 'RevCompl', '-RNA' : 'Reference'}
 
-def reform_hush(currentfolder:os.PathLike = './data')->None:
-    #syntax: ./reform_hush.py DNA/RNA/-RNA 80 (22)
+def reform_hush(nt_type:str,sub:bool,L:int,l:int,currentfolder:os.PathLike = './data')->None:
 
-    print(f'Number of arguments: '+str(len(sys.argv)))
-    if(len(sys.argv) == 3):
-        # no sublength was used
-        sub = FALSE
-    elif(len(sys.argv) == 4):
-        sub = TRUE
-    else:
-         print(f'Incorrect number of arguments. Exiting...')
-         exit(-1)
-
-    L = int(sys.argv[2])     #full oligo length
-    print(f'Length: '+str(L))
-    if (sub==TRUE):
-        l = int(sys.argv[3])
-        print(f'Sublength: '+str(l))
-    else:
-        print(f'No sublength used')
-    
-    types = {'DNA' : 'Reference', 'RNA' : 'RevCompl', '-RNA' : 'Reference'}
-    suffix = types[sys.argv[1]]
-
+    suffix = types[nt_type] # see types dict above
     roilist = currentfolder+'/rois/all_regions.tsv'
     rd = pd.read_csv(roilist,sep="\t",header=0)
     ROIcount = len(rd)
@@ -107,4 +87,26 @@ def reform_hush(currentfolder:os.PathLike = './data')->None:
     return
 
 if __name__ == "__main__":
-    reform_hush()        
+    #syntax: ./reform_hush.py DNA/RNA/-RNA 80 (22)
+
+    nt_type = sys.argv[1] # DNA/RNA/-RNA
+    print(f'Number of arguments: '+str(len(sys.argv)))
+    if(len(sys.argv) == 3):
+        # no sublength was used
+        sub = FALSE
+    elif(len(sys.argv) == 4):
+        sub = TRUE
+    else:
+         print(f'Incorrect number of arguments. Exiting...')
+         exit(-1)
+
+    L = int(sys.argv[2])     #full oligo length
+    print(f'Length: '+str(L))
+    if (sub==TRUE):
+        l = int(sys.argv[3]) # sublength
+        print(f'Sublength: '+str(l))
+        reform_hush(nt_type=nt_type,sub=sub,L=L,l=l)
+    else:
+        print(f'No sublength used')
+        reform_hush(nt_type=nt_type,sub=sub,L=L)
+    

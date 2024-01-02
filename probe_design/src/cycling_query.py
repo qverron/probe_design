@@ -79,7 +79,7 @@ def output(strand:str, length:int, mismatch:int, cutoff:int, threads:int, gap:in
 
     now = datetime.now()
     nowstring = now.strftime("%Y_%m_%d_%H:%M:%S")
-    logpath = os.path.join(logdir,'cycling_query_',nowstring,'.log')
+    logpath = os.path.join(logdir,f'cycling_query_{nowstring}.log')
 
     logging.basicConfig(filename=logpath, level=logging.DEBUG)
 
