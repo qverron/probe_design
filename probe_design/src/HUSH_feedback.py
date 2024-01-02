@@ -17,7 +17,14 @@ from itertools import compress
 # read corresponding probe candidate tsv file
 # attribute HUSH score to tsv file rows
 
-def HUSH_feedback(currentfolder:os.PathLike = './data/')->None:
+def HUSH_feedback(currentfolder:os.PathLike = './data/',
+                  cuttoff:int=99,
+                  wipe:bool=True)->None:
+    
+    ## TO FIX:
+    # cuttoff is not implemented
+    # wipe is not implemented
+    # selectedfolder is not implemented
     
     selectedfolder = currentfolder + 'selected_probes/'
     # identify probe files
@@ -26,13 +33,6 @@ def HUSH_feedback(currentfolder:os.PathLike = './data/')->None:
 
     dbpattern = currentfolder+"db_tsv/db.*.tsv"   # ROI oligo databases
     dbnames = glob.glob(dbpattern,recursive=True)
-    if(len(sys.argv)>2):
-        cutoff = sys.argv[1]
-        wipe = sys.argv[2]
-    if(len(sys.argv)>1):
-        cutoff = sys.argv[1]
-    else:    
-        cutoff = 99         # max HUSH score
 
     # for each result file from HUSH
     # read all rows and fetch HUSH score
@@ -91,7 +91,17 @@ def HUSH_feedback(currentfolder:os.PathLike = './data/')->None:
     return
 
 if __name__ == "__main__":
-    HUSH_feedback()
+    # for Command Line use
+    if(len(sys.argv)>2):
+        cutoff = sys.argv[1]
+        wipe = sys.argv[2]
+        HUSH_feedback(cuttoff=cutoff,wipe=wipe)
+    if(len(sys.argv)>1):
+        cutoff = sys.argv[1]
+        HUSH_feedback(cuttoff=cutoff)
+    else:    
+        cutoff = 99         # max HUSH score
+        HUSH_feedback(cuttoff=cutoff) # cuttoff is already 99 by default in the function
         
         
         
