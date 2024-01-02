@@ -36,9 +36,9 @@ def get_oligos(gcfilter:int = 1, extfolder:os.PathLike = './data/')->None:
 
 
     if type=='DNA':
-        roifile = extfolder+'rois/all_regions.tsv'
-        ref = extfolder+'ref/'
-        outseq = extfolder+'regions/'
+        roifile = os.path.join(extfolder,'rois/all_regions.tsv')
+        ref = os.path.join(extfolder,'ref/')
+        outseq = os.path.join(extfolder,'regions/')
 
         try:
             os.mkdir(outseq)
@@ -51,7 +51,7 @@ def get_oligos(gcfilter:int = 1, extfolder:os.PathLike = './data/')->None:
         for k in tqdm(range(len(rd)),desc='Retrieving sequences for all ROIs'):
             if not pd.isnull(rd.ref[k]):
                 chrnr = rd.chrom[k][3:]
-                reffile = ref+str(rd.at[k,'ref'])+'.chromosome.'+chrnr+'.fa'
+                reffile = os.path.join(ref,str(rd.at[k,'ref']),'.chromosome.',chrnr,'.fa')
 
                 with open(reffile) as handle:
                     for values in SimpleFastaParser(handle):
@@ -59,13 +59,13 @@ def get_oligos(gcfilter:int = 1, extfolder:os.PathLike = './data/')->None:
                         seq = fullseq[rd.Window_start[k]-1:rd.Window_end[k]]         # shift index by 1 to match ref genome
 
                         # export sequences
-                        out = open(outseq+'roi_'+str(rd.window_id[k])+'.fa','w')
+                        out = open(os.path.join(outseq,'roi_',str(rd.window_id[k]),'.fa'),'w')
                         out.write('>ROI_'+str(rd.window_id[k])+' pos='+rd.chrom[k]+':'+str(rd.Window_start[k])+'-'+str(rd.Window_end[k])+'\n'+seq)
                         out.close()       
                         
                         
         # Divide into k-mers
-        outcan = extfolder+'candidates/'
+        outcan = os.path.join(extfolder,'candidates/')
 
         try:
             os.mkdir(outcan)
@@ -73,16 +73,16 @@ def get_oligos(gcfilter:int = 1, extfolder:os.PathLike = './data/')->None:
             print("Saving to existing 'candidates' directory.")
             
         for k in range(len(rd)):
-            fullseq = outseq+'roi_'+str(rd.window_id[k])+'.fa'
+            fullseq = os.path.join(outseq,'roi_',str(rd.window_id[k]),'.fa')
             if not os.path.isfile(fullseq):
                 print('The FASTA sequence for ROI '+str(rd.window_id[k])+' is missing.')
                 continue
             extract(fullseq,outcan,rd.length[k],gcfilter)
 
     elif type == 'RNA':
-        roifile = extfolder+'rois/all_regions.tsv'
-        ref = extfolder+'ref/'
-        outseq = extfolder+'regions/'
+        roifile = os.path.join(extfolder,'rois/all_regions.tsv')
+        ref = os.path.join(extfolder,'ref/')
+        outseq = os.path.join(extfolder,'regions/')
 
         # ASSUME THAT THE TRANSCRIPT SEQUENCES HAVE ALREADY BEEN IDENTIFIED
         # implement direct transcript retrieval? 
@@ -91,7 +91,7 @@ def get_oligos(gcfilter:int = 1, extfolder:os.PathLike = './data/')->None:
         rd = pd.read_csv(f,sep="\t",header=0)              
                         
         # Divide into k-mers
-        outcan = extfolder+'candidates/'
+        outcan = os.path.join(extfolder,'candidates/')
 
         try:
             os.mkdir(outcan)
@@ -99,9 +99,9 @@ def get_oligos(gcfilter:int = 1, extfolder:os.PathLike = './data/')->None:
             print("Saving to existing 'candidates' directory.")
             
         for k in range(len(rd)):
-            fullseq = outseq+'roi_'+str(rd.window_id[k])+'.fa'
+            fullseq = os.path.join(outseq,'roi_',str(rd.window_id[k]),'.fa')
             if not os.path.isfile(fullseq):
-                print('The FASTA sequence for ROI '+str(rd.window_id[k])+' is missing.')
+                print(f'The FASTA sequence for ROI {rd.window_id[k]} is missing.')
                 continue
             extract(fullseq,outcan,rd.length[k],gcfilter)
 
