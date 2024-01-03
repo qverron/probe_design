@@ -29,3 +29,17 @@ __all__ = ["cycling_query",
             "summarize_probes_cumul",
             "summarize_probes_final",
             "summarize_probes"]
+
+import os
+# PATHMAIN is different from main init file
+PATHMAIN = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PATHSRC = os.path.join(PATHMAIN, "src")
+PATHSHELL = os.path.join(PATHMAIN, "shell")
+PATHDATA = os.path.join(PATHMAIN, "data")
+PATHNOTEBOOK = os.path.join(PATHMAIN, "notebooks")
+
+__constants__ = ["PATHMAIN",
+                "PATHSRC",
+                "PATHSHELL",
+                "PATHDATA",
+                "PATHNOTEBOOK"]

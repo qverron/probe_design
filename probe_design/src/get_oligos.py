@@ -35,7 +35,7 @@ def get_oligos(nt_type:str='DNA',
         for k in tqdm(range(len(rd)),desc='Retrieving sequences for all ROIs'):
             if not pd.isnull(rd.ref[k]):
                 chrnr = rd.chrom[k][3:]
-                reffile = os.path.join(ref,f'{rd.at[k,'ref']}.chromosome.{chrnr}.fa')
+                reffile = os.path.join(ref,f"{rd.at[k,'ref']}.chromosome.{chrnr}.fa")
 
                 with open(reffile) as handle:
                     for values in SimpleFastaParser(handle):
@@ -83,7 +83,7 @@ def get_oligos(nt_type:str='DNA',
             print("Saving to existing 'candidates' directory.")
             
         for k in range(len(rd)):
-            fullseq = os.path.join(outseq,f'roi_{rd.window_id[k])}.fa')
+            fullseq = os.path.join(outseq,f"roi_{rd.window_id[k]}.fa")
             if not os.path.isfile(fullseq):
                 print(f'The FASTA sequence for ROI {rd.window_id[k]} is missing.')
                 continue

@@ -1,0 +1,3 @@
+from probe_design import PATHMAIN, PATHSRC, PATHSHELL, PATHDATA, PATHNOTEBOOK
+
+print(PATHSHELL)
