@@ -43,3 +43,5 @@ __constants__ = ["PATHMAIN",
                 "PATHSHELL",
                 "PATHDATA",
                 "PATHNOTEBOOK"]
+
+PATHS = [PATHMAIN, PATHSRC, PATHSHELL, PATHDATA, PATHNOTEBOOK]

@@ -79,8 +79,8 @@ removed it from `probe_design`
 installation path changed drastically. Update it into much simpler version.
 
 ## TODO
-1. Move args into global scope
-2. (maybe) make sys.argv into argparse
-3. package other installlation requirements 
+1. ~~Move args into main scope~~
+2. (maybe) make sys.argv into argparse -- Decided not to pursue
+3. package other installlation requirements
 4. What else??
 
