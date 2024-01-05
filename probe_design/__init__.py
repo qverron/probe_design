@@ -13,7 +13,9 @@ from .src import (
     split_fasta,
     summarize_probes_cumul,
     summarize_probes_final,
-    summarize_probes)
+    summarize_probes,
+    download_chr_list,
+    download_chr)
 
 __all__ = ["cycling_query",
             "escafish_score",
@@ -28,7 +30,9 @@ __all__ = ["cycling_query",
             "split_fasta",
             "summarize_probes_cumul",
             "summarize_probes_final",
-            "summarize_probes"]
+            "summarize_probes",
+            "download_chr_list",
+            "download_chr"]
 
 # CONSTANTS
 import os

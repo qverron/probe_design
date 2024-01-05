@@ -4,3 +4,4 @@ token
 dist/
 *.pyc
 /__pycache__/
+*.fa
