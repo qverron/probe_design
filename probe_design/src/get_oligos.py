@@ -43,7 +43,7 @@ def get_oligos(nt_type:str='DNA',
                         seq = fullseq[rd.Window_start[k]-1:rd.Window_end[k]]         # shift index by 1 to match ref genome
 
                         # export sequences
-                        out = open(os.path.join(outseq,'roi_',str(rd.window_id[k]),'.fa'),'w')
+                        out = open(os.path.join(outseq,'roi_'+str(rd.window_id[k])+'.fa'),'w')
                         out.write('>ROI_'+str(rd.window_id[k])+' pos='+rd.chrom[k]+':'+str(rd.Window_start[k])+'-'+str(rd.Window_end[k])+'\n'+seq)
                         out.close()       
                         
