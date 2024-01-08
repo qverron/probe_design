@@ -10,7 +10,9 @@ import sys
 
 types = {'DNA' : 'Reference', 'RNA' : 'RevCompl', '-RNA' : 'Reference'}
 
-def reform_hush(nt_type:str,sub:bool,L:int,l:int,currentfolder:os.PathLike = './data')->None:
+def reform_hush(nt_type:str='DNA',
+                sub:bool=False,L:int=80,l:int=22,
+                currentfolder:os.PathLike = './data')->None:
 
     suffix = types[nt_type] # see types dict above
     roilist = currentfolder+'/rois/all_regions.tsv'

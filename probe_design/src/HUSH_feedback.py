@@ -95,7 +95,7 @@ if __name__ == "__main__":
     if(len(sys.argv)>2):
         cutoff = sys.argv[1]
         wipe = sys.argv[2]
-        HUSH_feedback(cuttoff=cutoff,wipe=wipe)
+        HUSH_feedback(cuttoff=cutoff,wipe=wipe) # wipe default is True
     if(len(sys.argv)>1):
         cutoff = sys.argv[1]
         HUSH_feedback(cuttoff=cutoff)

@@ -62,10 +62,10 @@ def consecblock(oligo,L,l,hdist_grouped,
 
 
 
-def reform_hush_consec(nt_type:str,
-                       sub:bool,
-                       L:int,
-                       l:int,
+def reform_hush_consec(nt_type:str='DNA',
+                       sub:bool=False,
+                       L:int=80,
+                       l:int=22,
                        currentfolder:os.PathLike = './data',
                        )->None:
 

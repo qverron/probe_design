@@ -61,10 +61,11 @@ def consecblock(oligo,L,l,hdist_grouped,
     return maxccmatch
 
 
-def reform_hush_combined(nt_type:str,
-                         L:int,
-                         l:int,
-                         currentfolder:os.PathLike = './data',)->None:
+def reform_hush_combined(nt_type:str='DNA',
+                         L:int=40,
+                         l:int=22,
+                         currentfolder:os.PathLike = './data',
+                         until:int=3)->None:
     
     suffix = types[nt_type]
     roilist = currentfolder+'/rois/all_regions.tsv'
