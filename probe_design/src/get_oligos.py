@@ -17,6 +17,7 @@ from tabulate import tabulate
 def get_oligos(nt_type:str='DNA',
                gcfilter:bool = 1, 
                extfolder:os.PathLike = './data/',
+               reffile:os.PathLike|None= None,
                )->None:
 
     if nt_type=='DNA':
@@ -34,8 +35,10 @@ def get_oligos(nt_type:str='DNA',
 
         for k in tqdm(range(len(rd)),desc='Retrieving sequences for all ROIs'):
             if not pd.isnull(rd.ref[k]):
-                chrnr = rd.chrom[k][3:]
-                reffile = os.path.join(ref,f"{rd.at[k,'ref']}.chromosome.{chrnr}.fa")
+                chrnr = rd.chrom[k][3:] # chromosome number
+
+                if reffile is None: # if no reference file is specified, use the one in the rois file
+                    reffile = os.path.join(ref,f"{rd.at[k,'ref']}.chromosome.{chrnr}.fa")
 
                 with open(reffile) as handle:
                     for values in SimpleFastaParser(handle):
