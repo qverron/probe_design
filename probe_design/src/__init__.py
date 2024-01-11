@@ -13,7 +13,7 @@ from .split_fasta import split_fasta
 from .summarize_probes_cumul import summarize_probes_cumul
 from .summarize_probes_final import summarize_probes_final
 from .summarize_probes import summarize_probes
-from .download_chromosomes import download_chr_list, download_chr
+from .download_chromosomes import download_chr_list, download_chr, download_ref_genome
 
 
 __all__ = ["cycling_query",
@@ -31,7 +31,8 @@ __all__ = ["cycling_query",
             "summarize_probes_final",
             "summarize_probes",
             "download_chr_list",
-            "download_chr"]
+            "download_chr",
+            "download_ref_genome"]
 
 import os
 # PATHMAIN is different from main init file

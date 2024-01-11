@@ -15,7 +15,8 @@ from .src import (
     summarize_probes_final,
     summarize_probes,
     download_chr_list,
-    download_chr)
+    download_chr,
+    download_ref_genome)
 
 __all__ = ["cycling_query",
             "escafish_score",
@@ -32,7 +33,8 @@ __all__ = ["cycling_query",
             "summarize_probes_final",
             "summarize_probes",
             "download_chr_list",
-            "download_chr"]
+            "download_chr",
+            "download_ref_genome"]
 
 # CONSTANTS
 import os
