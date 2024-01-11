@@ -67,6 +67,7 @@ def download_chr(chr_folder:os.PathLike="data/ref",
                                         ).replace('{build}',f'{build}') # placing release and chr numbers
     else:
         print(f"downloading from {url_chr}...")
+        print(f"if reference genome, this may take some time: 5-15 mins depending on your internet speed")
         pass # url_chr = url_chr
 
     if file_name is None:
@@ -93,6 +94,11 @@ def download_chr(chr_folder:os.PathLike="data/ref",
             open(chr_path,"wb").write(chr_fasta_gz.content)# write chr_fasta_gz into the chromosome path
         except:
             print("Link does not work:",url_chr)
+            print("Exiting...")
+            return
+    else:
+        print(f'file {chr_path} already exists. Skipping...')
+
 
     if unzip: # unzip the .gz file if requested
         chr_fasta = chr_path[:-3]  # Remove the '.gz' extension
@@ -100,10 +106,17 @@ def download_chr(chr_folder:os.PathLike="data/ref",
             print(f'unzipping...')
             # Unzip .gz file and save the unzipped content to a new file
             open(chr_fasta, 'wb').write(gzip.open(chr_path, 'rb').read())
+            print(f'unzipped file saved to {chr_fasta}')
+        else:
+            print(f'file {chr_fasta} already exists. Skipping...')
 
     if remove_gz: # remove the .gz file if requested
-        print(f'Removing gzipped file {chr_path} ...')
-        os.remove(chr_path)
+        if os.path.exists(chr_path):
+            print(f'Removing gzipped file {chr_path} ...')
+            os.remove(chr_path)
+            print('Done')
+        else: # could already be removed
+            print(f'file {chr_path} does not exist. Skipping...')
 
 
     return
@@ -188,8 +201,6 @@ def download_ref_genome(build:int=38,
                  file_name=file_name,
                  remove_gz=remove_gz)
     return
-
-
 
 
 
