@@ -13,11 +13,11 @@ source ~/.bashrc
 
 ## Installation
 
-NOTE: Depending on your system use either `pip` or `pip3`
+- Install **probe_design**  (also installs **ifpd2q**)
 
-- Install **probe_design** `pip install probe_design`
-
-- Previous step also does Installs **ifpd2q**
+```shell
+pip install probe_design
+```
 
 - Install **oligo-melting**
 
