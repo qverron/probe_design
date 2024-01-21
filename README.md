@@ -1,20 +1,37 @@
 # Instructions for probe design
 
+> [!CAUTION]
+> You may want to add python and pip as aliases for python3 and pip3
+
+On your terminal;
+
+```shell
+echo "alias python='python3'" >> ~/.bashrc
+echo "alias pip='pip3'" >> ~/.bashrc
+source ~/.bashrc
+```
+
 ## Installation
 
 NOTE: Depending on your system use either `pip` or `pip3`
 
-- Install **probe_design** `pip install probe_design` this will do the next two steps..
+- Install **probe_design** `pip install probe_design`
 
-  - Install **ifpd2q** `pip install ifpd2q`
+- Previous step also does Installs **ifpd2q**
 
-  - Install **oligo-melting** `pip install oligo_melting`
+- Install **oligo-melting**
 
-- Install the **dev branch** of [nHUSH](https://github.com/elgw/nHUSH/tree/dev)
+```shell
+git clone http://github.com/ggirelli/oligo-melting ~/oligo-melting
+cd ~/oligo-melting
+pip install .
+```
 
-- Install [HUSH](https://github.com/elgw/hush)
+- Install the **dev branch** of [nHUSH](https://github.com/elgw/nHUSH/tree/dev) NOTE: PRIVATE REPO
 
-- Install [escafish](https://github.com/elgw/escafish)
+- Install [HUSH](https://github.com/elgw/hush) NOTE: PRIVATE REPO
+
+- Install [escafish](https://github.com/elgw/escafish) NOTE: PRIVATE REPO
 
 - Install [OligoArrayAux](http://www.unafold.org/Dinamelt/software/oligoarrayaux.php)
 

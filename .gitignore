@@ -5,3 +5,4 @@ dist/
 *.pyc
 /__pycache__/
 *.fa
+.DS_Store
