@@ -194,19 +194,19 @@ bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 ```
 
 > m: Maximum length of a consecutive match. Default: 24
->
+
 > i: Maximum length of a consecutive homopolymer. Default: 6
->
+
 > All oligos with a longer consecutive match or homopolymer are stricly excluded.
->
+
 > L: oligo length
->
+
 > c: min number of occurrences for an oligo to be counted in black list
->
+
 > (should match settings used in 6.)
->
+
 > d: min Hamming distance to an oligo in the blacklist for exclusion 
->
+
 > T: Target melting temperature. Default: 72C
 
 
