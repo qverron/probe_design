@@ -28,7 +28,6 @@ echo "export PRB=$(pip show probe_design | awk '/Location:/{print $2"/probe_desi
 source ~/.bashrc
 ```
 
-
 - Install **oligo-melting**
 
 On your terminal;
@@ -39,11 +38,14 @@ cd ~/oligo-melting
 pip install .
 ```
 
-- Install the **dev branch** of [nHUSH](https://github.com/elgw/nHUSH/tree/dev) NOTE: PRIVATE REPO
+> [!NOTE]
+> nHUSH, HUSH and escafish are private repositories
 
-- Install [HUSH](https://github.com/elgw/hush) NOTE: PRIVATE REPO
+- Install the **dev branch** of [nHUSH](https://github.com/elgw/nHUSH/tree/dev)
 
-- Install [escafish](https://github.com/elgw/escafish) NOTE: PRIVATE REPO
+- Install [HUSH](https://github.com/elgw/hush)
+
+- Install [escafish](https://github.com/elgw/escafish)
 
 - Install [OligoArrayAux](http://www.unafold.org/Dinamelt/software/oligoarrayaux.php)
 
@@ -72,11 +74,12 @@ pip install .
 - For combined DNA-RNA FISH, the probe sets should be designed with an 
   homology check against both genome and transcriptome.
   
-- All the commands below assume you are starting from your pipeline
-  installation folder:
-  ``` shell
-  cd probe_design
-  ```
+- All the commands below assume you are starting from your project directory
+
+```shell
+mkdir <project_name>
+cd <project_name>
+```
 
 # Probe design pipeline:
 ## Alternative 1: Normally repetitive regions.
@@ -100,29 +103,31 @@ pip install .
   In that case, adjust the script manually with the correct Ensembl 
   address for your genome of interest.
 
-2. Generate all required subfolders:
+2. Generate all required subfolders inside your project directory:
 
-  ```shell
-  mkdir data/candidates
-  mkdir data/melt
-  mkdir data/secs
-  mkdir data/db
-  mkdir data/db_tsv
-  mkdir data/logfiles
-  mkdir HUSH
-  ```  
+```shell
+mkdir data/candidates
+mkdir data/melt
+mkdir data/secs
+mkdir data/db
+mkdir data/db_tsv
+mkdir data/logfiles
+mkdir HUSH
+```  
 
 3. Retrieve your region sequences and extract all k-mers of correct length:
 
-   ```shell
-   # (from Pipeline/)
-   ./get_oligos.py DNA|RNA [optional: applyGCfilter 0|1]
-   # Example:
-   ./get_oligos.py DNA 1
-   ```
+```shell
+# ($PRB is the path to pip installation of probe_design)
+# src is for the python source codes
+python $PRB/src/get_oligos.py DNA|RNA [optional: applyGCfilter 0|1]
+# Example:
+python $PRB/src/get_oligos.py DNA 1
+```
 
-   If indicating `RNA`, the module will assume that the transcript / region
-   sequences are already present in the `data/regions` folder. Default: `DNA.
+> [!NOTE]
+> If indicating `RNA`, the module will assume that the transcript / region
+> sequences are already present in the `data/regions` folder. Default: `DNA.
 
 
 4. Test all k-mers for their homology to other regions in the genome,
@@ -133,41 +138,47 @@ pip install .
 
 - Full length:
 
-  ``` shell
-  ./run_nHUSH.sh -d RNA -L 35 -m 5 -t 40 -i 14
-  ```
+``` shell
+bash $PRB/shell/run_nHUSH.sh -d RNA -L 35 -m 5 -t 40 -i 14
+```
+
 - Sublength:
-  ``` shell
-  ./run_nHUSH.sh -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
-  ```
+
+``` shell
+bash $PRB/shell/run_nHUSH.sh -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
+```
+
   ADD -g if this is the first time running with a new reference genome!  
   
 - In case nHUSH is interrupted before completion, run before continuing:
-  ``` shell
-  ./unfinished_HUSH.sh
-  ```
+
+``` shell
+bash $PRB/shell/unfinished_HUSH.sh
+```
   
   5. Recapitulate nHUSH results as a score 
 
 ``` shell
-./reform_hush_combined.py DNA|RNA|-RNA length sublength until
+python $PRB/src/reform_hush_combined.py DNA|RNA|-RNA length sublength until
 ```
+
 (`until` denotes the same number as specified after `-m` when running nHUSH). 
 
 6. Calculate the melting temperature of k-mers and the free energy of
    secondary structure formation:
 
-   ``` shell
-   ./melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))   
-   ```
-   
+``` shell
+bash $PRB/shell/melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))   
+```
+
  7. Generate a black list of abundantly repeated oligos in the reference genome.
-	
-    ``` shell
-    ./generate_blacklist.sh -L 40 -c 100
-    ```
-    This only needs to be run once per reference genome if not using any 
-    exclusion regions! Just save the blacklist folder between runs.
+
+``` shell
+bash $PRB/shell/generate_blacklist.sh -L 40 -c 100
+```
+> [!NOTE]
+> This only needs to be run once per reference genome if not using any 
+> exclusion regions! Just save the blacklist folder between runs.
     
 L: oligo length; c: min abundance to be included in oligo black list   
 
@@ -175,9 +186,9 @@ L: oligo length; c: min abundance to be included in oligo black list
    score to each oligo (based on nHUSH score, GC content, melting
    temperature, homopolymer stretches, secondary structures).
    
-   ``` shell
-	./build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
-    ```
+``` shell
+bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
+```
     m: Maximum length of a consecutive match. Default: 24
     i: Maximum length of a consecutive homopolymer. Default: 6
     All oligos with a longer consecutive match or homopolymer are stricly excluded.
@@ -189,29 +200,31 @@ L: oligo length; c: min abundance to be included in oligo black list
  
 9. Query the database to get candidate probes:
 
-    ``` shell
-	./cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -greedy
-    ```
-    	[optional: -greedy. Speed > quality]
-	[optional: -start 20 -end 100 -step 5]	 
+``` shell
+python $PRB/src/cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -greedy
+```
+
+[optional: -greedy. Speed > quality]
+[optional: -start 20 -end 100 -step 5]	 
 To sweep different oligo numbers, otherwise uses the oligo counts provided in `./rois/all_regions.tsv`
         [optional: -stepdown 10]
 Number of oligos to decrease probe size with every iteration that does not find enough oligos. Default: 1
-   
-      ```
+
 Cycling query which generate probe candidates, then checks the resulting oligos using HUSH, removes inacceptable oligos and generate probes again.
 If enough oligos cannot be found, design probes with fewer oligos, decreasing with `stepdown` at each step.
 
 10. Summarize the final probes:
-   ``` shell
-   ./summarize-probes-final.py
-   ```
+
+```shell
+python $PRB/src/summarize-probes-final.py
+```
+
 Some visual elements can be obtained using the following notebooks (needs updating!):
 
-    ``` shell
-    plot_probe_candidates.ipynb
-    plot_oligos.ipynb
-    ```
+``` shell
+python $PRB/notebooks/plot_probe_candidates.ipynb
+python $PRB/notebooks/plot_oligos.ipynb
+```
 
 
 ## Alternative 2: Repetitive or repeated regions.
@@ -230,45 +243,45 @@ oligos that are specific for the ROI can be included in the final probe.
 2. (UNLESS manually providing exclusion regions)
 Exclude regions of interest from HUSH scan.
 
-  ``` shell
-  ./generate_exclude.py
-  ```
+``` shell
+python $PRB/src/generate_exclude.py
+```
 - The same sheet template can be used to manually add further regions to exclude.
 
 2. Generate all required subfolders:
 
-  ``` shell
-  mkdir data/candidates
-  mkdir data/melt
-  mkdir data/secs
-  mkdir data/db
-  mkdir data/db_tsv
-  mkdir data/logfiles
-  ```
+``` shell
+mkdir data/candidates
+mkdir data/melt
+mkdir data/secs
+mkdir data/db
+mkdir data/db_tsv
+mkdir data/logfiles
+```
 
 3. Retrieve your region sequences and extract all k-mers of correct length:
 
-   ``` shell
-   # (from Pipeline/)
-   ./get_oligos.py DNA|RNA [optional: applyGCfilter 0|1]
-   # Example:
-   ./get_oligos.py DNA
-   ```
+``` shell
+# (from Pipeline/)
+python $PRB/src/get_oligos.py DNA|RNA [optional: applyGCfilter 0|1]
+# Example:
+python $PRB/src/get_oligos.py DNA
+```
 
    If indicating `RNA`, the module will assume that the transcript / region
    sequences are already present in the `data/regions` folder. Default: `DNA.
    
 4. Apply the region exclusion mask on the reference genome.
 
-	``` shell
-	./exclude_region.py 
-	```   
+``` shell
+python $PRB/src/exclude_region.py 
+```   
    
 5. Generate a black list of abundantly repeated oligos in the reference genome.
 	
-    ``` shell
-    ./generate_blacklist.sh -L 40 -c 100
-    ```
+``` shell
+bash $PRB/shell/generate_blacklist.sh -L 40 -c 100
+```
 Needs to be re-run everytime when using exclusion masks.
 L: oligo length; c: min abundance to be included in oligo black list   
 
@@ -281,33 +294,35 @@ L: oligo length; c: min abundance to be included in oligo black list
    `-t` number of threads, `-i` comb size
 
 Sublength:
-  ``` shell
-  ./run_nHUSH_excl.sh -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
-  ```
+
+``` shell
+bash $PRB/shell/run_nHUSH_excl.sh -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
+```
   
 Note the `_excl` specific to the exclusion mode.  
   
 In case nHUSH is interrupted before completion, run before continuing:
-  ``` shell
-  ./unfinished_HUSH.sh
-  ```
+``` shell
+bash $PRB/shell/unfinished_HUSH.sh
+```
   
   7. Recapitulate nHUSH results as a score 
 
 ``` shell
 # Format:
-./reform_hush_combined.py DNA|RNA|-RNA length sublength until
+python $PRB/src/reform_hush_combined.py DNA|RNA|-RNA length sublength until
 # Example:
-./reform_hush_combined.py DNA 40 21 3
+python $PRB/src/reform_hush_combined.py DNA 40 21 3
 ```
+
 (`until` denotes the same number as specified after `-m` when running nHUSH).
 
 8. Calculate the melting temperature of k-mers and the free energy of
    secondary structure formation:
 
-   ``` shell
-   ./melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))
-   ```
+``` shell
+bash $PRB/shell/melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))
+```
 
 9. Create k-mer database, convert to TSV for querying and attribute
    score to each oligo (based on nHUSH score, GC content, melting
@@ -315,23 +330,24 @@ In case nHUSH is interrupted before completion, run before continuing:
    
    Recommended:
    
-   ``` shell
-	./build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
-    ```
+``` shell
+bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
+```
     
     f: score function
     d: max Hamming distance to blacklist that is excluded
     L: oligo length; c: min abundance to be included in oligo blacklist
     i: max identical consecutive base pairs, T: target temperature, m: max length of consecutive off-target match
   
-
 10. Query the database to get candidate probes:
 
-    ``` shell
-	./cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy -excl
-    ```
-    	[optional: -greedy. Speed > quality]
-	[optional: -start 20 -end 100 -step 5]	 
+``` shell
+python $PRB/src/cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy -excl
+```
+
+[optional: -greedy. Speed > quality]
+[optional: -start 20 -end 100 -step 5]
+
 To sweep different oligo numbers, otherwise uses the oligo counts provided in `./rois/all_regions.tsv`
         [optional: -stepdown 10]
 Number of oligos to decrease probe size with every iteration that does not find enough oligos. Default: 1
@@ -342,9 +358,9 @@ If enough oligos cannot be found, design probes with fewer oligos, decreasing wi
 
 11. Summarize the final probes:
 
-   ``` shell
-   python summarize-probes-final.py
-   ```
+``` shell
+python $PRB/src/summarize-probes-final.py
+```
 
 
 ## Generate probes for ordering
