@@ -182,8 +182,8 @@ bash $PRB/shell/generate_blacklist.sh -L 40 -c 100
 > This only needs to be run once per reference genome if not using any 
 > exclusion regions! Just save the blacklist folder between runs.
 
-    L: oligo length
-    c: min abundance to be included in oligo black list
+> L: oligo length <br>
+> c: min abundance to be included in oligo black list
 
 8. Create k-mer database, convert to TSV for querying and attribute
    score to each oligo (based on nHUSH score, GC content, melting
@@ -210,8 +210,8 @@ bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 python $PRB/src/cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -greedy
 ```
 
-    [optional: -greedy. Speed > quality]
-    [optional: -start 20 -end 100 -step 5]
+**[optional: -greedy. Speed > quality]
+[optional: -start 20 -end 100 -step 5]**
 
 To sweep different oligo numbers, otherwise uses the oligo counts provided in `./rois/all_regions.tsv`
         [optional: -stepdown 10]
@@ -313,7 +313,7 @@ In case nHUSH is interrupted before completion, run before continuing:
 bash $PRB/shell/unfinished_HUSH.sh
 ```
   
-  7. Recapitulate nHUSH results as a score 
+7. Recapitulate nHUSH results as a score 
 
 ``` shell
 # Format:
@@ -341,10 +341,13 @@ bash $PRB/shell/melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))
 bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 ```
     
-    f: score function
-    d: max Hamming distance to blacklist that is excluded
-    L: oligo length; c: min abundance to be included in oligo blacklist
-    i: max identical consecutive base pairs, T: target temperature, m: max length of consecutive off-target match
+> f: score function  <br>
+> d: max Hamming distance to blacklist that is excluded <br>
+> L: oligo length <br>
+> c: min abundance to be included in oligo blacklist <br>
+> i: max identical consecutive base pairs,  <br>
+> T: target temperature <br>
+> m: max length of consecutive off-target match <br>
   
 10. Query the database to get candidate probes:
 
@@ -352,8 +355,8 @@ bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 python $PRB/src/cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy -excl
 ```
 
-[optional: -greedy. Speed > quality]
-[optional: -start 20 -end 100 -step 5]
+**[optional: -greedy. Speed > quality]
+[optional: -start 20 -end 100 -step 5]**
 
 To sweep different oligo numbers, otherwise uses the oligo counts provided in `./rois/all_regions.tsv`
         [optional: -stepdown 10]
