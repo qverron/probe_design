@@ -171,7 +171,7 @@ python $PRB/src/reform_hush_combined.py DNA|RNA|-RNA length sublength until
 bash $PRB/shell/melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))   
 ```
 
- 7. Generate a black list of abundantly repeated oligos in the reference genome.
+7. Generate a black list of abundantly repeated oligos in the reference genome.
 
 ``` shell
 bash $PRB/shell/generate_blacklist.sh -L 40 -c 100
@@ -205,8 +205,9 @@ bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 python $PRB/src/cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -greedy
 ```
 
-[optional: -greedy. Speed > quality]
-[optional: -start 20 -end 100 -step 5]	 
+> [optional: -greedy. Speed > quality]
+> [optional: -start 20 -end 100 -step 5]
+
 To sweep different oligo numbers, otherwise uses the oligo counts provided in `./rois/all_regions.tsv`
         [optional: -stepdown 10]
 Number of oligos to decrease probe size with every iteration that does not find enough oligos. Default: 1
