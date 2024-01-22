@@ -82,9 +82,11 @@ cd <project_name>
 ```
 
 # Probe design pipeline:
+
 ## Alternative 1: Normally repetitive regions.
 
 1. Preparation
+
 - The probe desin pipeline data is currently intended to be run on a 
   folder called `data/` contained within the pipeline installation folder.
 
@@ -180,7 +182,8 @@ bash $PRB/shell/generate_blacklist.sh -L 40 -c 100
 > This only needs to be run once per reference genome if not using any 
 > exclusion regions! Just save the blacklist folder between runs.
 
-L: oligo length; c: min abundance to be included in oligo black list
+    L: oligo length
+    c: min abundance to be included in oligo black list
 
 8. Create k-mer database, convert to TSV for querying and attribute
    score to each oligo (based on nHUSH score, GC content, melting
@@ -189,15 +192,15 @@ L: oligo length; c: min abundance to be included in oligo black list
 ``` shell
 bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 ```
-
-    m: Maximum length of a consecutive match. Default: 24
-    i: Maximum length of a consecutive homopolymer. Default: 6
-    All oligos with a longer consecutive match or homopolymer are stricly excluded.
-    L: oligo length
-    c: min number of occurrences for an oligo to be counted in black list
-    (should match settings used in 6.)
-    d: min Hamming distance to an oligo in the blacklist for exclusion 
-    T: Target melting temperature. Default: 72C
+> arguments;
+m: Maximum length of a consecutive match. Default: 24
+i: Maximum length of a consecutive homopolymer. Default: 6
+All oligos with a longer consecutive match or homopolymer are stricly excluded.
+L: oligo length
+c: min number of occurrences for an oligo to be counted in black list
+(should match settings used in 6.)
+d: min Hamming distance to an oligo in the blacklist for exclusion 
+T: Target melting temperature. Default: 72C
  
 9. Query the database to get candidate probes:
 
@@ -205,8 +208,8 @@ bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 python $PRB/src/cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -greedy
 ```
 
-> [optional: -greedy. Speed > quality]
-> [optional: -start 20 -end 100 -step 5]
+    [optional: -greedy. Speed > quality]
+    [optional: -start 20 -end 100 -step 5]
 
 To sweep different oligo numbers, otherwise uses the oligo counts provided in `./rois/all_regions.tsv`
         [optional: -stepdown 10]
