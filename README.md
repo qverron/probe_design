@@ -19,7 +19,19 @@ source ~/.bashrc
 pip install probe_design
 ```
 
+Add (pip) installation directory for the up-coming use cases;
+
+On your terminal;
+
+```shell
+echo "export PRB=$(pip show probe_design | awk '/Location:/{print $2"/probe_design"}')" >> ~/.bashrc
+source ~/.bashrc
+```
+
+
 - Install **oligo-melting**
+
+On your terminal;
 
 ```shell
 git clone http://github.com/ggirelli/oligo-melting ~/oligo-melting
@@ -90,7 +102,7 @@ pip install .
 
 2. Generate all required subfolders:
 
-  ``` shell
+  ```shell
   mkdir data/candidates
   mkdir data/melt
   mkdir data/secs
@@ -102,7 +114,7 @@ pip install .
 
 3. Retrieve your region sequences and extract all k-mers of correct length:
 
-   ``` shell
+   ```shell
    # (from Pipeline/)
    ./get_oligos.py DNA|RNA [optional: applyGCfilter 0|1]
    # Example:
