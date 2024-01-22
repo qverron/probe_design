@@ -89,8 +89,7 @@ cd <project_name>
   folder called `data/` contained within the pipeline installation folder.
 
 - Upon starting the pipeline, the `data/` folder should only contain
-  `data/rois/` and `data/ref/` (and possibly `data/blacklist/`, see 6.). If more folders are included, consider 
-  making a back-up or simply removing them.
+  `data/rois/` and `data/ref/` (and possibly `data/blacklist/`, see 6.). If more folders are included, consider making a back-up or simply removing them.
   
 - List your regions of interest and their coordinates in the input file:
   `data/rois/all_regions.tsv`
@@ -148,7 +147,8 @@ bash $PRB/shell/run_nHUSH.sh -d RNA -L 35 -m 5 -t 40 -i 14
 bash $PRB/shell/run_nHUSH.sh -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
 ```
 
-  ADD -g if this is the first time running with a new reference genome!  
+> [!TIP]
+> ADD -g if this is the first time running with a new reference genome!  
   
 - In case nHUSH is interrupted before completion, run before continuing:
 
@@ -156,7 +156,7 @@ bash $PRB/shell/run_nHUSH.sh -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
 bash $PRB/shell/unfinished_HUSH.sh
 ```
   
-  5. Recapitulate nHUSH results as a score 
+5. Recapitulate nHUSH results as a score 
 
 ``` shell
 python $PRB/src/reform_hush_combined.py DNA|RNA|-RNA length sublength until
@@ -179,16 +179,17 @@ bash $PRB/shell/generate_blacklist.sh -L 40 -c 100
 > [!NOTE]
 > This only needs to be run once per reference genome if not using any 
 > exclusion regions! Just save the blacklist folder between runs.
-    
-L: oligo length; c: min abundance to be included in oligo black list   
+
+L: oligo length; c: min abundance to be included in oligo black list
 
 8. Create k-mer database, convert to TSV for querying and attribute
    score to each oligo (based on nHUSH score, GC content, melting
    temperature, homopolymer stretches, secondary structures).
-   
+
 ``` shell
 bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 ```
+
     m: Maximum length of a consecutive match. Default: 24
     i: Maximum length of a consecutive homopolymer. Default: 6
     All oligos with a longer consecutive match or homopolymer are stricly excluded.
