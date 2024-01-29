@@ -18,6 +18,7 @@ from .src import (
     download_chr,
     download_ref_genome)
 
+
 __all__ = ["cycling_query",
             "escafish_score",
             "exclude_region",
@@ -34,7 +35,8 @@ __all__ = ["cycling_query",
             "summarize_probes",
             "download_chr_list",
             "download_chr",
-            "download_ref_genome"]
+            "download_ref_genome",
+            ]
 
 # CONSTANTS
 import os
