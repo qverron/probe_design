@@ -46,13 +46,13 @@ def show_available() -> None:
     return None
 
 
-def run_command(command:str,*script_arguments)->None:
+def run_command(command:str,script_arguments)->None:
     if command in shell_scripts_no_ext: # bash scripts
-        subprocess.run(["bash",os.path.join(PATHSHELL, command+".sh")," ".join(script_arguments)])
+        subprocess.run(["bash",os.path.join(PATHSHELL, command+".sh"),*script_arguments])
     elif command in py_scripts_no_ext: # python scripts
-        subprocess.run([sys.executable, os.path.join(PATHSRC, command+".py")," ".join(script_arguments)])
+        subprocess.run([sys.executable, os.path.join(PATHSRC, command+".py"),*script_arguments])
     elif command in notebook_scripts_no_ext: # jupyter notebooks
-        subprocess.run(["jupyter", "execute", os.path.join(PATHNOTEBOOK, command+".ipynb")," ".join(script_arguments)])
+        subprocess.run(["jupyter", "execute", os.path.join(PATHNOTEBOOK, command+".ipynb"),*script_arguments])
     else:
         print("Command not found. Please check below for the available commands.")
         show_available()
@@ -69,7 +69,7 @@ def main():
     else:
         command = sys.argv[1]
         script_arguments = sys.argv[2:]
-        run_command(command, *script_arguments)
+        run_command(command, script_arguments)
     
     return
 
