@@ -94,5 +94,5 @@ def with_argparse():
     return
 
 if __name__ == "__main__":
-
+    set_python_aliases()
     main()
