@@ -3,18 +3,6 @@ import os
 import argparse
 import subprocess
 
-# safe guard for python aliases
-def set_python_aliases():
-    if sys.platform.startswith('linux') or sys.platform == 'darwin':
-        os.system("alias python=python3")
-        os.system("alias pip=pip3")
-    elif sys.platform == 'win32':
-        os.system("doskey python=python3")
-        os.system("doskey pip=pip3")
-    else:
-        print("Unsupported platform. Please set up the aliases manually.")
-
-
 # PATH constants
 PATHMAIN = os.path.dirname(__file__)
 PATHSRC = os.path.join(PATHMAIN, "src")
@@ -72,27 +60,19 @@ def run_command(command:str,*script_arguments)->None:
     return None
 
 
-
 def main():
     if len(sys.argv) == 1:
         print("Please specify a command. Check below for the available commands.")
         print("Usage: prb <command> [arguments...]")
         show_available()
-        return None
+        return
     else:
         command = sys.argv[1]
         script_arguments = sys.argv[2:]
         run_command(command, *script_arguments)
-        return
-
-
-def with_argparse():
-    parser = argparse.ArgumentParser(description="Run scripts from this project.")
-    parser.add_argument('command', help='Name of the script to run')
-    parser.add_argument('script_arguments', nargs='*', help='Arguments for the script')
-    args = parser.parse_args()
+    
     return
 
+
 if __name__ == "__main__":
-    set_python_aliases()
     main()

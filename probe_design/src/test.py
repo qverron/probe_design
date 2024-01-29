@@ -1,16 +1,19 @@
 import argparse
 import sys
 
-# takes a command with undefined number of arguments
-def print_args(*many)->None:
+# add argparser that takes -l and -m and multiply them
+argparser = argparse.ArgumentParser()
+argparser.add_argument("-l", type=int, help="length")
+argparser.add_argument("-x", type=int, help="height")
+argparser.add_argument("-w", type=int, help="width")
+argparser.add_argument("-s", type=str, help="shape")
+args = argparser.parse_args()
 
-    for one in many:
-        print(one)
-    
-    return None
 
 if __name__ == "__main__":
 
-    print(sys.argv)
-    print_args(*sys.argv)
+    volume = args.l * args.x * args.w
+    shape = args.s
+    print(f"Volume of {shape} is {volume}")
 
+    # prb test -l 10 -h 20 -w 30 -s box
