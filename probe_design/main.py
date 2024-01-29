@@ -62,7 +62,7 @@ def run_command(command:str,*script_arguments)->None:
     if command in shell_scripts_no_ext: # bash scripts
         subprocess.run(["bash",os.path.join(PATHSHELL, command+".sh")," ".join(script_arguments)])
     elif command in py_scripts_no_ext: # python scripts
-        subprocess.run(["python", os.path.join(PATHSRC, command+".py")," ".join(script_arguments)])
+        subprocess.run([sys.executable, os.path.join(PATHSRC, command+".py")," ".join(script_arguments)])
     elif command in notebook_scripts_no_ext: # jupyter notebooks
         subprocess.run(["jupyter", "execute", os.path.join(PATHNOTEBOOK, command+".ipynb")," ".join(script_arguments)])
     else:
@@ -76,8 +76,8 @@ def run_command(command:str,*script_arguments)->None:
 def main():
     if len(sys.argv) == 1:
         print("Please specify a command. Check below for the available commands.")
-        show_available()
         print("Usage: prb <command> [arguments...]")
+        show_available()
         return None
     else:
         command = sys.argv[1]
