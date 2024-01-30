@@ -16,17 +16,10 @@ source ~/.bashrc
 - Install **probe_design**  (also installs **ifpd2q**)
 
 ```shell
-pip install probe_design
+pip install probe_design -U
 ```
 
-Add (pip) installation directory for the up-coming use cases;
-
-On your terminal;
-
-```shell
-echo "export PRB=$(pip show probe_design | awk '/Location:/{print $2"/probe_design"}')" >> ~/.bashrc
-source ~/.bashrc
-```
+This adds `prb` (short for probe design) as a shell command.
 
 - Install **oligo-melting**
 
@@ -100,20 +93,14 @@ cd <project_name>
   sure that the chromosome naming matches with the reference genome
   name provided in `all_regions.tsv`.
   
-- The reference folder can alternatively be gathered using `get_ref_genome.sh`.
+- The reference folder can alternatively be gathered using `prb get_ref_genome`.
   In that case, adjust the script manually with the correct Ensembl 
   address for your genome of interest.
 
 2. Generate all required subfolders inside your project directory:
 
 ```shell
-mkdir data/candidates
-mkdir data/melt
-mkdir data/secs
-mkdir data/db
-mkdir data/db_tsv
-mkdir data/logfiles
-mkdir HUSH
+prb makedirs
 ```  
 
 3. Retrieve your region sequences and extract all k-mers of correct length:
@@ -121,15 +108,14 @@ mkdir HUSH
 ```shell
 # ($PRB is the path to pip installation of probe_design)
 # src is for the python source codes
-python $PRB/src/get_oligos.py DNA|RNA [optional: applyGCfilter 0|1]
+prb get_oligos DNA|RNA [optional: applyGCfilter 0|1]
 # Example:
-python $PRB/src/get_oligos.py DNA 1
+prb get_oligos DNA 1
 ```
 
 > [!NOTE]
 > If indicating `RNA`, the module will assume that the transcript / region
 > sequences are already present in the `data/regions` folder. Default: `DNA.
-
 
 4. Test all k-mers for their homology to other regions in the genome,
    using nHUSH. Instead of running the entire k-mers (of length `L`) at
@@ -140,13 +126,13 @@ python $PRB/src/get_oligos.py DNA 1
 - Full length:
 
 ``` shell
-bash $PRB/shell/run_nHUSH.sh -d RNA -L 35 -m 5 -t 40 -i 14
+prb run_nHUSH -d RNA -L 35 -m 5 -t 40 -i 14
 ```
 
 - Sublength:
 
 ``` shell
-bash $PRB/shell/run_nHUSH.sh -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
+prb run_nHUSH -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
 ```
 
 > [!TIP]
@@ -155,13 +141,13 @@ bash $PRB/shell/run_nHUSH.sh -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
 - In case nHUSH is interrupted before completion, run before continuing:
 
 ``` shell
-bash $PRB/shell/unfinished_HUSH.sh
+prb unfinished_HUSH
 ```
   
 5. Recapitulate nHUSH results as a score 
 
 ``` shell
-python $PRB/src/reform_hush_combined.py DNA|RNA|-RNA length sublength until
+prb reform_hush_combined DNA|RNA|-RNA length sublength until
 ```
 
 (`until` denotes the same number as specified after `-m` when running nHUSH). 
@@ -170,13 +156,13 @@ python $PRB/src/reform_hush_combined.py DNA|RNA|-RNA length sublength until
    secondary structure formation:
 
 ``` shell
-bash $PRB/shell/melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))   
+prb melt_secs_parallel (optional DNA(ref) / RNA(rev. compl))   
 ```
 
 7. Generate a black list of abundantly repeated oligos in the reference genome.
 
 ``` shell
-bash $PRB/shell/generate_blacklist.sh -L 40 -c 100
+prb generate_blacklist -L 40 -c 100
 ```
 > [!NOTE]
 > This only needs to be run once per reference genome if not using any 
@@ -190,7 +176,7 @@ bash $PRB/shell/generate_blacklist.sh -L 40 -c 100
    temperature, homopolymer stretches, secondary structures).
 
 ``` shell
-bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
+prb build-db_BL -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 ```
 
 > m: Maximum length of a consecutive match. Default: 24 <br>
@@ -207,7 +193,7 @@ bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 9. Query the database to get candidate probes:
 
 ``` shell
-python $PRB/src/cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -greedy
+prb cycling_query -s DNA -L 40 -m 8 -c 100 -t 40 -greedy
 ```
 
 **[optional: -greedy. Speed > quality]
@@ -223,16 +209,15 @@ If enough oligos cannot be found, design probes with fewer oligos, decreasing wi
 10. Summarize the final probes:
 
 ```shell
-python $PRB/src/summarize-probes-final.py
+prb summarize_probes_final
 ```
 
 Some visual elements can be obtained using the following notebooks (needs updating!):
 
 ``` shell
-python $PRB/notebooks/plot_probe_candidates.ipynb
-python $PRB/notebooks/plot_oligos.ipynb
+prb plot_probe_candidates
+prb plot_oligos
 ```
-
 
 ## Alternative 2: Repetitive or repeated regions.
 
@@ -251,28 +236,23 @@ oligos that are specific for the ROI can be included in the final probe.
 Exclude regions of interest from HUSH scan.
 
 ``` shell
-python $PRB/src/generate_exclude.py
+prb generate_exclude
 ```
 - The same sheet template can be used to manually add further regions to exclude.
 
 2. Generate all required subfolders:
 
 ``` shell
-mkdir data/candidates
-mkdir data/melt
-mkdir data/secs
-mkdir data/db
-mkdir data/db_tsv
-mkdir data/logfiles
+prb makedirs
 ```
 
 3. Retrieve your region sequences and extract all k-mers of correct length:
 
 ``` shell
 # (from Pipeline/)
-python $PRB/src/get_oligos.py DNA|RNA [optional: applyGCfilter 0|1]
+prb get_oligos DNA|RNA [optional: applyGCfilter 0|1]
 # Example:
-python $PRB/src/get_oligos.py DNA
+prb get_oligos DNA
 ```
 
    If indicating `RNA`, the module will assume that the transcript / region
@@ -281,14 +261,15 @@ python $PRB/src/get_oligos.py DNA
 4. Apply the region exclusion mask on the reference genome.
 
 ``` shell
-python $PRB/src/exclude_region.py 
-```   
-   
-5. Generate a black list of abundantly repeated oligos in the reference genome.
-	
-``` shell
-bash $PRB/shell/generate_blacklist.sh -L 40 -c 100
+prb exclude_region
 ```
+
+5. Generate a black list of abundantly repeated oligos in the reference genome.
+
+```shell
+prb generate_blacklist -L 40 -c 100
+```
+
 Needs to be re-run everytime when using exclusion masks.
 L: oligo length; c: min abundance to be included in oligo black list   
 
@@ -302,24 +283,25 @@ L: oligo length; c: min abundance to be included in oligo black list
 
 Sublength:
 
-``` shell
-bash $PRB/shell/run_nHUSH_excl.sh -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
+```shell
+prb run_nHUSH_excl -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
 ```
   
 Note the `_excl` specific to the exclusion mode.  
   
 In case nHUSH is interrupted before completion, run before continuing:
-``` shell
-bash $PRB/shell/unfinished_HUSH.sh
+
+```shell
+prb unfinished_HUSH
 ```
   
-7. Recapitulate nHUSH results as a score 
+7. Recapitulate nHUSH results as a score
 
-``` shell
+```shell
 # Format:
-python $PRB/src/reform_hush_combined.py DNA|RNA|-RNA length sublength until
+prb reform_hush_combined DNA|RNA|-RNA length sublength until
 # Example:
-python $PRB/src/reform_hush_combined.py DNA 40 21 3
+prb reform_hush_combined DNA 40 21 3
 ```
 
 (`until` denotes the same number as specified after `-m` when running nHUSH).
@@ -327,8 +309,8 @@ python $PRB/src/reform_hush_combined.py DNA 40 21 3
 8. Calculate the melting temperature of k-mers and the free energy of
    secondary structure formation:
 
-``` shell
-bash $PRB/shell/melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))
+```shell
+prb melt_secs_parallel (optional DNA(ref) / RNA(rev. compl))
 ```
 
 9. Create k-mer database, convert to TSV for querying and attribute
@@ -338,7 +320,7 @@ bash $PRB/shell/melt_secs_parallel.sh (optional DNA(ref) / RNA(rev. compl))
    Recommended:
    
 ``` shell
-bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
+prb build-db_BL -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 ```
     
 > f: score function  <br>
@@ -352,7 +334,7 @@ bash $PRB/shell/build-db_BL.sh -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 10. Query the database to get candidate probes:
 
 ``` shell
-python $PRB/src/cycling_query.py -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy -excl
+prb cycling_query -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy -excl
 ```
 
 **[optional: -greedy. Speed > quality]
@@ -365,13 +347,11 @@ Number of oligos to decrease probe size with every iteration that does not find 
 Cycling query which generate probe candidates, then checks the resulting oligos using HUSH, removes inacceptable oligos and generate probes again.
 If enough oligos cannot be found, design probes with fewer oligos, decreasing with `stepdown` at each step.
 
-
 11. Summarize the final probes:
 
 ``` shell
-python $PRB/src/summarize-probes-final.py
+prb summarize-probes-final
 ```
-
 
 ## Generate probes for ordering
 
@@ -382,9 +362,9 @@ python $PRB/src/summarize-probes-final.py
   rev. compl of the rev sequence in the oligo
 - The complete oligos can be uploaded as an Excel file containing the
   oligo names (arbitrary but unique) and the sequences
-  
-  
+
 ## TO DO:
+
 - Adapt the code for more flexibility in input/output folders.
 - Add a visual report of the probes at the end of the pipeline.
 - One-button process!
