@@ -1,7 +1,5 @@
 import argparse
-import sys
 
-# add argparser that takes -l and -m and multiply them
 argparser = argparse.ArgumentParser()
 argparser.add_argument("-l", type=int, help="length", default=1)
 argparser.add_argument("-x", type=int, help="height", default=2)
