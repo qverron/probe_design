@@ -72,7 +72,7 @@ mkdir "$HUSHpath"/"$ts"
 
 for gen in "$datapath"/ref/genome*.fa
 do
-ln $gen "$HUSHpath"/"$ts"/$(basename -- $gen)
+ln -s $gen "$HUSHpath"/"$ts"/$(basename -- $gen)
 done
 
 # transform probe candidates into FASTA files readable by HUSH
