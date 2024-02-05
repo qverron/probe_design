@@ -115,7 +115,7 @@ then
 	cat "$datapath"/ref/*.fa > "$datapath"/ref/genome.fa
 fi
 
-ln "$datapath"/ref/genome.fa "$HUSHpath"/"$ts"/genome.fa
+ln -s "$datapath"/ref/genome.fa "$HUSHpath"/"$ts"/genome.fa
 
 if [ ! -z "$sublength" ]
 then

@@ -117,7 +117,7 @@ fi
 
 for g in "$datapath"/ref/genome*.fa
 do
-    ln "$g" "$HUSHpath"/"$ts"/$(basename -- "$g")
+    ln -s "$g" "$HUSHpath"/"$ts"/$(basename -- "$g")
 done 
 
 if [ ! -z "$sublength" ]
