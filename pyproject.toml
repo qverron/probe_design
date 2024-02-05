@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "probe-design"
+version = "0.2.2"
+description = "Probe design for FISH by Quentin Verron"
+authors = ["Quentin Verron"]
+maintainers = [
+    "Quentin Verron",
+    "Zafer Kosar <zafermolbio.gmail.com>"]
+license = "CC NC BY 4.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.20"
+pandas = ">=1.2.2,<3.0.0"
+tabulate = "^0.9.0"
+biopython = "^1.82"
+tqdm = "^4"
+joblib = "^1"
+click = "^8.1.7"
+poetry = "^1.5"
+ifpd2q = "^1.0.0"
+requests = "^2.31.0"
+jupyter = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.5.0"
+
+[tool.poetry.scripts]
+prb = "probe_design.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

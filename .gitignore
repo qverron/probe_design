@@ -1,0 +1,8 @@
+token
+*.tar.gz
+*.whl
+dist/
+*.pyc
+/__pycache__/
+*.fa
+.DS_Store

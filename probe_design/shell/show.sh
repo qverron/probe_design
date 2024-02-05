@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# PATH OF THE SHELL SCRIPT and MAIN FOLDER
+PATHSHELL="$(dirname "$(readlink -f "$0")")"
+PATHMAIN="$(dirname "$PATHSHELL")"
+# PATH OF THE SUBFOLDERS
+PATHSRC="$PATHMAIN/src"
+PATHNOTEBOOK="$PATHMAIN/notebooks"
+PATHDATA="$PATHMAIN/data"
+
+# SHOW PATHS
+echo $PATHSHELL
+echo $PATHMAIN
+echo $PATHSRC
+echo $PATHNOTEBOOK
+echo $PATHDATA
