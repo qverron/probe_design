@@ -81,7 +81,7 @@ cd <project_name>
 1. Preparation
 
 - The probe desin pipeline data is currently intended to be run on a 
-  folder called `data/` contained within the pipeline installation folder.
+  folder called `data/` contained within the pipeline project folder <project_name>.
 
 - Upon starting the pipeline, the `data/` folder should only contain
   `data/rois/` and `data/ref/` (and possibly `data/blacklist/`, see 6.). If more folders are included, consider making a back-up or simply removing them.
@@ -106,8 +106,6 @@ prb makedirs
 3. Retrieve your region sequences and extract all k-mers of correct length:
 
 ```shell
-# ($PRB is the path to pip installation of probe_design)
-# src is for the python source codes
 prb get_oligos DNA|RNA [optional: applyGCfilter 0|1]
 # Example:
 prb get_oligos DNA 1
