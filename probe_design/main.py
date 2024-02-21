@@ -66,6 +66,9 @@ def main():
         print("Usage: prb <command> [arguments...]")
         show_available()
         return
+    elif len(sys.argv) == 2 and sys.argv[1] in ["--help", "-h"]:
+        print("Usage: prb <command> [arguments...]")
+        show_available()
     else:
         command = sys.argv[1]
         script_arguments = sys.argv[2:]
