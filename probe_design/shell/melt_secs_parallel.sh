@@ -33,9 +33,5 @@ for f in "$data"/candidates/*"$suffix".fa; do process "$f" & done
 wait
 echo "Done!"
 
-for file in "$data"/melt/*.fa; do
-    mv "$file" "${file%.fa}.tsv"
-done
-
-# rename 's/.fa/.tsv/' "$data"/melt/*
+rename 's/.fa/.tsv/' "$data"/melt/*
 
