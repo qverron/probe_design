@@ -41,7 +41,7 @@ echo "Attributing oligo score."
 echo "Using the following score function: $scoref"
 #for d in db_temp1/*; do echo $d; sed -r 's/'$'\t''111([0-9]+)987([0-9]+)'$'\t''/'$'\t''\1'$'\t''\2'$'\t''/' $d | sed -r $'s/off_target_no\t/off_target_no\toff_target_sum\t/' > db_temp2/$(basename $d); done
 
-for d in db_temp1/*; do cat $d | ../escafish_score.py "$scoref" "$2" "$3" > db_tsv/$(basename $d); done
+for d in db_temp1/*; do cat $d | prb escafish_score "$scoref" "$2" "$3" > db_tsv/$(basename $d); done
 #for d in db_temp2/*; do cat $d | ../escafish_score.py "$scoref" "$2" "$3" > db_tsv/$(basename $d); done
 rm -r db_temp1
 #rm -r db_temp2
