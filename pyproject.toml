@@ -17,11 +17,10 @@ tabulate = "^0.9.0"
 biopython = "^1.82"
 tqdm = "^4"
 joblib = "^1"
-click = "^8.1.7"
+click = "^8.1.0"
 poetry = "^1.5"
-ifpd2q = "^1.0.0"
 requests = "^2.31.0"
-jupyter = "^1.0.0"
+jupyter = {version = "^1.0.0", optional = true}
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.5.0"

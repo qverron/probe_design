@@ -227,7 +227,7 @@ score_functions = { 'gg' : score_gg,
                     'q_combined': score_q_combined,
                     'q_bl': score_q_combined_bl}
 
-def escafish_score(function:str,d:dict,*args,**kwargs)->float:
+def escafish_score(function:str,d:dict,*args,**kwargs)->None:
     """
     # Dictionary of scoring functions
     score_functions = { 'gg' : score_gg,
@@ -238,12 +238,6 @@ def escafish_score(function:str,d:dict,*args,**kwargs)->float:
                     'q_bl': score_q_combined_bl}
     """
 
-    score_function = score_functions[function]
-    score = score_function(d,*args,**kwargs)
-    
-    return score
-
-if __name__ == "__main__":
     header = sys.stdin.readline().strip()
 
     if(len(sys.argv) < 2):
@@ -289,4 +283,7 @@ if __name__ == "__main__":
 
         print(f"{line}\t{score}")
 
+    return
+
+if __name__ == "__main__":
     escafish_score()
