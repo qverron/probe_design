@@ -6,7 +6,7 @@
 
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
-from ifpd2q.scripts.extract_kmers import main as extract
+from ifpd2.scripts.extract_kmers import main as extract
 import pandas as pd
 import os
 import sys
