@@ -227,7 +227,7 @@ score_functions = { 'gg' : score_gg,
                     'q_combined': score_q_combined,
                     'q_bl': score_q_combined_bl}
 
-def escafish_score(function:str,d:dict,*args,**kwargs)->None:
+def escafish_score()->None:
     """
     # Dictionary of scoring functions
     score_functions = { 'gg' : score_gg,
