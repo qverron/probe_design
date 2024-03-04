@@ -5,7 +5,7 @@ from .exclude_region import exclude_region
 from .generate_exclude import generate_exclude
 from .get_oligos import get_oligos
 from .HUSH_feedback import HUSH_feedback
-from .reform_hush_combined import reform_hush_combined
+from .reform_hush_combined_new import reform_hush_combined
 from .reform_hush_consec import reform_hush_consec
 from .reform_hush import reform_hush
 from .select_probe import select_probe
@@ -22,7 +22,7 @@ __all__ = ["cycling_query",
             "generate_exclude",
             "get_oligos",
             "HUSH_feedback",
-            "reform_hush_combined",
+            "reform_hush_combined_new",
             "reform_hush_consec",
             "reform_hush",
             "select_probe",

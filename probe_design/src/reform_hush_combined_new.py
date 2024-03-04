@@ -14,6 +14,7 @@ import joblib
 import time
 from tqdm import tqdm
 
+types = {'DNA' : 'Reference', 'RNA' : 'RevCompl', '-RNA' : 'Reference'}
 
 @contextlib.contextmanager
 def tqdm_joblib(tqdm_object):
@@ -33,11 +34,12 @@ def tqdm_joblib(tqdm_object):
 
 
 
-def consecblock(oligo,L,l,hdist_grouped):
+def consecblock(oligo,L,l,hdist_grouped,
+                maxccmatch:int=0, # largest possible match
+                currentccmatch:int=0, # current match block
+                prev:int=1, # pointer to previous sublength
+                )->int:
     # find consecutive 0 in each L-mer
-    maxccmatch = 0      # largest possible match
-    currentccmatch = 0  # current match block
-    prev = 1            # pointer to previous sublength
 
     for sub in range(L-l+1):         # check the homology of all consecutive l-mers
         current = hdist_grouped[oligo,sub]
@@ -58,29 +60,14 @@ def consecblock(oligo,L,l,hdist_grouped):
     
     return maxccmatch
 
-if __name__ == '__main__':
-    #syntax: ./reform_hush_combined.py DNA/RNA/-RNA 40 22 3 
 
-    print(f'Number of arguments: '+str(len(sys.argv)))
-    if(len(sys.argv) < 5):
-        print(f'The combined scoring approach requires nHUSH to be run using sublength oligos.\n')
-        print(f'Required arguments: [DNA/RNA/-RNA] [length] [sublength] [until].\n')
-        print(f'With "until" the same parameter as used when running nHUSH.\n')
-        print(f'Incorrect number of arguments. Exiting...')
-        exit(-1)
-
-    types = {'DNA' : 'Reference', 'RNA' : 'RevCompl', '-RNA' : 'Reference'}
-    suffix = types[sys.argv[1]]
-
-    L = int(sys.argv[2])     #full oligo length
-    print(f'Length: '+str(L))
-    l = int(sys.argv[3])    # sublength used for nHUSH
-    print(f'Sublength: '+str(l))
-    until = int(sys.argv[4])
-    print(f'HUSH was run until '+str(until)+' mismatches.')
-
-    currentfolder = './data'
-
+def reform_hush_combined(nt_type:str='DNA',
+                         L:int=40,
+                         l:int=22,
+                         currentfolder:os.PathLike = './data',
+                         until:int=3)->None:
+    
+    suffix = types[nt_type]
     roilist = currentfolder+'/rois/all_regions.tsv'
     rd = pd.read_csv(roilist,sep="\t",header=0)
     ROIcount = len(rd)
@@ -130,4 +117,29 @@ if __name__ == '__main__':
         outseq = ''.join(splitseq)
         o.write(outseq)
         o.close()
-        f.close()  
+        f.close()
+
+        return
+
+if __name__ == "__main__":
+    #syntax: ./reform_hush_combined.py DNA/RNA/-RNA 40 22 3 
+
+    print(f'Number of arguments: '+str(len(sys.argv)))
+    if(len(sys.argv) < 5):
+        print(f'The combined scoring approach requires nHUSH to be run using sublength oligos.\n')
+        print(f'Required arguments: [DNA/RNA/-RNA] [length] [sublength] [until].\n')
+        print(f'With "until" the same parameter as used when running nHUSH.\n')
+        print(f'Incorrect number of arguments. Exiting...')
+        exit(-1)
+
+    # types = {'DNA' : 'Reference', 'RNA' : 'RevCompl', '-RNA' : 'Reference'}
+    # suffix = types[sys.argv[1]]
+
+    L = int(sys.argv[2])     #full oligo length
+    print(f'Length: '+str(L))
+    l = int(sys.argv[3])    # sublength used for nHUSH
+    print(f'Sublength: '+str(l))
+    until = int(sys.argv[4])
+    print(f'HUSH was run until '+str(until)+' mismatches.')
+    # call the function here
+    reform_hush_combined(nt_type=sys.argv[1],L=L,l=l,until=until)  
