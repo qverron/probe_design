@@ -1,6 +1,6 @@
 # Expose the following functions to the main package
 from .cycling_query import cycling_query
-from .escafish_score import escafish_score
+from .escafish_score_new import escafish_score
 from .exclude_region import exclude_region
 from .generate_exclude import generate_exclude
 from .get_oligos import get_oligos
@@ -17,7 +17,7 @@ from .download_chromosomes import download_chr_list, download_chr, download_ref_
 
 
 __all__ = ["cycling_query",
-            "escafish_score",
+            "escafish_score_new",
             "exclude_region",
             "generate_exclude",
             "get_oligos",

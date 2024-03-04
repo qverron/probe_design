@@ -15,18 +15,16 @@
 
 import sys
 import re
-from tqdm import tqdm
+from tqdm import tqdm 
 
-
-
-def score_gg(d:dict, 
-             max_dg_fraction:float = 0.5,
-             max_off_targets:int = 99)->float:
+def score_gg(d):
     # Extract variables from the dictionary
     ss_dG = float(d['ss_dG'])
     off_target_no = int(d['off_target_no'])
     Tm_dG = float(d['Tm_dG'])
-
+    # Parameters
+    max_dg_fraction = 0.5
+    max_off_targets = 99
     # Calculate the score
     off_target_score = 1-off_target_no/max_off_targets
     if off_target_score < 0:
@@ -40,21 +38,20 @@ def score_gg(d:dict,
     score = 1-(off_target_score + ss_score)/2
     return score
 
-def score_gg_nhush(d:dict,
-                   max_dg_fraction:float = 0.5,
-                   max_off_targets:int = 99,
-                   ss_score:float=0)->float:
+def score_gg_nhush(d):
     # Extract variables from the dictionary
     ss_dG = float(d['ss_dG'])
     off_target_no = int(d['off_target_no'])
     Tm_dG = float(d['Tm_dG'])
-
+    # Parameters
+    max_dg_fraction = 0.5
+    max_off_targets = 99
     # Calculate the score
     # 0 -> 1, 1->1/2, 2->1/3 etc
     off_target_score = 1/(1+off_target_no)
     if off_target_score < 0:
         off_target_score = 0
-
+    ss_score = 0
     if(ss_dG/Tm_dG <= max_dg_fraction):
         ss_score = 1-ss_dG/Tm_dG/max_dg_fraction
 
@@ -65,10 +62,7 @@ def score_gg_nhush(d:dict,
 
     return score
 
-def score_q_nhush(d:dict,
-                  max_dg_fraction = 0.3,
-                  max_offtarget = 4   # correction for aberrant values after mindist
-                  )->float:
+def score_q_nhush(d):
     # Extract variables from the dictionary
     ss_dG = float(d['ss_dG'])
     off_target_no = int(d['off_target_no'])
@@ -76,7 +70,9 @@ def score_q_nhush(d:dict,
     Tm_dG = float(d['Tm_dG'])
     Tm = float(d['Tm'])
     seq = str(d['sequence'])
-
+    # Parameters
+    max_dg_fraction = 0.3
+    max_offtarget = 4   # correction for aberrant values after mindist
     # Calculate the score
     # 0 -> 1, 1->1/2, 2->1/3 etc
     if(off_target_no>max_offtarget):
@@ -100,14 +96,14 @@ def score_q_nhush(d:dict,
 
     return score    
 
-def score_q_consec(d:dict,max_off_targets:int,maxid:int,
-                   max_dg_fraction:float = 0.5)->float:
+def score_q_consec(d,max_off_targets,maxid):
     # Extract variables from the dictionary
     ss_dG = float(d['ss_dG'])
     off_target_no = int(d['off_target_no'])
     Tm_dG = float(d['Tm_dG'])
     seq = str(d['sequence'])
-    
+    # Parameters
+    max_dg_fraction = 0.5
     # Calculate the score
     if off_target_no > max_off_targets:
         off_target_score = 1e99
@@ -125,9 +121,7 @@ def score_q_consec(d:dict,max_off_targets:int,maxid:int,
     score = (off_target_score + ss_score)/2
     return score
 
-def score_q_combined(d:dict,max_consec:int,maxid:int,
-                     targetTemp:float,max_dg_fraction:float = 0.5,
-                     ss_cost:float=1e10)->float:         
+def score_q_combined(d,max_consec,maxid,targetTemp):         
    
     # Extract variables from the dictionary
     ss_dG = float(d['ss_dG'])
@@ -137,9 +131,12 @@ def score_q_combined(d:dict,max_consec:int,maxid:int,
     Tm = float(d['Tm'])
     seq = str(d['sequence'])
 
+    # Parameters
+    max_dg_fraction = 0.5
 
     # Calculate the oligo cost
     # 1. Secondary structures
+    ss_cost = 1e10
     if ss_dG >= 0:
         ss_cost = 0
     elif(ss_dG/Tm_dG <= max_dg_fraction):
@@ -169,10 +166,7 @@ def score_q_combined(d:dict,max_consec:int,maxid:int,
 
     return score    
 
-def score_q_combined_bl(d:dict,max_consec:int,maxid:int,
-                        targetTemp:float,hamdist:float,
-                        ss_cost:float=1e10, # 1. Secondary structures
-                        max_dg_fraction:float = 0.5)->float:         
+def score_q_combined_bl(d,max_consec,maxid,targetTemp,hamdist):         
    
     # Extract variables from the dictionary
     ss_dG = float(d['ss_dG'])
@@ -183,9 +177,12 @@ def score_q_combined_bl(d:dict,max_consec:int,maxid:int,
     seq = str(d['sequence'])
     distBL = int(d['bl_dist'])
 
+    # Parameters
+    max_dg_fraction = 0.5
 
     # Calculate the oligo cost
-   
+    # 1. Secondary structures
+    ss_cost = 1e10
     if ss_dG >= 0:
         ss_cost = 0
     elif(ss_dG/Tm_dG <= max_dg_fraction):
@@ -219,25 +216,14 @@ def score_q_combined_bl(d:dict,max_consec:int,maxid:int,
     return score    
 
 
-# Dictionary of scoring functions
-score_functions = { 'gg' : score_gg,
-                    'gg_nhush': score_gg_nhush,
-                    'q': score_q_nhush,
-                    'q_cc': score_q_consec,
-                    'q_combined': score_q_combined,
-                    'q_bl': score_q_combined_bl}
+score_functions = {'gg' : score_gg,
+                   'gg_nhush': score_gg_nhush,
+                   'q': score_q_nhush,
+                   'q_cc': score_q_consec,
+                   'q_combined': score_q_combined,
+                   'q_bl': score_q_combined_bl}
 
-def escafish_score()->None:
-    """
-    # Dictionary of scoring functions
-    score_functions = { 'gg' : score_gg,
-                    'gg_nhush': score_gg_nhush,
-                    'q': score_q_nhush,
-                    'q_cc': score_q_consec,
-                    'q_combined': score_q_combined,
-                    'q_bl': score_q_combined_bl}
-    """
-
+if __name__ == '__main__':
     header = sys.stdin.readline().strip()
 
     if(len(sys.argv) < 2):
@@ -247,7 +233,7 @@ def escafish_score()->None:
             print(f'{key}')
         exit(-1)
 
-    score_function = score_functions[sys.argv[1]] # select the scoring function
+    score_function = score_functions[sys.argv[1]]
 
     # unless specified, allow max 6 consecutive identical base pairs
     maxid = "6"
@@ -268,7 +254,6 @@ def escafish_score()->None:
         line = line.strip()
         d = dict(zip(header.split('\t'), line.split('\t')))
 
-        
         if (sys.argv[1] == 'q_cc'):
             score = score_function(d,maxmm,maxid)
         elif (sys.argv[1] == 'q_combined'):
@@ -282,8 +267,3 @@ def escafish_score()->None:
             score = 0
 
         print(f"{line}\t{score}")
-
-    return
-
-if __name__ == "__main__":
-    escafish_score()
