@@ -10,7 +10,7 @@ import click
 import re
 from tqdm import tqdm 
 from tabulate import tabulate
-import statistics as stat
+# import statistics as stat
 import shutil
 from itertools import compress
 import subprocess
@@ -318,11 +318,11 @@ def selectprobes(input_folder, toprocessroi, toprocessoligos, cutoff_cost, cutof
                 len(rd), float(filesplit[4][-8:-4]), probe_end-probe_start+1, int(roi_end)-int(roi_start)+1, (probe_end-probe_start+1)/(int(roi_end)-int(roi_start)+1), \
                 min(probe_center/roi_center,2-(probe_center/roi_center)), 100*(rd.start-rd.end.shift()).max()/(int(roi_end)-int(roi_start)+1), 100*(rd.start-rd.end.shift()).max()/(int(probe_end)-int(probe_start)+1),\
                 (rd.start-rd.end.shift()).mean(), (rd.start-rd.end.shift()).min(), (rd.start-rd.end.shift()).max(), (rd.start-rd.end.shift()).std(), \
-                max(rd.Tm)-min(rd.Tm), stat.mean(rd.Tm), stat.stdev(rd.Tm), \
-                max(rd.gc_content)-min(rd.gc_content), stat.mean(rd.gc_content), stat.stdev(rd.gc_content), \
-                stat.mean(rd.off_target_no), min(rd.off_target_no), max(rd.off_target_no), stat.stdev(rd.off_target_no), \
-                stat.mean(rd.off_target_sum), min(rd.off_target_sum), max(rd.off_target_sum), stat.stdev(rd.off_target_sum), \
-                stat.mean(rd.oligo_cost), min(rd.oligo_cost), max(rd.oligo_cost), stat.stdev(rd.oligo_cost), \
+                max(rd.Tm)-min(rd.Tm), np.mean(rd.Tm), np.std(rd.Tm), \
+                max(rd.gc_content)-min(rd.gc_content), np.mean(rd.gc_content), np.std(rd.gc_content), \
+                np.mean(rd.off_target_no), min(rd.off_target_no), max(rd.off_target_no), np.std(rd.off_target_no), \
+                np.mean(rd.off_target_sum), min(rd.off_target_sum), max(rd.off_target_sum), np.std(rd.off_target_sum), \
+                np.mean(rd.oligo_cost), min(rd.oligo_cost), max(rd.oligo_cost), np.std(rd.oligo_cost), \
                 inv_cost.sum()]
             # stat.mean(rd.off_target_sum), min(rd.off_target_sum), max(rd.off_target_sum), stat.stdev(rd.off_target_sum)]  
         
