@@ -214,7 +214,7 @@ def output(strand:str, length:int, mismatch:int, cutoff:int, threads:int, gap:in
             print(f"Checking the oligos with (old)HUSH...")
             with open(hushlogpath,'w') as f:
 #            subprocess.run("./validation_oldHUSH_BLAST.sh -L "+str(length)+" -m "+str(mismatch)+" -t "+str(threads)+flag+" > "+hushlogpath, shell=True,check=True)
-                subprocess.run(["./validation_oldHUSH_BLAST.sh", '-L', str(length),"-m",str(mismatch),"-t",str(threads),flag],stdout=f) # TO FIX: PATH
+                subprocess.run(["prb","validation_oldHUSH_BLAST", '-L', str(length),"-m",str(mismatch),"-t",str(threads),flag],stdout=f)
             print(f"Removing poor oligos from database")
 
         # apply results from HUSH to exclude poor oligos
@@ -237,14 +237,14 @@ def output(strand:str, length:int, mismatch:int, cutoff:int, threads:int, gap:in
             maskrerun = [(toprocess.loc[k,'window_id'] in rerunlist) for k in toprocess.index.to_list()] 
             rerunrois = toprocess[maskrerun]
             if (len(rerunrois)>0):
-                toprocess["window"][maskrerun] = [int(selection.loc[k,'oligos']) for k in rerunrois.window_id.to_list()]
-
+                toprocess.loc[maskrerun,"window"] = [int(selection.loc[k,'oligos']) for k in rerunrois.window_id.to_list()]
+                #toprocess["window"][maskrerun] = [int(selection.loc[k,'oligos']) for k in rerunrois.window_id.to_list()]
             # for probes for which no valid probe could be constructed, reduce number of oligos for next iteration
             maskfailed = [(toprocess.loc[k,'window_id'] in failedlist) for k in toprocess.index.to_list()] 
             failedrois = toprocess[maskfailed]
             if (len(failedrois)>0):
-                toprocess["window"][maskfailed] = [int(selection.loc[k,'oligos']-stepdown) for k in failedrois.window_id.to_list()]
-
+                toprocess.loc[maskfailed,"window"] = [int(selection.loc[k,'oligos']-stepdown) for k in failedrois.window_id.to_list()]
+                #toprocess["window"][maskfailed] = [int(selection.loc[k,'oligos']-stepdown) for k in failedrois.window_id.to_list()]
             # only keep rois that need to be re-run
             maskcombined = [(toprocess.loc[k,'window_id'] in combinedlist) for k in toprocess.index.to_list()] 
             toprocess = toprocess[maskcombined]
