@@ -17,16 +17,17 @@ notebook_scripts = [os.path.join(PATHNOTEBOOK, x) for x in os.listdir(PATHNOTEBO
 
 # SCRIPTS: names
 shell_scripts_names = [x.split("/")[-1] for x in shell_scripts if "__" not in x.split("/")[-1]]
-py_scripts_names = [x.split("/")[-1] for x in py_scripts if "__" not in x.split("/")[-1]]
+src_script_names = [x.split("/")[-1] for x in py_scripts if "__" not in x.split("/")[-1]]
 notebook_scripts_names = [x.split("/")[-1] for x in notebook_scripts if "__" not in x.split("/")[-1]]
 
 # SCRIPTS: no extension
 shell_scripts_no_ext = [x.split(".")[0] for x in shell_scripts_names]
-py_scripts_no_ext = [x.split(".")[0] for x in py_scripts_names]
+py_scripts_no_ext = [x.split(".")[0] for x in src_script_names if '.py' in x]
+r_scripts_no_ext = [x.split(".")[0] for x in src_script_names if '.r' in x or '.R' in x]
 notebook_scripts_no_ext = [x.split(".")[0] for x in notebook_scripts_names]
 
 # SCRIPTS: all
-ALL_SCRIPTS = shell_scripts_names + py_scripts_names + notebook_scripts_names
+ALL_SCRIPTS = shell_scripts_names + src_script_names + notebook_scripts_names
 ALL_COMMANDS = shell_scripts_no_ext + py_scripts_no_ext + notebook_scripts_no_ext
 
 def show_available() -> None:
@@ -53,6 +54,8 @@ def run_command(command:str,script_arguments)->None:
         subprocess.run([sys.executable, os.path.join(PATHSRC, command+".py"),*script_arguments])
     elif command in notebook_scripts_no_ext: # jupyter notebooks
         subprocess.run(["jupyter", "execute", os.path.join(PATHNOTEBOOK, command+".ipynb"),*script_arguments])
+    elif command in r_scripts_no_ext: # R scripts
+        subprocess.run(["Rscript", os.path.join(PATHSRC, command+".R"),*script_arguments])
     else:
         print("Command not found. Please check below for the available commands.")
         show_available()
