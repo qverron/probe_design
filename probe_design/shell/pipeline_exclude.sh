@@ -13,7 +13,7 @@ mkdir data/selected_probes
 mkdir HUSH
 
 # 1. Reformat input
-Rscript ./src/prepare_input.r
+prb prepare_input
 
 # 2. Retrieve sequences and extract k-mers
 prb get_oligos DNA/RNA [applyGCfilter False] [extfolder] # RNA assumes already existing transcript sequences. Default> DNA
@@ -60,5 +60,5 @@ prb cycling_query -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy -ex
 prb summarize-probes-final 
 
 # TO DO: ADD PLOTS
-./notebooks/plot_oligos.ipynb
-./notebooks/plot_probe_candidates.ipynb
+prb plot_oligos
+prb plot_probe_candidates 
