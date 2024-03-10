@@ -55,7 +55,7 @@ def run_command(command:str,script_arguments)->None:
     elif command in notebook_scripts_no_ext: # jupyter notebooks
         subprocess.run(["jupyter", "execute", os.path.join(PATHNOTEBOOK, command+".ipynb"),*script_arguments])
     elif command in r_scripts_no_ext: # R scripts
-        subprocess.run(["Rscript", os.path.join(PATHSRC, command+".R"),*script_arguments])
+        subprocess.run(["Rscript", os.path.join(PATHSRC, command+".r"),*script_arguments])
     else:
         print("Command not found. Please check below for the available commands.")
         show_available()
