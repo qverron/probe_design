@@ -36,7 +36,9 @@ maxconsec=24
 maxid=6
 targetTemp=72
 
-while getopts "d:L:c:f:m:i:T:h" flag; do
+confirm=false
+
+while getopts "d:L:c:f:m:i:T:hy" flag; do
    case "${flag}" in
       d) hamdist=${OPTARG};;
       L) length=${OPTARG};;
@@ -48,6 +50,7 @@ while getopts "d:L:c:f:m:i:T:h" flag; do
       h) # display Help
          Help
          exit;;
+      y) confirm=true;;
      \?) # Invalid option
          echo "Error: Invalid option, exiting."
          exit;;
@@ -58,20 +61,22 @@ data=$PWD'/data'
 cd "$data"
 if [ -d "db" ]
 then 
-    echo 'The directories need to be cleared to continue.'
-    while true; do
-        read -p "Do you wish to continue? (y/n)" yn
-        case $yn in
-            [Yy]* ) break;;
-            [Nn]* ) exit;;
-            * ) echo "Please answer yes (y) or no (n).";;
-        esac
-    done
+   echo 'The directories need to be cleared to continue.'
+   if [ "$confirm" = false ] ; then
+      while true; do
+            read -p "Do you wish to continue? (y/n)" yn
+            case $yn in
+                [Yy]* ) break;;
+                [Nn]* ) exit;;
+                * ) echo "Please answer yes (y) or no (n).";;
+            esac
+        done
+    fi
 
-    rm -r db
-    rm -r db_tsv
-    rm -r db_temp1
-    rm -r db_temp2
+   rm -r db
+   rm -r db_tsv
+   rm -r db_temp1
+   rm -r db_temp2
 fi
 
 mkdir db

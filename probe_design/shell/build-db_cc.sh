@@ -1,18 +1,27 @@
 #!/bin/bash
 set -e
 
+for arg in "$@"
+do
+    if [ "$arg" = "-y" ] ; then
+        confirm=true
+    fi
+done
+
 cd data
 if [ -d "db" ]
 then 
     echo 'The directories need to be cleared to continue.'
-    while true; do
-        read -p "Do you wish to continue? (y/n)" yn
-        case $yn in
-            [Yy]* ) break;;
-            [Nn]* ) exit;;
-            * ) echo "Please answer yes (y) or no (n).";;
-        esac
-    done
+    if [ "$confirm" = false ] ; then
+        while true; do
+            read -p "Do you wish to continue? (y/n)" yn
+            case $yn in
+                [Yy]* ) break;;
+                [Nn]* ) exit;;
+                * ) echo "Please answer yes (y) or no (n).";;
+            esac
+        done
+    fi
 
     rm -r db
     rm -r db_tsv
