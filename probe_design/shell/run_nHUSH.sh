@@ -34,7 +34,7 @@ skip=false
 gen=false
 confirm=false
 
-while getopts "f:L:l:m:t:i:d:s:hgcp" flag; do
+while getopts "f:L:l:m:t:i:d:s:hgcpy" flag; do
    case "${flag}" in
       f) exppath=${OPTARG};;
       d) fishtype=${OPTARG};;
