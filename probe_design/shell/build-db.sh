@@ -1,17 +1,28 @@
 #!/bin/bash
 
+confirm=false
+
+for arg in "$@"
+do
+    if [ "$arg" = "-y" ] ; then
+        confirm=true
+    fi
+done
+
 cd data
 if [ -d "db" ]
 then 
     echo 'The directories need to be cleared to continue.'
-    while true; do
-        read -p "Do you wish to continue? (y/n)" yn
-        case $yn in
-            [Yy]* ) break;;
-            [Nn]* ) exit;;
-            * ) echo "Please answer yes (y) or no (n).";;
-        esac
-    done
+    if [ "$confirm" = false ] ; then
+        while true; do
+            read -p "Do you wish to continue? (y/n)" yn
+            case $yn in
+                [Yy]* ) break;;
+                [Nn]* ) exit;;
+                * ) echo "Please answer yes (y) or no (n).";;
+            esac
+        done
+    fi
 
     rm -r db
     rm -r db_tsv
@@ -59,7 +70,7 @@ echo "Using the following score function: $scoref"
 for d in db_temp1/*; do echo $d; sed -r 's/'$'\t''111([0-9]+)987([0-9]+)'$'\t''/'$'\t''\1'$'\t''\2'$'\t''/' $d | sed -r $'s/off_target_no\t/off_target_no\toff_target_sum\t/' > db_temp2/$(basename $d); done
 
 #for d in db_temp1/*; do cat $d | ../escafish_score.py "$scoref" "$2" "$3" > db_tsv/$(basename $d); done
-for d in db_temp2/*; do cat $d | ../escafish_score.py "$scoref" "$maxconsec" "$maxid" "$targetTemp" > db_tsv/$(basename $d); done
+for d in db_temp2/*; do cat $d | prb escafish_score "$scoref" "$maxconsec" "$maxid" "$targetTemp" > db_tsv/$(basename $d); done
 rm -r db_temp1
 rm -r db_temp2
 

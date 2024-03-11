@@ -26,10 +26,10 @@ This adds `prb` (short for probe design) as a shell command.
 On your terminal;
 
 ```shell
-git clone http://github.com/ggirelli/oligo-melting ~/oligo-melting
-cd ~/oligo-melting
-pip install .
+pip install git+https://github.com/ggirelli/oligo-melting.git
 ```
+
+
 
 > [!NOTE]
 > nHUSH, HUSH and escafish are private repositories
