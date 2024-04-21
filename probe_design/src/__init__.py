@@ -1,5 +1,5 @@
 # Expose the following functions to the main package
-from .cycling_query import cycling_query
+from .cycling_query_new import cycling_query
 from .escafish_score_new import escafish_score
 from .exclude_region import exclude_region
 from .generate_exclude import generate_exclude
@@ -16,7 +16,7 @@ from .summarize_probes import summarize_probes
 from .download_chromosomes import download_chr_list, download_chr, download_ref_genome
 
 
-__all__ = ["cycling_query",
+__all__ = ["cycling_query_new",
             "escafish_score_new",
             "exclude_region",
             "generate_exclude",
