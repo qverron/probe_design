@@ -27,7 +27,7 @@ Help()
    echo "g     Assemble a reference genome from separate files"
    echo "p     Skip division in sublength kmers"
 }
-
+ 
 ##########################################
 # Variables
 skip=false
@@ -119,7 +119,7 @@ then
 	cat "$datapath"/ref/*.fa > "$datapath"/ref/genome.fa
 fi
 #ln -s "$datapath"/ref/genome.fa "$HUSHpath"/"$ts"/genome.fa
-ln "$datapath"/ref/genome.fa "$HUSHpath"/"$ts"/genome.fa
+cp "$datapath"/ref/genome.fa "$HUSHpath"/"$ts"/genome.fa
 
 if [ ! -z "$sublength" ]
 then

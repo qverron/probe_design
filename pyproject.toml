@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "probe-design"
-version = "0.2.21"
+version = "0.2.22"
 description = "Probe design for FISH by Quentin Verron"
 authors = ["Quentin Verron"]
 maintainers = [
@@ -20,7 +20,6 @@ joblib = "^1"
 click = "^8.1.0"
 poetry = "^1.5"
 requests = "^2.31.0"
-jupyter = {version = "^1.0.0", optional = true}
 ifpd2q = "^1.0.3"
 
 [tool.poetry.group.dev.dependencies]
