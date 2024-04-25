@@ -9,7 +9,7 @@
 # Fetches the chromosome in the "./data/ref/" folder and generates a genome ref file with that region masked
 
 from Bio.SeqIO.FastaIO import SimpleFastaParser
-from ifpd2_new.ifpd2.scripts.extract_kmers import main as extract
+from ifpd2q.scripts.extract_kmers import main as extract
 import pandas as pd
 import os
 import sys

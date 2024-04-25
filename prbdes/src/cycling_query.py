@@ -205,7 +205,7 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylo
             print(f"Checking the oligos with (old)HUSH...")
             with open(hushlogpath,'w') as f:
 #            subprocess.run("./validation_oldHUSH_BLAST.sh -L "+str(length)+" -m "+str(mismatch)+" -t "+str(threads)+flag+" > "+hushlogpath, shell=True,check=True)
-                subprocess.run(["./validation_oldHUSH_BLAST.sh", '-L', str(length),"-m",str(mismatch),"-t",str(threads),flag],stdout=f)
+                subprocess.run(["prbdes","validation_oldHUSH_BLAST", '-L', str(length),"-m",str(mismatch),"-t",str(threads),flag],stdout=f)
             print(f"Removing poor oligos from database")
 
         # apply results from HUSH to exclude poor oligos
@@ -485,11 +485,11 @@ def probequery(length,strand,roi,oligos,logpath,greedy,noquerylog):
         suffix = "-g"
     if noquerylog:    
         #subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+suffix+"> /dev/null 2>&1", shell=True)
-        subprocess.run(["./probe-query.sh","-s",strand,"-e",str(roi),"-o",str(oligos),suffix], stdout=None)
+        subprocess.run(["prbdes","probe-query","-s",strand,"-e",str(roi),"-o",str(oligos),suffix], stdout=None)
     else:
         with open(logpath,'w') as f:
         #subprocess.run("./probe-query.sh -s "+strand+" -e "+str(roi)+" -o "+str(oligos)+suffix+" > "+logpath+" 2>&1", shell=True)
-            subprocess.run(["./probe-query.sh","-s",strand,"-e",str(roi),"-o",str(oligos),suffix],stderr=subprocess.STDOUT,stdout=f)
+            subprocess.run(["prbdes","probe-query","-s",strand,"-e",str(roi),"-o",str(oligos),suffix],stderr=subprocess.STDOUT,stdout=f)
 
 # -----------------------------------------------------------------------------------------------------------------------      
 # -----------------------------------------------------------------------------------------------------------------------            
