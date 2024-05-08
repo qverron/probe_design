@@ -59,9 +59,15 @@ def tqdm_joblib(tqdm_object):
 @click.option('-excl', is_flag=True)
 @click.option('-noquerylog', is_flag=True)
 
-def output(strand:str, length:int, mismatch:int, cutoff:int, threads:int, gap:int, greedy:bool,excl:bool,noquerylog:bool, 
-           gappercent:int|None = None, stepdown:int|None = None, probe:int|None=None,
-           start:int|None=None, end:int|None =None, step:int|None=None,
+def output(strand:str, length:int, mismatch:int, cutoff:int,
+           threads:int, greedy:bool,excl:bool,noquerylog:bool, 
+           gap:int=500,
+           gappercent:int|None = None, 
+           stepdown:int|None = None, 
+           probe:int|None=None,
+           start:int|None=None, 
+           end:int|None =None, 
+           step:int|None=None,
            currentfolder = './data/', # can be adapted so the code can be run in other folders
            cutoff_cost:float = 1e6,
            cutoff_oligo:float = 10, # max allowed cost for a single oligo
@@ -82,9 +88,7 @@ def output(strand:str, length:int, mismatch:int, cutoff:int, threads:int, gap:in
     logpath = os.path.join(logdir,f'cycling_query_{nowstring}.log')
 
     logging.basicConfig(filename=logpath, level=logging.DEBUG)
-
     logging.info(f"Starting probe query: "+nowstring)
-
     logging.info(f"User-set parameters:")
     logging.info(f"FISH type                : {strand}")
     logging.info(f"Oligo length             : {length}")
