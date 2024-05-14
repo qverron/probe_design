@@ -35,7 +35,7 @@ def split_fasta(genome_fasta:str, prefix:str='chm13',save_loc:str='.')->None:
             fname = os.path.join(save_loc, f'{prefix}.chromosome.{chr_id}.fa') # Output file name
             with open(fname, 'w') as out:
                 # Create a new SeqRecord for the sequence
-                print(f'\033[92mWriting chromosome {chr_id} to {save_loc}{prefix}.chromosome.{chr_id}.fa',end=' ')
+                print(f'\033[92mWriting chromosome {chr_id} to {fname}\033[0m',end=' ')
                 new_record = SeqRecord(sequence, id=record.id, description=title)
                 # Write the SeqRecord to the file
                 SeqIO.write(new_record, out, 'fasta')   # 60 characters per line
