@@ -1,53 +1,49 @@
 from Bio import SeqIO
-from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import argparse
-from tqdm import tqdm
+import os
 
+'''
+Split a CHM13 T2T (telomere-to-telomere) genome fasta file into chromosomes.
+The chromosome id is extracted from the fasta title.
+The output files are named as "save_loc/prefix.chromosome.chr_id.fa"
+Also, FASTA sequences are transformed to uppercase.
+'''
 
-argparser = argparse.ArgumentParser(description="Split T2T reference into individual chromosomes")
-argparser.add_argument("-g",'--genome', help="Path to the reference fasta file", type=str, default="~/ref/T2T.fa")
-argparser.add_argument('-n','--name',help="Name of the reference", type = str, default="CHM13.T2T")
-argparser.add_argument('-d','--directory',help="Path to the output directory", type = str, default="./data/ref")
+argparser = argparse.ArgumentParser(description='Split a CHM13 T2T (telomere-to-telomere) genome fasta file into chromosomes.')
+argparser.add_argument('-g','--genome', help='Input genome fasta file.',default='GCA_009914755.4_T2T-CHM13v2.0_genomic.fna')
+argparser.add_argument('-p','--prefix', help='Prefix for the output files.', default='CHM13.T2T')
+argparser.add_argument('-s','--save_loc', help='Location to save the output chromosome files.', default='.')
 args = argparser.parse_args()
 
-def extract_headers_and_sequences(fasta_file:str,ref_name:str = "CHM13.T2T", dir=None) -> tuple[list[str], list[str], list[str]]:
-    headers = []
-    sequences = []
+def split_fasta(genome_fasta:str, prefix:str='chm13',save_loc:str='.')->None:
+    '''
+    Read a genome fasta file and split it into chromosomes.
+    The chromosome id is extracted from the fasta title.
+    The output files are named as "save_loc.prefix.chromosome.chr_id.fa"
+    '''
+    with open(genome_fasta, 'r') as f:
+        for record in SeqIO.parse(f, 'fasta'):
+            title = record.description
+            sequence = record.seq.upper() # Convert to uppercase
+            words = title.split(' ')
+            if not 'mitochondrion' in title: # Not a mitochondrial chromosome
+                chr_id = words[-1] # last word is the chromosome id
+            else : # Mitochondrial chromosome
+                chr_id = 'M' 
 
-    if dir:
-        ref_name = f"{dir}/{ref_name}"
-
-    for record in SeqIO.parse(fasta_file, "fasta"):
-        headers.append(record.description)
-        sequences.append(record.seq)
-
-    chr_ids = [x.split(" ")[6].strip(',') for x in headers]
-    file_names = [f"{ref_name}.chromosome.{x}.fa" for x in chr_ids]
-
-    return file_names, headers, sequences
-
-
-def save_fasta_files(file_names:list[str], headers:list[str], sequences:list[str]) -> None:
-
-
-    for i in tqdm(range(len(file_names))):
-        sequence = Seq(sequences[i])
-        record = SeqRecord(sequence, id=headers[i])
-        with open(file_names[i], "w") as f:
-            SeqIO.write(record, f, "fasta")
-    return
-
-
-if __name__ == "__main__":
-    ref = 'GCF_009914755.1_T2T-CHM13v2.0_genomic.fna'
-    save_fasta_files(
-        *extract_headers_and_sequences(
-            fasta_file=args.genome,
-            dir=args.directory,
-            ref_name=args.name,
-            )
-        )
+            fname = os.path.join(save_loc, f'{prefix}.chromosome.{chr_id}.fa') # Output file name
+            with open(fname, 'w') as out:
+                # Create a new SeqRecord for the sequence
+                print(f'Writing chromosome {chr_id} to {save_loc}{prefix}.chromosome.{chr_id}.fa ...',end='')
+                new_record = SeqRecord(sequence, id=record.id, description=title)
+                # Write the SeqRecord to the file
+                SeqIO.write(new_record, out, 'fasta')   # 60 characters per line
+                print(f'Chromosome {chr_id} written to {save_loc}{prefix}.chromosome.{chr_id}.fa')
+    return 
 
 
-
+if __name__ == '__main__':
+    split_fasta(args.genome, args.prefix, args.save_loc)
+    test_script = 'python3 split_it.py -g GCA_009914755.4_T2T-CHM13v2.0_genomic.fna -p chm13 -s ./'
+    test_for_hpc = 'python3 split_it.py -g data/ref/GCA_009914755.4_T2T-CHM13v2.0_genomic.fna -p CHM13.T2T -s data/ref/'
