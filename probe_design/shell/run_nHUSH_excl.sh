@@ -107,6 +107,7 @@ if [ "$confirm" = false ]; then
 fi
 
 # define a unique nHUSH folder
+mkdir -p HUSH
 datapath="${exppath}/data"
 HUSHpath="${exppath}/HUSH"
 ts="HUSH_"$(date +%Y%m%d-%H%M%S)
