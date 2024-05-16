@@ -24,6 +24,7 @@ ifpd2q = "^1.0.3"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.5.0"
+ipykernel = "^6.29.4"
 
 [tool.poetry.scripts]
 prb = "probe_design.main:main"
