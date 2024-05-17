@@ -25,6 +25,7 @@ argparser = argparse.ArgumentParser(prog='download ensemble genome',description=
 argparser.add_argument('-s','--species',type=str,default='homo_sapiens',choices=["homo_sapiens","mus_musculus"])
 argparser.add_argument('-b','--build',type=int,default=38,help="the build number of the genome")
 argparser.add_argument('-r','--release',default=109,help="release number of the build")
+argparser.add_argument('-d','--dir',default='data/ref',help='destination directory')
 argparser.add_argument('-f','--filename',default=None,help="give a specific name to the downloaded file ")
 argparser.add_argument('-k','--keep',action='store_true',help="whether to keep gzip files")
 argparser.add_argument('-split',action='store_true',help='whether to split into chromosomes')
@@ -252,10 +253,10 @@ def main():
             build=args.build,
             release=args.release,
             species=args.species,
-            chr_folder="data/ref",
+            chr_folder=args.dir,
             file_name=args.filename,
             unzip=True,
-            remove_gz=not args.k
+            remove_gz=not args.keep
         )
     else:
         release = get_ensembl_release(species=args.species.capitalize())
@@ -263,10 +264,10 @@ def main():
             build=args.build,
             release=release,
             species=args.species,
-            chr_folder="data/ref",
+            chr_folder=args.dir,
             file_name=args.filename,
             unzip=True,
-            remove_gz=not args.k
+            remove_gz=not args.keep
         )
 
     if args.split:
