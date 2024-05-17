@@ -5,7 +5,7 @@ import os
 import gzip
 import argparse
 from bs4 import BeautifulSoup
-from .split_GRC import split_fasta
+from split_GRC import split_fasta
 from tqdm import tqdm
 
 # Human (homo_sapiens) and Mouse (mus_musculus) genomes respectively
@@ -26,7 +26,7 @@ argparser.add_argument('-s','--species',type=str,default='homo_sapiens',choices=
 argparser.add_argument('-b','--build',type=int,default=38,help="the build number of the genome")
 argparser.add_argument('-r','--release',default=109,help="release number of the build")
 argparser.add_argument('-f','--filename',default=None,help="give a specific name to the downloaded file ")
-argparser.add_argument('-k','-keep',action='store_true',help="whether to keep gzip files")
+argparser.add_argument('-k','--keep',action='store_true',help="whether to keep gzip files")
 argparser.add_argument('-split',action='store_true',help='whether to split into chromosomes')
 args = argparser.parse_args()
 
@@ -273,7 +273,7 @@ def main():
         import glob
         fasta = glob.glob('data/ref/*.dna.primary_assembly.fa')[0]
         split_fasta(genome_fasta=fasta,prefix=None,save_loc='.') # split the genome into chromosomes
-    
+        os.rename(fasta,'genome.fa')
 
 if __name__ == "__main__":
     main()

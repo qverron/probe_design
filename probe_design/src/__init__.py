@@ -14,7 +14,7 @@ from .summarize_probes_cumul import summarize_probes_cumul
 from .summarize_probes_final import summarize_probes_final
 from .summarize_probes import summarize_probes
 from .download_chromosomes import download_chr_list, download_chr, download_ref_genome
-
+from .split_GRC import split_fasta
 
 __all__ = ["cycling_query_new",
             "escafish_score_new",
