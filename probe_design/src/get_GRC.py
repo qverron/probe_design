@@ -21,7 +21,7 @@ human_all_chr: list[int|str] = list(range(1,23))+['X','Y','MT'] # list of human 
 mouse_all_chr: list[int|str] = list(range(1,19))+['X','Y','MT'] # list of mouse chromosomes
 
 #args
-argparser = argparse.ArgumentParser(prog='download ensemble genome',description="download ensemble genome")
+argparser = argparse.ArgumentParser(prog='prb get_GRC',description="download ensemble genome")
 argparser.add_argument('-s','--species',type=str,default='homo_sapiens',choices=["homo_sapiens","mus_musculus"])
 argparser.add_argument('-b','--build',type=int,default=38,help="the build number of the genome")
 argparser.add_argument('-r','--release',default=109,help="release number of the build")
@@ -272,9 +272,13 @@ def main():
 
     if args.split:
         import glob
-        fasta = glob.glob('data/ref/*.dna.primary_assembly.fa')[0]
+        pattern = os.path.join(args.dir,'*dna.primary_assembly.fa')
+        fasta = glob.glob(pattern)[0]
         split_fasta(genome_fasta=fasta,prefix=None,save_loc='.') # split the genome into chromosomes
-        os.rename(fasta,'genome.fa')
+
+        # rename the genome file
+        target = os.path.join(args.dir,'genome.fa')
+        os.rename(fasta,target)
 
 if __name__ == "__main__":
     main()
