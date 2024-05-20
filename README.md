@@ -128,20 +128,20 @@ prb get_GRC -split
 >
 >download ensemble genome
 >
->options:
->  -h, --help
-> ------> show this help message and exit
->  -s {homo_sapiens,mus_musculus}, --species {homo_sapiens,mus_musculus}
->  -b BUILD, --build BUILD
-> ------> the build number of the genome
->  -r RELEASE, --release RELEASE
-> ------> release number of the build
->  -d DIR, --dir DIR     destination directory
->  -f FILENAME, --filename FILENAME
-> ------> give a specific name to the downloaded file
->  -k, --keep
-> ------> whether to keep gzip files
->  -split                
+>options:<br>
+>  -h, --help<br>
+> ------> show this help message and exit<br>
+>  -s {homo_sapiens,mus_musculus}, --species {homo_sapiens,mus_musculus}<br>
+>  -b BUILD, --build BUILD<br>
+> ------> the build number of the genome<br>
+>  -r RELEASE, --release RELEASE<br>
+> ------> release number of the build<br>
+>  -d DIR, --dir DIR     destination directory<br>
+>  -f FILENAME, --filename FILENAME<br>
+> ------> give a specific name to the downloaded file<br>
+>  -k, --keep<br>
+> ------> whether to keep gzip files<br>
+>  -split                <br>
 > ------> whether to split into chromosomes
 
 4. Retrieve your region sequences and extract all k-mers of correct length:
@@ -244,7 +244,7 @@ prb build-db_BL -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 9. Query the database to get candidate probes:
 
 ``` shell
-prb cycling_query -s DNA -L 40 -m 8 -c 100 -t 40 -greedy
+prb cycling_query -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -greedy
 ```
 
 **[optional: -greedy. Speed > quality]
@@ -263,7 +263,7 @@ If enough oligos cannot be found, design probes with fewer oligos, decreasing wi
 prb summarize_probes_final
 ```
 
-Some visual elements can be obtained using the following notebooks (needs updating!):
+Some visual elements can be obtained using the following notebooks (TODO!):
 
 ``` shell
 prb plot_probe_candidates
@@ -278,12 +278,38 @@ oligos that are specific for the ROI can be included in the final probe.
 
 ### Warning: This approach occupies a lot more hard drive space!
 
-1. Preparation
+1. Generate all required subfolders:
+
+``` shell
+prb makedirs
+```
+
+2. Input file for Region of Intrests (ROIS)
+
+> [!CAUTION]
+> 1. your region of interests file MUST be named `all_regions.tsv`
+> 2. `all_regions.tsv` MUST follow the [EXAMPLE](probe_design/data/rois/all_regions.tsv) format.
+> 3. `all_regions.tsv` MUST be placed within `data/rois` folder.
+> 4. 
+
+3. Additional Preparation
 - Besides `data/rois/` and `data/ref/`, the pipeline requires an additional
   `data/exclude/` folder containing BED files with the coordinates of sections
   to mask out when running HUSH for each ROI. 
-  
-2. (UNLESS manually providing exclusion regions)
+
+4. Download Reference genome
+
+For CHM13 T2T (advised for repetetive regions)
+
+```shell
+prb get_T2T
+```
+options
+> -p: prefix for the chromosomes ;default: CHM13.T2T
+> names will prefix.chromosome.ID.fa where ID stands for chromosome ID i.e., 1-22+X,Y,M
+
+
+5. (UNLESS manually providing exclusion regions)
 Exclude regions of interest from HUSH scan.
 
 ``` shell
@@ -291,13 +317,8 @@ prb generate_exclude
 ```
 - The same sheet template can be used to manually add further regions to exclude.
 
-2. Generate all required subfolders:
 
-``` shell
-prb makedirs
-```
-
-3. Retrieve your region sequences and extract all k-mers of correct length:
+6. Retrieve your region sequences and extract all k-mers of correct length:
 
 ``` shell
 # (from Pipeline/)
@@ -309,13 +330,13 @@ prb get_oligos DNA
    If indicating `RNA`, the module will assume that the transcript / region
    sequences are already present in the `data/regions` folder. Default: `DNA.
    
-4. Apply the region exclusion mask on the reference genome.
+7. Apply the region exclusion mask on the reference genome.
 
 ``` shell
 prb exclude_region
 ```
 
-5. Generate a black list of abundantly repeated oligos in the reference genome.
+8. Generate a black list of abundantly repeated oligos in the reference genome.
 
 ```shell
 prb generate_blacklist -L 40 -c 100
@@ -325,18 +346,20 @@ Needs to be re-run everytime when using exclusion masks.
 L: oligo length; c: min abundance to be included in oligo black list   
 
 
-6. Test all k-mers for their homology to other regions in the genome,
-   using nHUSH. Instead of running the entire k-mers (of length `L`) at
-   once, can be sped up by testing shorter sublength oligos (of length
-   l).  `-m` number of mismatches to test for (minimum 1 for sublength;
-   more gives better information but takes longer time);
-   `-t` number of threads, `-i` comb size
+9. Test all k-mers for their homology to other regions in the genome,
+using nHUSH. Instead of running the entire k-mers (of length `L`) at
+once, can be sped up by testing shorter sublength oligos (of length
+l).  `-m` number of mismatches to test for (minimum 1 for sublength;
+more gives better information but takes longer time);
+`-t` number of threads, `-i` comb size
 
 Sublength:
 
 ```shell
 prb run_nHUSH_excl -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
 ```
+
+> prb run_nHUSH_excl -d {DNA|RNA} -L {length} -l (optional){sublength} -m {number of mismatches} -t {threads} i {comb size}
   
 Note the `_excl` specific to the exclusion mode.  
   
@@ -355,6 +378,7 @@ prb reform_hush_combined DNA|RNA|-RNA length sublength until
 prb reform_hush_combined DNA 40 21 3
 ```
 
+
 (`until` denotes the same number as specified after `-m` when running nHUSH).
 
 8. Calculate the melting temperature of k-mers and the free energy of
@@ -363,6 +387,7 @@ prb reform_hush_combined DNA 40 21 3
 ```shell
 prb melt_secs_parallel (optional DNA(ref) / RNA(rev. compl))
 ```
+> e.g., prb melt_secs_parallel DNA
 
 9. Create k-mer database, convert to TSV for querying and attribute
    score to each oligo (based on nHUSH score, GC content, melting
@@ -401,7 +426,7 @@ If enough oligos cannot be found, design probes with fewer oligos, decreasing wi
 11. Summarize the final probes:
 
 ``` shell
-prb summarize-probes-final
+prb summarize_probes_final
 ```
 
 ## Generate probes for ordering
