@@ -412,8 +412,8 @@ def feedback(currentfolder,outfolder,count,cutoff,logpath):
                 logging.info(f'No oligos were excluded.')  
                 # move probe to final selection folder
                 tsvname = basename[6:basename.find('.fa')]+".tsv"
-                shutil.move(selectedfolder + tsvname,outfolder)
-                shutil.move(selectedfolder + basename,outfolder)    # also keep the .out file (all other files will be deleted)      
+                shutil.move(selectedfolder + tsvname,outfolder + tsvname)
+                shutil.move(selectedfolder + basename,outfolder + basename)    # also keep the .out file (all other files will be deleted)      
                     
 
     logging.info(f'Length of rerunlist: '+str(len(rerunlist)))

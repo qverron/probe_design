@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "probe-design"
-version = "0.2.39"
+version = "0.2.40"
 description = "Probe design for FISH by Quentin Verron"
 authors = ["Quentin Verron"]
 maintainers = [
