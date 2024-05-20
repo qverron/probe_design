@@ -1,15 +1,17 @@
 # Instructions for probe design
 
 > [!CAUTION]
-> You may want to add python and pip as aliases for python3 and pip3
+> You may want to add pip as alias for pip3
 
 On your terminal;
 
 ```shell
-echo "alias python='python3'" >> ~/.bashrc
+
 echo "alias pip='pip3'" >> ~/.bashrc
 source ~/.bashrc
 ```
+
+Or simply use `pip3` instead of `pip`
 
 ## Installation
 
@@ -69,6 +71,8 @@ pip install git+https://github.com/ggirelli/oligo-melting.git
   
 - All the commands below assume you are starting from your project directory
 
+- To make a project directory and change directory to project directory
+
 ```shell
 mkdir <project_name>
 cd <project_name>
@@ -80,30 +84,67 @@ cd <project_name>
 
 1. Preparation
 
-- The probe desin pipeline data is currently intended to be run on a 
-  folder called `data/` contained within the pipeline project folder <project_name>.
-
-- Upon starting the pipeline, the `data/` folder should only contain
-  `data/rois/` and `data/ref/` (and possibly `data/blacklist/`, see 6.). If more folders are included, consider making a back-up or simply removing them.
-  
-- List your regions of interest and their coordinates in the input file:
-  `data/rois/all_regions.tsv`
-
-- Place your reference genome in the `data/ref/` folder. Make
-  sure that the chromosome naming matches with the reference genome
-  name provided in `all_regions.tsv`.
-  
-- The reference folder can alternatively be gathered using `prb get_ref_genome`.
-  In that case, adjust the script manually with the correct Ensembl 
-  address for your genome of interest.
-
-2. Generate all required subfolders inside your project directory:
+Inside the project dirctory.
 
 ```shell
 prb makedirs
 ```  
 
-3. Retrieve your region sequences and extract all k-mers of correct length:
+This will create `data` directory and its subdirectories `data/rois` and `data/ref`.
+
+- Upon starting the pipeline, the `data/` folder should only contain
+  `data/rois/` and `data/ref/` (and possibly `data/blacklist/`, see 6.). If more folders are included, consider making a back-up or simply removing them.
+
+2. Input file for Region of Intrests (ROIS)
+
+> [!CAUTION]
+> 1. your region of interests file MUST be named `all_regions.tsv`
+> 2. `all_regions.tsv` MUST follow the [EXAMPLE](probe_design/data/rois/all_regions.tsv) format.
+> 3. `all_regions.tsv` MUST be placed within `data/rois` folder.
+> 4. 
+
+
+- List your regions of interest and their coordinates in the input file:
+  `data/rois/all_regions.tsv`
+
+
+3. Download Reference genome
+
+For CHM13 T2T 
+
+```shell
+prb get_T2T
+```
+options
+> -p: prefix for the chromosomes ;default: CHM13.T2T
+> names will prefix.chromosome.ID.fa where ID stands for chromosome ID i.e., 1-22+X,Y,M
+
+For GRCh38
+
+```shell
+prb get_GRC -split
+```
+>usage: prb get_GRC [-h] [-s {homo_sapiens,mus_musculus}] [-b BUILD] [-r RELEASE] [-d DIR] [-f FILENAME] [-k] [-split]
+>
+>download ensemble genome
+>
+>options:
+>  -h, --help
+> ------> show this help message and exit
+>  -s {homo_sapiens,mus_musculus}, --species {homo_sapiens,mus_musculus}
+>  -b BUILD, --build BUILD
+> ------> the build number of the genome
+>  -r RELEASE, --release RELEASE
+> ------> release number of the build
+>  -d DIR, --dir DIR     destination directory
+>  -f FILENAME, --filename FILENAME
+> ------> give a specific name to the downloaded file
+>  -k, --keep
+> ------> whether to keep gzip files
+>  -split                
+> ------> whether to split into chromosomes
+
+4. Retrieve your region sequences and extract all k-mers of correct length:
 
 ```shell
 prb get_oligos DNA|RNA [optional: applyGCfilter 0|1]
@@ -115,11 +156,15 @@ prb get_oligos DNA 1
 > If indicating `RNA`, the module will assume that the transcript / region
 > sequences are already present in the `data/regions` folder. Default: `DNA.
 
-4. Test all k-mers for their homology to other regions in the genome,
+
+5. Test all k-mers for their homology to other regions in the genome,
    using nHUSH. Instead of running the entire k-mers (of length `L`) at
    once, can be sped up by testing shorter sublength oligos (of length
    l).  `-m` number of mismatches to test for (always use 1 when running
    sublength); `-t` number of threads, `-i` comb size
+
+> [!CAUTION]
+> Make sure your Length (-L) here matches with the Length in your all_regions.tsv file
 
 - Full length:
 
@@ -133,8 +178,10 @@ prb run_nHUSH -d RNA -L 35 -m 5 -t 40 -i 14
 prb run_nHUSH -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
 ```
 
-> [!TIP]
-> ADD -g if this is the first time running with a new reference genome!  
+> prb run_nHUSH -d {DNA|RNA} -L {length} -l (optional){sublength} -m {number of mismatches} -t {threads} i {comb size}
+
+
+ 
   
 - In case nHUSH is interrupted before completion, run before continuing:
 
@@ -142,29 +189,35 @@ prb run_nHUSH -d DNA -L 40 -l 21 -m 3 -t 40 -i 14
 prb unfinished_HUSH
 ```
   
-5. Recapitulate nHUSH results as a score 
+6. Recapitulate nHUSH results as a score 
 
 ``` shell
 prb reform_hush_combined DNA|RNA|-RNA length sublength until
 ```
 
+> e.g., prb reform_hush_combined DNA 40 21 3
+
 (`until` denotes the same number as specified after `-m` when running nHUSH). 
 
-6. Calculate the melting temperature of k-mers and the free energy of
+7. Calculate the melting temperature of k-mers and the free energy of
    secondary structure formation:
 
 ``` shell
-prb melt_secs_parallel (optional DNA(ref) / RNA(rev. compl))   
+prb melt_secs_parallel (optional DNA(ref) | RNA(rev. compl))   
 ```
 
+> e.g., prb melt_secs_parallel DNA
+
 7. Generate a black list of abundantly repeated oligos in the reference genome.
+
+> [!NOTE]
+> This only needs to be run once per reference genome if not using any 
+> exclusion regions! Just save the blacklist folder between runs.
 
 ``` shell
 prb generate_blacklist -L 40 -c 100
 ```
-> [!NOTE]
-> This only needs to be run once per reference genome if not using any 
-> exclusion regions! Just save the blacklist folder between runs.
+
 
 > L: oligo length <br>
 > c: min abundance to be included in oligo black list
