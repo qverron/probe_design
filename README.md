@@ -369,7 +369,7 @@ In case nHUSH is interrupted before completion, run before continuing:
 prb unfinished_HUSH
 ```
   
-7. Recapitulate nHUSH results as a score
+10. Recapitulate nHUSH results as a score
 
 ```shell
 # Format:
@@ -381,7 +381,7 @@ prb reform_hush_combined DNA 40 21 3
 
 (`until` denotes the same number as specified after `-m` when running nHUSH).
 
-8. Calculate the melting temperature of k-mers and the free energy of
+11. Calculate the melting temperature of k-mers and the free energy of
    secondary structure formation:
 
 ```shell
@@ -389,7 +389,7 @@ prb melt_secs_parallel (optional DNA(ref) / RNA(rev. compl))
 ```
 > e.g., prb melt_secs_parallel DNA
 
-9. Create k-mer database, convert to TSV for querying and attribute
+12. Create k-mer database, convert to TSV for querying and attribute
    score to each oligo (based on nHUSH score, GC content, melting
    temperature, homopolymer stretches, secondary structures).
    
@@ -407,7 +407,7 @@ prb build-db_BL -f q_bl -m 32 -i 6 -L 40 -c 100 -d 8 -T 72
 > T: target temperature <br>
 > m: max length of consecutive off-target match <br>
   
-10. Query the database to get candidate probes:
+13. Query the database to get candidate probes:
 
 ``` shell
 prb cycling_query -s DNA -L 40 -m 8 -c 100 -t 40 -g 500 -stepdown 50 -greedy -excl
@@ -423,7 +423,7 @@ Number of oligos to decrease probe size with every iteration that does not find 
 Cycling query which generate probe candidates, then checks the resulting oligos using HUSH, removes inacceptable oligos and generate probes again.
 If enough oligos cannot be found, design probes with fewer oligos, decreasing with `stepdown` at each step.
 
-11. Summarize the final probes:
+14. Summarize the final probes:
 
 ``` shell
 prb summarize_probes_final
