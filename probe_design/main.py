@@ -32,7 +32,7 @@ ALL_COMMANDS = shell_scripts_no_ext + py_scripts_no_ext + notebook_scripts_no_ex
 
 def show_available() -> None:
     # ANSI escape codes for text color
-    blue_code = "\033[34m"  # Dark Blue
+    blue_code = "\033[34m"  # Dark Blue -h
     red_code = "\033[91m"   # Red
     green_code = "\033[92m" # Green
     reset_code = "\033[0m"  # Reset color

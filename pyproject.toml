@@ -1,13 +1,16 @@
 [tool.poetry]
 name = "probe-design"
-version = "0.2.41"
+version = "0.2.42"
 description = "Probe design for FISH by Quentin Verron"
 authors = ["Quentin Verron"]
 maintainers = [
-    "Quentin Verron",
-    "Zafer Kosar <zafermolbio.gmail.com>"]
+    "Quentin Verron <quentin.verron@ki.se>",
+    "Zafer Kosar <zafermolbio@gmail.com>",
+]
 license = "CC NC BY 4.0"
 readme = "README.md"
+repository = "https://github.com/qverron/probe_design"
+keywords = ["FISH", "probe", "design", "bioinformatics"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
