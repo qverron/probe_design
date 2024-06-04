@@ -10,7 +10,7 @@ import click
 import re
 from tqdm import tqdm 
 from tabulate import tabulate
-import statistics as stat
+# import statistics as stat
 import shutil
 from itertools import compress
 import subprocess
@@ -59,10 +59,25 @@ def tqdm_joblib(tqdm_object):
 @click.option('-excl', is_flag=True)
 @click.option('-noquerylog', is_flag=True)
 
-def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylog, gappercent = None, stepdown = None, probe=None,start=None, end=None, step=None):
-        # initialization
-    currentfolder = './data/'       # can be adapted so the code can be run in other folders
-    logdir = currentfolder + "logfiles/"
+def output(strand:str, length:int, mismatch:int, cutoff:int,
+           threads:int, greedy:bool,excl:bool,noquerylog:bool, 
+           gap:int=500,
+           gappercent:int|None = None, 
+           stepdown:int|None = None, 
+           probe:int|None=None,
+           start:int|None=None, 
+           end:int|None =None, 
+           step:int|None=None,
+           currentfolder = './data/', # can be adapted so the code can be run in other folders
+           cutoff_cost:float = 1e6,
+           cutoff_oligo:float = 10, # max allowed cost for a single oligo
+           finished:bool = False,
+           count:int = 1,
+           completelyfailed:list = [],
+           )->None:
+    # initialization
+    
+    logdir = os.path.join(currentfolder,"logfiles/")
     try:
         os.mkdir(logdir)
     except FileExistsError:
@@ -70,12 +85,10 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylo
 
     now = datetime.now()
     nowstring = now.strftime("%Y_%m_%d_%H:%M:%S")
-    logpath = logdir+'cycling_query_'+nowstring+'.log'
+    logpath = os.path.join(logdir,f'cycling_query_{nowstring}.log')
 
     logging.basicConfig(filename=logpath, level=logging.DEBUG)
-
     logging.info(f"Starting probe query: "+nowstring)
-
     logging.info(f"User-set parameters:")
     logging.info(f"FISH type                : {strand}")
     logging.info(f"Oligo length             : {length}")
@@ -85,7 +98,7 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylo
         logging.info(f"Masking probe region from HUSH runs.")
     
 
-    outprobes = currentfolder +"final_probes/"
+    outprobes = os.path.join(currentfolder,"final_probes/")
     try:
         os.mkdir(outprobes)
     except FileExistsError:
@@ -93,7 +106,7 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylo
     # TO DO: check already completed probes and skip
 
     # parameters
-    cutoff_cost = 1e6       # max total cost of a probe. Exclude probe if even one oligo has a prohibitive cost
+          # max total cost of a probe. Exclude probe if even one oligo has a prohibitive cost
     if (not gappercent):
         cutoff_d_pc = 10
     else:
@@ -101,7 +114,7 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylo
     #cutoff_d_pc = 10        # max distance between 2 consecutive oligos, as a % of the total probe length
     cutoff_d = gap          # max distance between 2 consecutive oligos, in nucleotides 
     #cutoff_d = 500          # max distance between 2 consecutive oligos, in nucleotides 
-    cutoff_oligo = 10       # max allowed cost for a single oligo
+    
     if (not stepdown):
         stepdown = 1                # number of oligos to decrease size of probe with, if no valid probe could be found with the current size       
 
@@ -112,13 +125,13 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylo
     logging.info(f"Max single oligo cost                        : {cutoff_oligo}")
 
     # start process with full ROI list
-    roilist = currentfolder+'rois/all_regions.tsv'
+    roilist = os.path.join(currentfolder,'rois/all_regions.tsv')
     rdroi = pd.read_csv(roilist,sep="\t",header=0)
     
-    finished = False
-    count = 1
-
-    completelyfailed = []
+    # moved into function args as they are independently initialized 
+    #finished = False
+    #count = 1
+    #completelyfailed = []
 
     if ((not start) or (not end) or (not step)):          # check if the user has provided all three parameters to sweep different oligo numbers
         sweep = False  
@@ -132,22 +145,22 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylo
           
     while (not finished):
 
-        logging.warning(f"Probe generation round "+str(count)+".")
+        logging.warning(f"Probe generation round {count}.")
 
-        print(f"Probe generation round "+str(count)+".")
+        print(f"Probe generation round {count}.")
 
         # EMPTY SELECTED_PROBES FOLDER + MAKE SURE PROBE QUERY FOLDERS DON'T COLLIDE
         try:
-            shutil.rmtree(currentfolder + "probe_candidates")
+            shutil.rmtree(os.path.join(currentfolder , "probe_candidates"))
         except:
             pass
         try:
-            shutil.rmtree(currentfolder + "selected_probes") 
+            shutil.rmtree(os.path.join(currentfolder , "selected_probes")) 
         except:
             pass       
 
-        os.mkdir(currentfolder+"probe_candidates/")
-        os.mkdir(currentfolder+"selected_probes/")
+        os.mkdir(os.path.join(currentfolder,"probe_candidates/"))
+        os.mkdir(os.path.join(currentfolder,"selected_probes/"))
         
         toprocessRoi = toprocess.window_id.to_list()
         toprocessOligos = toprocess.window.to_list()
@@ -228,14 +241,14 @@ def output(strand, length, mismatch, cutoff, threads, gap, greedy,excl,noquerylo
             maskrerun = [(toprocess.loc[k,'window_id'] in rerunlist) for k in toprocess.index.to_list()] 
             rerunrois = toprocess[maskrerun]
             if (len(rerunrois)>0):
-                toprocess["window"][maskrerun] = [int(selection.loc[k,'oligos']) for k in rerunrois.window_id.to_list()]
-
+                toprocess.loc[maskrerun,"window"] = [int(selection.loc[k,'oligos']) for k in rerunrois.window_id.to_list()]
+                #toprocess["window"][maskrerun] = [int(selection.loc[k,'oligos']) for k in rerunrois.window_id.to_list()]
             # for probes for which no valid probe could be constructed, reduce number of oligos for next iteration
             maskfailed = [(toprocess.loc[k,'window_id'] in failedlist) for k in toprocess.index.to_list()] 
             failedrois = toprocess[maskfailed]
             if (len(failedrois)>0):
-                toprocess["window"][maskfailed] = [int(selection.loc[k,'oligos']-stepdown) for k in failedrois.window_id.to_list()]
-
+                toprocess.loc[maskfailed,"window"] = [int(selection.loc[k,'oligos']-stepdown) for k in failedrois.window_id.to_list()]
+                #toprocess["window"][maskfailed] = [int(selection.loc[k,'oligos']-stepdown) for k in failedrois.window_id.to_list()]
             # only keep rois that need to be re-run
             maskcombined = [(toprocess.loc[k,'window_id'] in combinedlist) for k in toprocess.index.to_list()] 
             toprocess = toprocess[maskcombined]
@@ -309,11 +322,11 @@ def selectprobes(input_folder, toprocessroi, toprocessoligos, cutoff_cost, cutof
                 len(rd), float(filesplit[4][-8:-4]), probe_end-probe_start+1, int(roi_end)-int(roi_start)+1, (probe_end-probe_start+1)/(int(roi_end)-int(roi_start)+1), \
                 min(probe_center/roi_center,2-(probe_center/roi_center)), 100*(rd.start-rd.end.shift()).max()/(int(roi_end)-int(roi_start)+1), 100*(rd.start-rd.end.shift()).max()/(int(probe_end)-int(probe_start)+1),\
                 (rd.start-rd.end.shift()).mean(), (rd.start-rd.end.shift()).min(), (rd.start-rd.end.shift()).max(), (rd.start-rd.end.shift()).std(), \
-                max(rd.Tm)-min(rd.Tm), stat.mean(rd.Tm), stat.stdev(rd.Tm), \
-                max(rd.gc_content)-min(rd.gc_content), stat.mean(rd.gc_content), stat.stdev(rd.gc_content), \
-                stat.mean(rd.off_target_no), min(rd.off_target_no), max(rd.off_target_no), stat.stdev(rd.off_target_no), \
-                stat.mean(rd.off_target_sum), min(rd.off_target_sum), max(rd.off_target_sum), stat.stdev(rd.off_target_sum), \
-                stat.mean(rd.oligo_cost), min(rd.oligo_cost), max(rd.oligo_cost), stat.stdev(rd.oligo_cost), \
+                max(rd.Tm)-min(rd.Tm), np.mean(rd.Tm), np.std(rd.Tm), \
+                max(rd.gc_content)-min(rd.gc_content), np.mean(rd.gc_content), np.std(rd.gc_content), \
+                np.mean(rd.off_target_no), min(rd.off_target_no), max(rd.off_target_no), np.std(rd.off_target_no), \
+                np.mean(rd.off_target_sum), min(rd.off_target_sum), max(rd.off_target_sum), np.std(rd.off_target_sum), \
+                np.mean(rd.oligo_cost), min(rd.oligo_cost), max(rd.oligo_cost), np.std(rd.oligo_cost), \
                 inv_cost.sum()]
             # stat.mean(rd.off_target_sum), min(rd.off_target_sum), max(rd.off_target_sum), stat.stdev(rd.off_target_sum)]  
         
@@ -412,8 +425,8 @@ def feedback(currentfolder,outfolder,count,cutoff,logpath):
                 logging.info(f'No oligos were excluded.')  
                 # move probe to final selection folder
                 tsvname = basename[6:basename.find('.fa')]+".tsv"
-                shutil.move(selectedfolder + tsvname,outfolder + tsvname)
-                shutil.move(selectedfolder + basename,outfolder + basename)    # also keep the .out file (all other files will be deleted)      
+                shutil.move(selectedfolder + tsvname,outfolder)
+                shutil.move(selectedfolder + basename,outfolder)    # also keep the .out file (all other files will be deleted)      
                     
 
     logging.info(f'Length of rerunlist: '+str(len(rerunlist)))
@@ -478,7 +491,6 @@ def filterdb(db,cutoff):
 # -----------------------------------------------------------------------------------------------------------------------      
 # -----------------------------------------------------------------------------------------------------------------------            
 
-
 def probequery(length,strand,roi,oligos,logpath,greedy,noquerylog):
     suffix = ""
     if(greedy): 
@@ -493,8 +505,10 @@ def probequery(length,strand,roi,oligos,logpath,greedy,noquerylog):
 
 # -----------------------------------------------------------------------------------------------------------------------      
 # -----------------------------------------------------------------------------------------------------------------------            
-
-
-if __name__ == '__main__':
+def cycling_query():
     output()
     logging.shutdown()
+    return
+
+if __name__ == '__main__':
+    cycling_query()

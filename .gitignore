@@ -6,3 +6,4 @@ dist/
 /__pycache__/
 *.fa
 .DS_Store
+token*

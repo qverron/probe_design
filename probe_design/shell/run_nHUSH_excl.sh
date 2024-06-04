@@ -32,8 +32,9 @@ Help()
 # Variables
 skip=false
 gen=false
+confirm=false
 
-while getopts "f:L:l:m:t:i:d:s:hgcp" flag; do
+while getopts "f:L:l:m:t:i:d:s:hgcpy" flag; do
    case "${flag}" in
       f) exppath=${OPTARG};;
       d) fishtype=${OPTARG};;
@@ -47,7 +48,8 @@ while getopts "f:L:l:m:t:i:d:s:hgcp" flag; do
          Help
          exit;;
       g) gen=true;;
-      p) skip=true;; 
+      p) skip=true;;
+      y) confirm=true;; 
      \?) # Invalid option
          echo "Error: Invalid option, exiting."
          exit;;
@@ -93,16 +95,19 @@ fi
 
 
 # Check that the input were correctly parsed
-while true; do
-    read -p "Do you wish to continue? (y/n)" yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer yes (y) or no (n).";;
-    esac
-done
+if [ "$confirm" = false ]; then
+    while true; do
+        read -p "Do you wish to continue? (y/n)" yn
+        case $yn in
+            [Yy]* ) break;;
+            [Nn]* ) exit;;
+            * ) echo "Please answer yes (y) or no (n).";;
+        esac
+    done
+fi
 
 # define a unique nHUSH folder
+mkdir -p HUSH
 datapath="${exppath}/data"
 HUSHpath="${exppath}/HUSH"
 ts="HUSH_"$(date +%Y%m%d-%H%M%S)

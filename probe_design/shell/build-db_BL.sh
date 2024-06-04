@@ -36,7 +36,9 @@ maxconsec=24
 maxid=6
 targetTemp=72
 
-while getopts "d:L:c:f:m:i:T:h" flag; do
+confirm=false
+
+while getopts "d:L:c:f:m:i:T:hy" flag; do
    case "${flag}" in
       d) hamdist=${OPTARG};;
       L) length=${OPTARG};;
@@ -48,6 +50,7 @@ while getopts "d:L:c:f:m:i:T:h" flag; do
       h) # display Help
          Help
          exit;;
+      y) confirm=true;;
      \?) # Invalid option
          echo "Error: Invalid option, exiting."
          exit;;
@@ -58,20 +61,22 @@ data=$PWD'/data'
 cd "$data"
 if [ -d "db" ]
 then 
-    echo 'The directories need to be cleared to continue.'
-    while true; do
-        read -p "Do you wish to continue? (y/n)" yn
-        case $yn in
-            [Yy]* ) break;;
-            [Nn]* ) exit;;
-            * ) echo "Please answer yes (y) or no (n).";;
-        esac
-    done
+   echo 'The directories need to be cleared to continue.'
+   if [ "$confirm" = false ] ; then
+      while true; do
+            read -p "Do you wish to continue? (y/n)" yn
+            case $yn in
+                [Yy]* ) break;;
+                [Nn]* ) exit;;
+                * ) echo "Please answer yes (y) or no (n).";;
+            esac
+        done
+    fi
 
-    rm -r db
-    rm -r db_tsv
-    rm -r db_temp1
-    rm -r db_temp2
+   rm -r db
+   rm -r db_tsv
+   rm -r db_temp1
+   rm -r db_temp2
 fi
 
 mkdir db
@@ -106,7 +111,7 @@ done
 echo "Attributing oligo score."
 echo "Using the following score function: $scoref"
 #for d in db_temp1/*; do cat $d | ../escafish_score.py "$scoref" "$2" "$3" > db_tsv/$(basename $d); done
-for d in db_temp2/*_filtered.fa; do cat $d | ../escafish_score.py "$scoref" "$maxconsec" "$maxid" "$targetTemp" "$hamdist" > db_tsv/$(basename $d ".bl_filtered.fa"); done
+for d in db_temp2/*_filtered.fa; do cat $d | prb escafish_score "$scoref" "$maxconsec" "$maxid" "$targetTemp" "$hamdist" > db_tsv/$(basename $d ".bl_filtered.fa"); done
 rm -r db_temp1
 rm -r db_temp2
 

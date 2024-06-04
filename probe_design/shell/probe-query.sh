@@ -61,8 +61,8 @@ else
     output="$expfolder/probe_candidates/query_output_o_$oligos""_t_$ts"
 fi
 
-mkdir "$expfolder/probe_candidates"
-mkdir $output
+mkdir -p "$expfolder/probe_candidates"
+mkdir -p $output
 
 
 process () {

@@ -72,6 +72,7 @@ mkdir "$HUSHpath"/"$ts"
 
 for gen in "$datapath"/ref/genome*.fa
 do
+# ln -s $gen "$HUSHpath"/"$ts"/$(basename -- $gen)
 ln -s $gen "$HUSHpath"/"$ts"/$(basename -- $gen)
 done
 

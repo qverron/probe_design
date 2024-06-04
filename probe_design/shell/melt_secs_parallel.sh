@@ -34,3 +34,4 @@ wait
 echo "Done!"
 
 rename 's/.fa/.tsv/' "$data"/melt/*
+
