@@ -472,7 +472,7 @@ def filterdatabase_par(currentfolder,cutoff,threads,toprocessRoi):
     dbnames = glob.glob(dbpattern,recursive=True)
 
     dbparse = [re.split('roi_',db,maxsplit=1)[1] for db in dbnames]
-    dbrois = [int(re.split('\.',db,maxsplit=1)[0]) for db in dbparse]
+    dbrois = [int(re.split(r'\.',db,maxsplit=1)[0]) for db in dbparse]
 
     filtereddblist = [dbnames[k] for k in range(len(dbrois)) if dbrois[k] in toprocessRoi]
 
