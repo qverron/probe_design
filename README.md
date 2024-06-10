@@ -162,7 +162,7 @@ prb melt_secs_parallel (optional DNA(ref) / RNA(rev. compl))
 ``` shell
 prb generate_blacklist -L 40 -c 100
 ```
-> [!NOTE]
+> [!TIP]
 > This only needs to be run once per reference genome if not using any 
 > exclusion regions! Just save the blacklist folder between runs.
 
