@@ -113,7 +113,7 @@ prb get_oligos DNA 1
 
 > [!NOTE]
 > If indicating `RNA`, the module will assume that the transcript / region
-> sequences are already present in the `data/regions` folder. Default: `DNA.
+> sequences are already present in the `data/regions` folder. Default: DNA.
 
 4. Test all k-mers for their homology to other regions in the genome,
    using nHUSH. Instead of running the entire k-mers (of length `L`) at
@@ -223,7 +223,8 @@ In this alternative, the region (along with any user-indicated repeats)
 is masked out from the reference genome used by nHUSH. This way, repeated
 oligos that are specific for the ROI can be included in the final probe.
 
-### Warning: This approach occupies a lot more hard drive space!
+> [!CAUTION]
+> This approach occupies a lot more hard drive space!
 
 1. Preparation
 - Besides `data/rois/` and `data/ref/`, the pipeline requires an additional
@@ -252,9 +253,9 @@ prb get_oligos DNA|RNA [optional: applyGCfilter 0|1]
 # Example:
 prb get_oligos DNA
 ```
-
-   If indicating `RNA`, the module will assume that the transcript / region
-   sequences are already present in the `data/regions` folder. Default: `DNA.
+> [!NOTE]
+> If indicating `RNA`, the module will assume that the transcript / region
+> sequences are already present in the `data/regions` folder. Default: DNA.
    
 4. Apply the region exclusion mask on the reference genome.
 
